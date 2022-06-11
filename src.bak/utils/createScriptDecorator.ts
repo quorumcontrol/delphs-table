@@ -40,7 +40,7 @@ export function attrib<T>(params: TAttributeParams): any {
   return function (
     target: ScriptTypeBase,
     propertyKey: string,
-    _descriptor: TypedPropertyDescriptor<T>
+    descriptor: TypedPropertyDescriptor<T>
   ): any {
     if (!target.attributesData) {
       target.attributesData = {};
