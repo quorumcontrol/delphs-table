@@ -29,12 +29,12 @@ interface CellInitializeOptions {
 }
 
 class Cell {
-  warriors:Warrior[] = []
-  outgoing:Warrior[] = []
-  incoming:Warrior[] = []
+  warriors:Warrior[]
+  outgoing:Warrior[]
+  incoming:Warrior[]
 
-  battles:Battle[] = []
-  wootgump:Wootgump[] = []
+  battles:Battle[]
+  wootgump:Wootgump[]
 
   grid:Grid
   x:number
@@ -44,6 +44,11 @@ class Cell {
     this.grid = opts.grid
     this.x = opts.x
     this.y = opts.y
+    this.warriors = []
+    this.outgoing = []
+    this.incoming = []
+    this.battles = []
+    this.wootgump = []
   }
 
   addWarrior(warrior:Warrior) {
@@ -158,7 +163,7 @@ class Cell {
   private nonBattlingWarriors() {
     const inBattle = this.battlingWarriors()
     return this.warriors.filter((w) => {
-      return !inBattle.includes(w)
+      return !inBattle.includes(w) && w.currentHealth > 0
     })
   }
 

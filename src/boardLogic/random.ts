@@ -1,5 +1,9 @@
-import { randomInt, createHash } from 'crypto'
+import { createHash } from 'crypto'
 import { BigNumber } from 'ethers'
+
+function randomInt(max: number) {
+  return Math.min(Math.random() * max)
+}
 
 export function fakeRandomSeed() {
   return `local-seed-${randomInt(25000000)}`

@@ -49,9 +49,15 @@ class Battle {
     }
     this.previousWinner = (attackRoll > defenseRoll) ? attacker : defender
     if (this.isOver()) {
-      const wootGumpToTake = Math.floor(this.winner()!.wootgumpBalance * WOOTGUMP_TAKE_PERCENTAGE)
-      this.loser()!.wootgumpBalance -= wootGumpToTake
-      this.winner()!.wootgumpBalance += wootGumpToTake
+      const winner = this.winner()
+      const loser = this.loser()
+      if (!winner || !loser) {
+        console.error(this.battleId(), ' no winner or loser: ', this.warriors)
+        throw new Error('the battle is over, but now inner')
+      }
+      const wootGumpToTake = Math.floor(winner.wootgumpBalance * WOOTGUMP_TAKE_PERCENTAGE)
+      loser.wootgumpBalance -= wootGumpToTake
+      winner.wootgumpBalance += wootGumpToTake
     }
     return {
       id: this.battleId(),
@@ -76,7 +82,7 @@ class Battle {
     if (!this.isOver()) {
       return undefined
     }
-    return this.warriors.find((w) => w.isAlive())
+    return this.warriors.find((w) => !w.isAlive())
   }
 
   isOver() {

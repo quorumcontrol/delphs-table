@@ -4,7 +4,7 @@ import Warrior from "../boardLogic/Warrior";
 import Wootgump from "../boardLogic/Wootgump";
 import { ScriptTypeBase } from "../types/ScriptTypeBase";
 
-import { createScript, attrib } from "../utils/createScriptDecorator";
+import { createScript } from "../utils/createScriptDecorator";
 import { randomBounded } from "../utils/randoms";
 
 @createScript("cellState")
@@ -15,10 +15,11 @@ class CellState extends ScriptTypeBase {
   wootGumpTemplate: GraphNode; // for now
 
   cell?: Cell;
-  playerMarkers: { [key: string]: GraphNode } = {};
-  gumps: { [key: string]: GraphNode } = {};
+  playerMarkers: { [key: string]: Entity };
+  gumps: { [key: string]: Entity };
 
   initialize() {
+    this.handleTick = this.handleTick.bind(this);
     if (!this.entity.render) {
       throw new Error("no render");
     }
@@ -39,6 +40,14 @@ class CellState extends ScriptTypeBase {
     }
     this.wootGumpTemplate = wootGumpTemplate;
     this.playerMarkerTemplate = playerMarker;
+    this.playerMarkers = {};
+    this.gumps = {};
+    this.entity.parent.on("tick", this.handleTick);
+  }
+
+  handleTick() {
+    console.log("cell handling tick");
+    this.stateUpdate();
   }
 
   setCell(cell: Cell) {
@@ -50,28 +59,89 @@ class CellState extends ScriptTypeBase {
     if (!this.cell) {
       throw new Error("no cell assigned");
     }
-    for (const warrior of this.cell.warriors) {
-      this.placeWarrior(warrior);
-    }
-    for (const gump of this.cell.wootgump) {
-      this.placeGump(gump);
-    }
+    this.updateWarriors();
+    this.updateGump();
   }
 
-  placeGump(wootGump: Wootgump) {
+  private updateWarriors() {
+    if (!this.cell) {
+      throw new Error("trying to update cellSTate with no cell");
+    }
+    const cellIds = this.cell.warriors.map((w) => w.id);
+    const uiIds = Object.keys(this.playerMarkers);
+    // first delete anything that's not there anymore
+    uiIds
+      .filter((id) => !cellIds.includes(id))
+      .forEach((id) => {
+        try {
+          this.playerMarkers[id].destroy();
+          delete this.playerMarkers[id];
+        } catch (err) {
+          console.error("error: ", err);
+          throw err;
+        }
+      });
+
+    this.cell.warriors.forEach((warrior) => {
+      try {
+        if (!this.playerMarkers[warrior.id]) {
+          this.placeWarrior(warrior);
+        }
+      } catch (err) {
+        console.error("err: ", err);
+        throw err;
+      }
+    });
+  }
+
+  private updateGump() {
+    if (!this.cell) {
+      throw new Error("trying to update cellSTate with no cell");
+    }
+    const cellIds = this.cell.wootgump.map((w) => w.id);
+    const uiIds = Object.keys(this.gumps);
+    // first delete anything that's not there anymore
+    uiIds
+      .filter((id) => !cellIds.includes(id))
+      .forEach((id) => {
+        try {
+          this.gumps[id].destroy();
+          delete this.gumps[id];
+        } catch (err) {
+          console.error("error: ", err);
+          throw err;
+        }
+      });
+
+    this.cell.wootgump.forEach((gump) => {
+      try {
+        if (!this.gumps[gump.id]) {
+          this.placeGump(gump);
+        }
+      } catch (err) {
+        console.error("err: ", err);
+        throw err;
+      }
+    });
+  }
+
+  private placeGump(wootGump: Wootgump) {
     const gumpElement = this.wootGumpTemplate.clone();
     this.entity.addChild(gumpElement);
 
     const rndX = randomBounded(this.xSize);
     const rndZ = randomBounded(this.zSize);
+    gumpElement.setLocalScale(0.1, 5, 0.1);
 
     gumpElement.setLocalPosition(rndX, 5, rndZ);
     gumpElement.setRotation(0, randomBounded(0.2), 0, 1);
-    this.gumps[wootGump.id] = gumpElement;
+    this.gumps[wootGump.id] = gumpElement as Entity;
+    console.log(this.cell?.x, this.cell?.y, "placed gump")
   }
 
-  placeWarrior(warrior: Warrior) {
+  private placeWarrior(warrior: Warrior) {
     const playerMarker = this.playerMarkerTemplate.clone();
+    playerMarker.name = `${this.cell?.x}-${this.cell?.y}-marker-${warrior.id}`;
     const name = playerMarker.findByName("Name") as Entity;
     if (!name.element) {
       throw new Error("no element");
@@ -84,7 +154,8 @@ class CellState extends ScriptTypeBase {
 
     playerMarker.setLocalPosition(rndX, 5, rndZ);
     playerMarker.setRotation(0, randomBounded(0.2), 0, 1);
-    this.playerMarkers[warrior.id] = playerMarker;
+    this.playerMarkers[warrior.id] = playerMarker as Entity;
+    return playerMarker;
   }
 }
 

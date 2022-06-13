@@ -15,6 +15,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "strictPropertyInitialization": false,
-    "typeRoots": ["src/types"]
+    "typeRoots": ["src/types", "./node_modules/@types"]
   }
 }

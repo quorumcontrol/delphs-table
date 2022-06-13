@@ -29,11 +29,11 @@ class Grid {
 
   
   constructor(opts:GridOptions) {
-    this.initialCellPopulation(opts.warriors)
     this.currentSeed = opts.seed
     this.id = `grid-${this.currentSeed}`
     this.sizeX = opts.sizeX || 20
     this.sizeY = opts.sizeY || 20
+    this.initialCellPopulation(opts.warriors)
   }
 
   doTick() {
