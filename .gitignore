@@ -27,6 +27,7 @@ yarn-error.log*
 .npmrc
 
 # playcanvas
+dist
 dist/scripts/index.js
 dist/scripts/index.js.map
 .playcanvas-engine

@@ -1,6 +1,11 @@
+import { generateFakeWarriors } from "../boardLogic/Warrior";
 import { ScriptTypeBase } from "../types/ScriptTypeBase";
 
 import { createScript, attrib } from "../utils/createScriptDecorator";
+import Grid from "../boardLogic/Grid";
+import Cell from "../boardLogic/Cell";
+import { Entity, GraphNode } from "playcanvas";
+import CellState from "./CellState";
 
 @createScript("boardGenerate")
 class BoardGenerate extends ScriptTypeBase {
@@ -10,7 +15,11 @@ class BoardGenerate extends ScriptTypeBase {
   @attrib({ type: "number", default: 10 })
   numTilesY = 10;
 
+  ground: GraphNode
+  grid: Grid
+
   initialize() {
+    this.initialCellSetup = this.initialCellSetup.bind(this)
     // We've created a couple of templates that are our world tiles
     // In the Editor hierarchy, we have disabled the templates because
     // we don't want them to be visible. We just want our generated
@@ -23,24 +32,37 @@ class BoardGenerate extends ScriptTypeBase {
     if (!ground) {
       throw new Error("no ground");
     }
+    this.ground = ground
 
-    for (let y = 0; y < this.numTilesY; y++) {
-      for (let x = 0; x < this.numTilesX; x++) {
-        // Clone the tile
-        const e = ground.clone();
+    console.log("sizeX/sizeY: ", this.numTilesX, this.numTilesY)
+    this.grid = new Grid({
+      warriors: generateFakeWarriors(10, "test"),
+      seed: 'test',
+      sizeX: this.numTilesX,
+      sizeY: this.numTilesY,
+    })
 
-        // Set the world position of the cloned tile. Note that because
-        // our tiles are 10x10 in X,Z dimensions, we have to multiply
-        // the position by 10
-        e.setPosition(
-          (x - this.numTilesX / 2) * 1.01,
-          0.6,
-          (y - this.numTilesX / 2) * 1.01
-        );
-        // Add the tile to the scene's hierarchy
-        this.app.root.addChild(e);
-      }
+    this.grid.everyCell(this.initialCellSetup)
+
+  }
+
+  private initialCellSetup(cell: Cell) {
+    const e = this.ground.clone();
+    const cellStateScript = this.getScript<CellState>(e as Entity, 'cellState')
+    if (!cellStateScript) {
+      throw new Error('no script')
     }
+    // Set the world position of the cloned tile. Note that because
+    // our tiles are 10x10 in X,Z dimensions, we have to multiply
+    // the position by 10
+    e.setPosition(
+      (cell.x - this.numTilesX / 2) * 1.01,
+      0.6,
+      (cell.y - this.numTilesX / 2) * 1.01
+    );
+    // Add the tile to the scene's hierarchy
+    this.app.root.addChild(e);
+    cellStateScript?.setCell(cell)
   }
 }
 

@@ -1,5 +1,6 @@
 import "./board/BoardGenerate"
 import "./board/RandomTrees"
+import "./board/CellState"
 
 console.log(
   `--------------------------------------------------------------------------------

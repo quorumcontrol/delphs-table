@@ -13,7 +13,6 @@ class RandomTrees extends ScriptTypeBase {
     const tileBoundingBox = this.entity.render.meshInstances[0].aabb;
     const xSize = tileBoundingBox.halfExtents.x;
     const zSize = tileBoundingBox.halfExtents.z;
-    console.log([xSize, zSize]);
 
     const templates = this.app.root.findByName("Templates");
     if (!templates) {
