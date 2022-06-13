@@ -1,6 +1,7 @@
 import { deterministicRandom } from "./random"
 import Warrior from "./Warrior"
 import debug from 'debug'
+import EventEmitter from "events"
 
 const log = debug('Battle')
 
@@ -23,16 +24,19 @@ export interface BattleTickReport {
 
 const WOOTGUMP_TAKE_PERCENTAGE = 0.5
 
-class Battle {
+class Battle extends EventEmitter {
   warriors: Warrior[]
   tick: number
+  startingTick: number
   seed: string
   previousWinner?:Warrior
 
   constructor(opts: BattleOptions) {
+    super()
     this.warriors = opts.warriors
     this.seed = opts.seed
     this.tick = opts.startingTick
+    this.startingTick = opts.startingTick
   }
 
   doBattleTick(tick: number, seed: string):BattleTickReport {
@@ -59,7 +63,7 @@ class Battle {
       loser.wootgumpBalance -= wootGumpToTake
       winner.wootgumpBalance += wootGumpToTake
     }
-    return {
+    const report:BattleTickReport = {
       id: this.battleId(),
       attacker,
       defender,
@@ -69,6 +73,8 @@ class Battle {
       winner: this.winner(),
       loser: this.loser(),
     }
+    this.emit('tick', report)
+    return report
   }
 
   winner() {
@@ -114,8 +120,8 @@ class Battle {
     return deterministicRandom(max, `${this.battleId()}-${this.tick}`, this.seed)
   }
 
-  private battleId() {
-    return `battle-${this.warriors[0].id}-${this.warriors[1].id}-${this.tick}`
+  battleId() {
+    return `battle-${this.warriors[0].id}-${this.warriors[1].id}-${this.startingTick}`
   }
 
   private log(...args:any[]) {

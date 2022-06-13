@@ -1,6 +1,9 @@
 import "./board/BoardGenerate"
 import "./board/RandomTrees"
 import "./board/CellState"
+import "./board/FaceCamera"
+import "./board/BattleUI"
+import "./board/PlayerMarker"
 
 console.log(
   `--------------------------------------------------------------------------------

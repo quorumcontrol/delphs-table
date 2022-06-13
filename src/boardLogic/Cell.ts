@@ -160,7 +160,7 @@ class Cell {
     }
   }
 
-  private nonBattlingWarriors() {
+  nonBattlingWarriors() {
     const inBattle = this.battlingWarriors()
     return this.warriors.filter((w) => {
       return !inBattle.includes(w) && w.currentHealth > 0
