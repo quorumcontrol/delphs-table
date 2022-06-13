@@ -46,7 +46,6 @@ class CellState extends ScriptTypeBase {
   }
 
   handleTick() {
-    console.log("cell handling tick");
     this.stateUpdate();
   }
 
