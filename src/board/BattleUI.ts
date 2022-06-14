@@ -8,6 +8,8 @@ import mustFindByName from "../utils/mustFindByName";
 import { randomBounded } from "../utils/randoms";
 import PlayerMarker from "./PlayerMarker";
 
+const standardPlaces:[number,number,number][] = [[0.2,8,0.35],[0.15,8,-0.2]]
+
 @createScript("battleUI")
 class BattleUI extends ScriptTypeBase {
   xSize: number;
@@ -47,10 +49,11 @@ class BattleUI extends ScriptTypeBase {
     textElement.enabled = true
     this.entity.addChild(textElement)
     textElement.element!.text = text    
-    textElement.setLocalScale(0.05, 0.5, 0.05)
+    textElement.setLocalScale(0.02, 2, 0.02)
+    textElement.setLocalPosition(0,50,0)
     const startingPosition = textElement.getLocalPosition()
     console.log('starting from: ', startingPosition)
-    textElement.tween(startingPosition).to({x: startingPosition.x, y: startingPosition.y + 100, z: startingPosition.z}, 1.0, pc.SineIn).start().on('complete', () => {
+    textElement.tween(startingPosition).to({x: startingPosition.x, y: startingPosition.y + 100, z: startingPosition.z}, 5.0, pc.SineIn).start().on('complete', () => {
       textElement.destroy()
     })
   }
@@ -65,12 +68,12 @@ class BattleUI extends ScriptTypeBase {
     if (!this.battle) {
       throw new Error('no battle')
     }
-    this.battle.warriors.forEach((warrior) => {
-      this.placeWarrior(warrior)
+    this.battle.warriors.forEach((warrior, i) => {
+      this.placeWarrior(warrior, i)
     })
   }
 
-  private placeWarrior(warrior: Warrior) {
+  private placeWarrior(warrior: Warrior, index:number) {
     const playerMarker = this.playerMarkerTemplate.clone();
     playerMarker.name = `${this.battle?.battleId()}-marker-${warrior.id}`;
 
@@ -78,15 +81,11 @@ class BattleUI extends ScriptTypeBase {
     this.getScript<PlayerMarker>(playerMarker as Entity, 'playerMarker')?.setWarrior(warrior)
 
     playerMarker.setLocalScale(0.1, 10, 0.1);
-    const rndX = randomBounded(this.xSize);
-    const rndZ = randomBounded(this.zSize);
 
-    playerMarker.setLocalPosition(rndX, 5, rndZ);
+    playerMarker.setLocalPosition(...standardPlaces[index]);
     playerMarker.setRotation(0, randomBounded(0.2), 0, 1);
     return playerMarker;
   }
-
-
 }
 
 export default BattleUI;

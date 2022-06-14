@@ -167,10 +167,16 @@ class Cell {
     })
   }
 
+  deadWarriors() {
+    const inBattle = this.battlingWarriors()
+    return this.warriors.filter((w) => {
+      return !inBattle.includes(w) && w.currentHealth <= 0
+    })
+  }
+
   private battlingWarriors() {
     return this.battles.map((b) => b.warriors).flat()
   }
-
 
   private livingWarriors() {
     return this.warriors.filter((w) => w.isAlive())

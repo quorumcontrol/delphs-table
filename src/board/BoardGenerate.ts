@@ -6,9 +6,13 @@ import Grid from "../boardLogic/Grid";
 import Cell from "../boardLogic/Cell";
 import { Entity, GraphNode } from "playcanvas";
 import CellState from "./CellState";
+import { GameConfig } from "../utils/config";
 
 @createScript("boardGenerate")
 class BoardGenerate extends ScriptTypeBase {
+  @attrib({ type: "string", default: ''})
+  currentPlayer = "";
+  
   @attrib({ type: "number", default: 10 })
   numTilesX = 10;
 
@@ -49,14 +53,23 @@ class BoardGenerate extends ScriptTypeBase {
 
   update(dt: number) {
     this.timer += dt;
-    if (this.timer >= 4) {
+    if (this.timer >= 6) {
       const tick = this.grid.doTick();
       console.log(tick);
       if (!this.entity.fire) {
         throw new Error('no fire method')
       }
       this.entity.fire("tick", tick);
+      console.log('destination: ', this.getGameConfig().currentPlayer?.destination)
       this.timer = 0;
+    }
+  }
+
+  getGameConfig():GameConfig {
+    return {
+      currentPlayer: this.grid.warriors?.find((w) => w.id === this.currentPlayer),
+      grid: this.grid,
+      controller: this.entity
     }
   }
 

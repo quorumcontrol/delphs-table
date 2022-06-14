@@ -4,6 +4,7 @@ import Cell from "../boardLogic/Cell";
 import Warrior from "../boardLogic/Warrior";
 import Wootgump from "../boardLogic/Wootgump";
 import { ScriptTypeBase } from "../types/ScriptTypeBase";
+import { getGameConfig } from "../utils/config";
 
 import { createScript } from "../utils/createScriptDecorator";
 import mustFindByName from "../utils/mustFindByName";
@@ -15,9 +16,12 @@ import PlayerMarker from "./PlayerMarker";
 class CellState extends ScriptTypeBase {
   xSize: number;
   zSize: number;
-  playerMarkerTemplate: GraphNode; // for now
-  wootGumpTemplate: GraphNode; // for now
-  battleTemplate: GraphNode
+  playerMarkerTemplate: GraphNode;
+  wootGumpTemplate: GraphNode;
+  battleTemplate: GraphNode;
+  destinationTemplate: Entity;
+
+  destinationElement?: Entity; // keep track of it to delete if the destination changes
 
   cell?: Cell;
   playerMarkers: { [key: string]: Entity };
@@ -37,14 +41,20 @@ class CellState extends ScriptTypeBase {
     this.playerMarkerTemplate = mustFindByName(templates, "PlayerMarker");
     this.wootGumpTemplate = mustFindByName(templates, "Wootgump");
     this.battleTemplate = mustFindByName(templates, "Battle");
+    this.destinationTemplate = mustFindByName(templates, "DestinationMarker");
+
     this.playerMarkers = {};
     this.gumps = {};
-    this.battles = {}
+    this.battles = {};
     this.entity.parent.on("tick", this.handleTick);
   }
 
   handleTick() {
     this.stateUpdate();
+  }
+
+  update() {
+    this.handleMaybeDestinationTile();
   }
 
   setCell(cell: Cell) {
@@ -61,6 +71,35 @@ class CellState extends ScriptTypeBase {
     this.updateBattles();
   }
 
+  private handleMaybeDestinationTile() {
+    const gameConfig = getGameConfig(this.app.root);
+    if (!gameConfig.currentPlayer || !gameConfig.currentPlayer.destination || !this.cell) {
+      return;
+    }
+
+    if (
+      gameConfig.currentPlayer.destination[0] == this.cell.x &&
+      gameConfig.currentPlayer.destination[1] == this.cell.y
+    ) {
+      if (!this.destinationElement) {
+        console.log(this.cell.x, this.cell.y, 'setting destination element')
+        this.destinationElement = this.destinationTemplate.clone() as Entity;
+        this.entity.addChild(this.destinationElement);
+        const rndX = randomBounded(this.xSize * 0.5);
+        const rndZ = randomBounded(this.zSize * 0.5);
+        this.destinationElement.setLocalScale(1, 20, 1);
+        this.destinationElement.setLocalPosition(rndX, 3, rndZ);
+      }
+
+      return;
+    }
+
+    if (this.destinationElement) {
+      this.destinationElement.destroy();
+      this.destinationElement = undefined;
+    }
+  }
+
   private updateBattles() {
     if (!this.cell) {
       throw new Error("trying to update cellSTate with no cell");
@@ -72,8 +111,8 @@ class CellState extends ScriptTypeBase {
       .filter((id) => !cellIds.includes(id))
       .forEach((id) => {
         try {
-          if ( this.battles[id]) {
-            const battleUIScript = this.getScript<BattleUI>(this.battles[id], 'battleUI')
+          if (this.battles[id]) {
+            const battleUIScript = this.getScript<BattleUI>(this.battles[id], "battleUI");
             battleUIScript?.destroy();
             delete this.battles[id];
           }
@@ -82,40 +121,42 @@ class CellState extends ScriptTypeBase {
           throw err;
         }
       });
-      this.cell.battles.forEach((battle) => {
-          if (!this.battles[battle.battleId()]) {
-            this.placeBattle(battle);
-          }
-      });
+    this.cell.battles.forEach((battle) => {
+      if (!this.battles[battle.battleId()]) {
+        this.placeBattle(battle);
+      }
+    });
   }
 
-  private placeBattle(battle:Battle) {
+  private placeBattle(battle: Battle) {
     const battleElement = this.battleTemplate.clone();
     this.entity.addChild(battleElement);
 
     const rndX = randomBounded(this.xSize * 0.5);
     const rndZ = randomBounded(this.zSize * 0.5);
-    battleElement.setLocalScale(0.5, 0.5, 0.5);
+    battleElement.setLocalScale(0.4, 0.4, 0.4);
 
     battleElement.setLocalPosition(rndX, 0.5, rndZ);
     battleElement.setRotation(0, randomBounded(0.2), 0, 1);
     this.battles[battle.battleId()] = battleElement as Entity;
-    const battleUIScript = this.getScript<BattleUI>(battleElement as Entity, 'battleUI')
-    battleUIScript?.setBattle(battle)
+    const battleUIScript = this.getScript<BattleUI>(battleElement as Entity, "battleUI");
+    battleUIScript?.setBattle(battle);
   }
 
   private updateWarriors() {
     if (!this.cell) {
       throw new Error("trying to update cellSTate with no cell");
     }
-    const cellIds = this.cell.nonBattlingWarriors().map((w) => w.id);
+    const warriorsToShow = this.cell.nonBattlingWarriors().concat(this.cell.deadWarriors())
+
+    const cellIds = warriorsToShow.map((w) => w.id);
     const uiIds = Object.keys(this.playerMarkers);
     // first delete anything that's not there anymore
     uiIds
       .filter((id) => !cellIds.includes(id))
       .forEach((id) => {
         try {
-          if ( this.playerMarkers[id]) {
+          if (this.playerMarkers[id]) {
             this.playerMarkers[id].destroy();
             delete this.playerMarkers[id];
           }
@@ -125,7 +166,7 @@ class CellState extends ScriptTypeBase {
         }
       });
 
-    this.cell.nonBattlingWarriors().forEach((warrior) => {
+    warriorsToShow.forEach((warrior) => {
       try {
         if (!this.playerMarkers[warrior.id]) {
           this.placeWarrior(warrior);
@@ -186,7 +227,9 @@ class CellState extends ScriptTypeBase {
     playerMarker.name = `${this.cell?.x}-${this.cell?.y}-marker-${warrior.id}`;
 
     this.entity.addChild(playerMarker);
-    this.getScript<PlayerMarker>(playerMarker as Entity, 'playerMarker')?.setWarrior(warrior)
+    this.getScript<PlayerMarker>(playerMarker as Entity, "playerMarker")?.setWarrior(
+      warrior
+    );
 
     playerMarker.setLocalScale(0.05, 5, 0.05);
     const rndX = randomBounded(this.xSize);

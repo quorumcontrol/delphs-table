@@ -1,9 +1,11 @@
 import "./board/BoardGenerate"
 import "./board/RandomTrees"
 import "./board/CellState"
-import "./board/FaceCamera"
+import "./board/SlightPulse"
 import "./board/BattleUI"
 import "./board/PlayerMarker"
+import "./board/CellSelector"
+import "./board/Hud"
 
 console.log(
   `--------------------------------------------------------------------------------

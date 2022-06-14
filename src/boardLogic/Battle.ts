@@ -59,7 +59,7 @@ class Battle extends EventEmitter {
         console.error(this.battleId(), ' no winner or loser: ', this.warriors)
         throw new Error('the battle is over, but now inner')
       }
-      const wootGumpToTake = Math.floor(winner.wootgumpBalance * WOOTGUMP_TAKE_PERCENTAGE)
+      const wootGumpToTake = Math.floor(loser.wootgumpBalance * WOOTGUMP_TAKE_PERCENTAGE)
       loser.wootgumpBalance -= wootGumpToTake
       winner.wootgumpBalance += wootGumpToTake
     }
