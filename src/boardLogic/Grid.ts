@@ -48,6 +48,7 @@ class Grid {
     // then update which tick we are at
     this.newRandomSeed()
     this.tick++
+    
     return { tick: this.tick, seed: this.currentSeed }
   }
 

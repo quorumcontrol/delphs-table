@@ -22,7 +22,7 @@ class Hud extends ScriptTypeBase {
     const grid = config.grid
     const text = grid.warriors?.map((w) => {
       const prefix = config.currentPlayer?.id === w.id ? '-> ' : ''
-      return `${prefix}${w.name}: ${Math.ceil(w.currentHealth)} HP / ${w.wootgumpBalance} WG`
+      return `${prefix}${w.name} (A: ${w.attack}, D: ${w.defense}): ${Math.ceil(w.currentHealth)} HP / ${w.wootgumpBalance} WG`
     }).join("\n")
     this.uiText.element!.text = text || ''
   }
