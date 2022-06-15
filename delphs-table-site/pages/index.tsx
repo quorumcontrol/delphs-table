@@ -12,7 +12,7 @@ const Home: NextPage = () => {
       <Layout>
         <VStack mt="50" spacing={5}>
           <Heading>Delph's Table</Heading>
-          <Text>Show support for your community.</Text>
+          <Text>Find the Wootgump, don't get rekt.</Text>
           <Box pt="16">
 
           </Box>
