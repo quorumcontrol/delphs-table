@@ -6,27 +6,17 @@ const func: DeployFunction = async function ({
   deployments,
   getNamedAccounts,
 }: HardhatRuntimeEnvironment) {
-  const { deploy, execute } = deployments;
+  const { deploy, get } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const player = await deploy("Player", {
+  const player = await get('Player')
+  const roller = await get('DiceRoller')
+
+  await deploy("DelphsTable", {
     from: deployer,
     log: true,
     // deterministicDeployment: true,
-    args: [],
+    args: [roller.address, player.address, deployer],
   });
-
-  if (player.newlyDeployed) {
-    execute(
-      "Player",
-      {
-        log: true,
-        from: deployer,
-      },
-      "initializePlayer",
-      "deployer",
-      deployer
-    );
-  }
 };
 export default func;

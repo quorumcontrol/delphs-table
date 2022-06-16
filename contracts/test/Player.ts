@@ -15,7 +15,8 @@ describe("Player", function () {
     player = player.connect(alice)
   })
 
-  it("sets username", async () => {
+  it("sets username after initialization", async () => {
+    await player.initializePlayer('alice', alice.address);
     await player.setUsername('alice');
     expect(await player.name(alice.address)).to.eq('alice')
   });

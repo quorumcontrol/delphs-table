@@ -6,27 +6,15 @@ const func: DeployFunction = async function ({
   deployments,
   getNamedAccounts,
 }: HardhatRuntimeEnvironment) {
-  const { deploy, execute } = deployments;
+  const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const player = await deploy("Player", {
+  await deploy("DiceRoller", {
     from: deployer,
     log: true,
     // deterministicDeployment: true,
     args: [],
   });
 
-  if (player.newlyDeployed) {
-    execute(
-      "Player",
-      {
-        log: true,
-        from: deployer,
-      },
-      "initializePlayer",
-      "deployer",
-      deployer
-    );
-  }
 };
 export default func;
