@@ -1,33 +1,68 @@
 import { utils, Wallet } from "ethers";
-import { useMutation } from "react-query"
+import { useMutation, useQuery } from "react-query"
 import { useSigner } from "wagmi";
 import { usePlayer } from "./Player";
 import { backOff } from "exponential-backoff";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { randomBytes } from "crypto";
 import useIsClientSide from "./useIsClientSide";
 
 const ENCRYPTED_KEY = 'delphs:epk'
 const DEVICE_ID_KEY = 'delphs:deviceId'
-
+const signatureMessage = () => `I trust this device on Delphs Table. id: ${deviceKey()}`
 // const encryptedDeviceKey = localStorage.getItem(ENCRYPTED_KEY)
+const deviceKey = () => localStorage.getItem(DEVICE_ID_KEY)
 
+let decryptionKey:string|undefined = undefined
+let deviceSigner:Wallet|undefined = undefined
 
+export const useDeviceSigner = () => {
+  const signer = useSigner()
 
-export const useDeviceKey = () => {
-  const isClientSide = useIsClientSide()
+  const isTrustedDevice = useMemo(() => {
+    return !!deviceKey()
+  }, [])
 
-  return useMemo(() => {
-    if (!isClientSide) {
-      return undefined
+  const login = useCallback(async () => {
+    if (!signer.data || !deviceKey()) {
+      throw new Error('no signer')
     }
-    const deviceId = localStorage.getItem(DEVICE_ID_KEY)
-    if (deviceId) {
-      return deviceId
+    const sig = await signer.data.signMessage(signatureMessage())
+    decryptionKey = sig
+  }, [signer])
+
+  const fetchDeviceSigner = async () => {
+    if (!decryptionKey) {
+      throw new Error('can only fetch after decryption key is set')
     }
-    localStorage.setItem(DEVICE_ID_KEY, randomBytes(8).toString('hex'))
-  }, [isClientSide])
+    if (deviceSigner) {
+      return deviceSigner
+    }
+    deviceSigner = await Wallet.fromEncryptedJson(localStorage.get(ENCRYPTED_KEY), decryptionKey)
+    return deviceSigner
+  }
+
+  const query = useQuery('device-signer', fetchDeviceSigner, {
+    enabled: !!decryptionKey && !!signer
+  })
+  return {...query, login, isTrustedDevice}
 }
+
+
+// export const useDeviceKey = () => {
+//   const isClientSide = useIsClientSide()
+
+//   return useMemo(() => {
+//     if (!isClientSide) {
+//       return undefined
+//     }
+//     const deviceId = localStorage.getItem(DEVICE_ID_KEY)
+//     if (deviceId) {
+//       return deviceId
+//     }
+//     localStorage.setItem(DEVICE_ID_KEY, randomBytes(8).toString('hex'))
+//   }, [isClientSide])
+// }
 
 export interface UserData {
   username: string;
@@ -40,7 +75,6 @@ const thresholdForFaucet = utils.parseEther('0.25')
 const useNewUser = () => {
   const player = usePlayer()
   const { data:signer } = useSigner()
-  const deviceKey = useDeviceKey()
 
   return useMutation(async ({ username, trustDevice}:UserData) => {
     if (!signer || !player) {
@@ -78,7 +112,7 @@ const useNewUser = () => {
     }
 
     if (trustDevice) {
-      const sig = await signer.signMessage(`I trust this device on Delphs Table. id: ${deviceKey}`)
+      const sig = await signer.signMessage(signatureMessage())
       const wallet = Wallet.createRandom()
       
       return Promise.all([

@@ -1,4 +1,4 @@
-import { VStack, Text, Heading, Box, Spinner, Link, Button} from "@chakra-ui/react";
+import { VStack, Text, Heading, Box, Spinner, Link, Button } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import NextLink from "next/link";
@@ -6,11 +6,18 @@ import { useAccount } from "wagmi";
 import Layout from "../src/components/Layout";
 import { useIsInitialized, useUsername } from "../src/hooks/Player";
 import useIsClientSide from "../src/hooks/useIsClientSide";
+import { useDeviceSigner } from "../src/hooks/useUser";
 
 const Home: NextPage = () => {
   const { data } = useAccount();
   const { isInitialized, isLoading } = useIsInitialized(data?.address);
-  const { data:username } = useUsername(data?.address);
+  const { data: username } = useUsername(data?.address);
+  const {
+    data: deviceSigner,
+    isLoading: deviceSignerIsLoading,
+    login,
+    isTrustedDevice,
+  } = useDeviceSigner();
   const isClient = useIsClientSide();
 
   return (
@@ -32,7 +39,12 @@ const Home: NextPage = () => {
               </VStack>
             )}
             {isClient && !isLoading && data?.address && isInitialized && (
-              <Text>Welcome back {username}.</Text>
+              <Box>
+                <Text>Welcome back {username}.</Text>
+                {deviceSignerIsLoading && <Spinner />}
+                {isTrustedDevice && !deviceSigner && <Button>Login</Button>}
+                {deviceSigner && <Button>Play</Button>}
+              </Box>
             )}
           </Box>
         </VStack>
