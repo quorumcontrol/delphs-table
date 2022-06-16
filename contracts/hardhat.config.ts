@@ -30,6 +30,14 @@ const config: HardhatUserConfig = {
       },
     },
   },
+  namedAccounts: {
+    deployer: {
+      default: 0, // here this will by default take the first account as deployer
+    },
+    tableAdmin: {
+      default: 1, // here this will by default take the first account as deployer
+    },
+  },
   networks: {
     skale: {
       url: "https://mainnet.skalenodes.com/v1/haunting-devoted-deneb",

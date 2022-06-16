@@ -1,0 +1,316 @@
+{
+  "address": "0xb0A616e35622c5eB72589cfE5cB1Ec46B35572C6",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "UsernameAlreadyClaimed",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "addDevice",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "deviceToPlayer",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "devices",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "device",
+          "type": "address"
+        }
+      ],
+      "name": "initializePlayer",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "player",
+          "type": "address"
+        }
+      ],
+      "name": "isInitialized",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "name",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "removeDevice",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        }
+      ],
+      "name": "setUsername",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "name": "usernameToAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x3b686ab006454fd1b47353ce95e43682ed05e6d34ec4dd4a6ec2654b9f0e4a04",
+  "receipt": {
+    "to": "0x0000000000000000000000000000000000000000",
+    "from": "0x905173B6C0A51925d3C9B619466c623c754Fb7BB",
+    "contractAddress": "0xb0A616e35622c5eB72589cfE5cB1Ec46B35572C6",
+    "transactionIndex": 0,
+    "gasUsed": "532348",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x09f28086ac8684fd2dbf9818874eda17c2f2697646d1bb5b8037461cfdb0a473",
+    "transactionHash": "0x3b686ab006454fd1b47353ce95e43682ed05e6d34ec4dd4a6ec2654b9f0e4a04",
+    "logs": [],
+    "blockNumber": 900208,
+    "cumulativeGasUsed": "532348",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "614dae1527ca7ab5db65c465fb9c2d4a",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.14+commit.80d49f37\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"UsernameAlreadyClaimed\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"addDevice\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"deviceToPlayer\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"devices\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"device\",\"type\":\"address\"}],\"name\":\"initializePlayer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"player\",\"type\":\"address\"}],\"name\":\"isInitialized\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"removeDevice\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"}],\"name\":\"setUsername\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"name\":\"usernameToAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/Player.sol\":\"Player\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/Player.sol\":{\"content\":\"//SPDX-License-Identifier: Unlicense\\npragma solidity ^0.8.0;\\n\\nimport \\\"./interfaces/IPlayer.sol\\\";\\n\\nerror UsernameAlreadyClaimed();\\n\\ncontract Player is IPlayer {\\n    mapping (address => mapping(address => bool)) public devices;\\n    mapping (address => string) public name;\\n    mapping (string => address) public usernameToAddress;\\n    mapping (address => address) public deviceToPlayer;\\n\\n    function setUsername(string calldata _name) public returns (bool) {\\n        address sender = deviceToPlayer[msg.sender];\\n        address existing = usernameToAddress[_name];\\n        if (!(existing == sender || existing == address(0))) {\\n            revert UsernameAlreadyClaimed();\\n        }\\n        delete usernameToAddress[name[sender]];\\n        name[sender] = _name;\\n        usernameToAddress[_name] = sender;\\n        return true;\\n    }\\n\\n    function addDevice(address addr) public returns (bool) {\\n        devices[msg.sender][addr] = true;\\n        deviceToPlayer[addr] = msg.sender;\\n        return true;\\n    }\\n\\n    function removeDevice(address addr) external returns (bool) {\\n        delete devices[msg.sender][addr];\\n        delete deviceToPlayer[addr];\\n        return true;\\n    }\\n\\n    function initializePlayer(string calldata _name, address device) external returns (bool) {\\n        deviceToPlayer[msg.sender] = msg.sender; // map the player themselves as a device\\n        setUsername(_name);\\n        addDevice(device);\\n        return true;\\n    }\\n\\n    function isInitialized(address player) external view returns (bool) {\\n        return deviceToPlayer[player] == player;\\n    }\\n\\n}\\n\",\"keccak256\":\"0x709e99157185ba24cd2f7141d8041e9ce119c8b4c3f1469bc8bcd081c49abe13\",\"license\":\"Unlicense\"},\"contracts/interfaces/IPlayer.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface IPlayer {\\n\\n  function deviceToPlayer(address device) external view returns (address player);\\n\\n}\",\"keccak256\":\"0x35f8d4db856c72e25d7b4278ce054f88ba514f385d4eea73fb04ba6826a3bd1e\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506108ab806100206000396000f3fe608060405234801561001057600080fd5b50600436106100935760003560e01c80634bf7494b116100665780634bf7494b1461018f578063b111cb84146101a2578063d60b347f146101b5578063ed59313a146101e4578063f825f143146101f757600080fd5b806301984892146100985780631a1bd7e4146100c15780631f7b6324146100fc57806336ec7a771461014e575b600080fd5b6100ab6100a6366004610540565b61022b565b6040516100b89190610562565b60405180910390f35b6100ec6100cf3660046105b7565b600060208181529281526040808220909352908152205460ff1681565b60405190151581526020016100b8565b6100ec61010a366004610540565b336000908152602081815260408083206001600160a01b03949094168352928152828220805460ff19169055600390522080546001600160a01b0319169055600190565b61017761015c366004610540565b6003602052600090815260409020546001600160a01b031681565b6040516001600160a01b0390911681526020016100b8565b6100ec61019d366004610633565b6102c5565b6100ec6101b0366004610540565b610305565b6100ec6101c3366004610540565b6001600160a01b039081166000818152600360205260409020549091161490565b6100ec6101f2366004610687565b610353565b6101776102053660046106df565b80516020818301810180516002825292820191909301209152546001600160a01b031681565b6001602052600090815260409020805461024490610790565b80601f016020809104026020016040519081016040528092919081815260200182805461027090610790565b80156102bd5780601f10610292576101008083540402835291602001916102bd565b820191906000526020600020905b8154815290600101906020018083116102a057829003601f168201915b505050505081565b33600081815260036020526040812080546001600160a01b0319169092179091556102f08484610353565b506102fa82610305565b506001949350505050565b336000818152602081815260408083206001600160a01b03959095168352938152838220805460ff19166001908117909155600390915292902080546001600160a01b031916909117905590565b336000908152600360205260408082205490516001600160a01b0390911690829060029061038490879087906107ca565b908152604051908190036020019020546001600160a01b03908116915082168114806103b757506001600160a01b038116155b6103d457604051634804ba5b60e01b815260040160405180910390fd5b6001600160a01b0382166000908152600160205260409081902090516002916103fc916107da565b908152604080516020928190038301902080546001600160a01b03191690556001600160a01b03841660009081526001909252902061043c90868661048b565b5081600286866040516104509291906107ca565b90815260405190819003602001902080546001600160a01b03929092166001600160a01b031990921691909117905550600191505092915050565b82805461049790610790565b90600052602060002090601f0160209004810192826104b957600085556104ff565b82601f106104d25782800160ff198235161785556104ff565b828001600101855582156104ff579182015b828111156104ff5782358255916020019190600101906104e4565b5061050b92915061050f565b5090565b5b8082111561050b5760008155600101610510565b80356001600160a01b038116811461053b57600080fd5b919050565b60006020828403121561055257600080fd5b61055b82610524565b9392505050565b600060208083528351808285015260005b8181101561058f57858101830151858201604001528201610573565b818111156105a1576000604083870101525b50601f01601f1916929092016040019392505050565b600080604083850312156105ca57600080fd5b6105d383610524565b91506105e160208401610524565b90509250929050565b60008083601f8401126105fc57600080fd5b50813567ffffffffffffffff81111561061457600080fd5b60208301915083602082850101111561062c57600080fd5b9250929050565b60008060006040848603121561064857600080fd5b833567ffffffffffffffff81111561065f57600080fd5b61066b868287016105ea565b909450925061067e905060208501610524565b90509250925092565b6000806020838503121561069a57600080fd5b823567ffffffffffffffff8111156106b157600080fd5b6106bd858286016105ea565b90969095509350505050565b634e487b7160e01b600052604160045260246000fd5b6000602082840312156106f157600080fd5b813567ffffffffffffffff8082111561070957600080fd5b818401915084601f83011261071d57600080fd5b81358181111561072f5761072f6106c9565b604051601f8201601f19908116603f01168101908382118183101715610757576107576106c9565b8160405282815287602084870101111561077057600080fd5b826020860160208301376000928101602001929092525095945050505050565b600181811c908216806107a457607f821691505b6020821081036107c457634e487b7160e01b600052602260045260246000fd5b50919050565b8183823760009101908152919050565b600080835481600182811c9150808316806107f657607f831692505b6020808410820361081557634e487b7160e01b86526022600452602486fd5b818015610829576001811461083a57610867565b60ff19861689528489019650610867565b60008a81526020902060005b8681101561085f5781548b820152908501908301610846565b505084890196505b50949897505050505050505056fea2646970667358221220cc078feaddf1a8dbaea418435e06bfab71bc1d51c43560a4c238a8a07d1b748964736f6c634300080e0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100935760003560e01c80634bf7494b116100665780634bf7494b1461018f578063b111cb84146101a2578063d60b347f146101b5578063ed59313a146101e4578063f825f143146101f757600080fd5b806301984892146100985780631a1bd7e4146100c15780631f7b6324146100fc57806336ec7a771461014e575b600080fd5b6100ab6100a6366004610540565b61022b565b6040516100b89190610562565b60405180910390f35b6100ec6100cf3660046105b7565b600060208181529281526040808220909352908152205460ff1681565b60405190151581526020016100b8565b6100ec61010a366004610540565b336000908152602081815260408083206001600160a01b03949094168352928152828220805460ff19169055600390522080546001600160a01b0319169055600190565b61017761015c366004610540565b6003602052600090815260409020546001600160a01b031681565b6040516001600160a01b0390911681526020016100b8565b6100ec61019d366004610633565b6102c5565b6100ec6101b0366004610540565b610305565b6100ec6101c3366004610540565b6001600160a01b039081166000818152600360205260409020549091161490565b6100ec6101f2366004610687565b610353565b6101776102053660046106df565b80516020818301810180516002825292820191909301209152546001600160a01b031681565b6001602052600090815260409020805461024490610790565b80601f016020809104026020016040519081016040528092919081815260200182805461027090610790565b80156102bd5780601f10610292576101008083540402835291602001916102bd565b820191906000526020600020905b8154815290600101906020018083116102a057829003601f168201915b505050505081565b33600081815260036020526040812080546001600160a01b0319169092179091556102f08484610353565b506102fa82610305565b506001949350505050565b336000818152602081815260408083206001600160a01b03959095168352938152838220805460ff19166001908117909155600390915292902080546001600160a01b031916909117905590565b336000908152600360205260408082205490516001600160a01b0390911690829060029061038490879087906107ca565b908152604051908190036020019020546001600160a01b03908116915082168114806103b757506001600160a01b038116155b6103d457604051634804ba5b60e01b815260040160405180910390fd5b6001600160a01b0382166000908152600160205260409081902090516002916103fc916107da565b908152604080516020928190038301902080546001600160a01b03191690556001600160a01b03841660009081526001909252902061043c90868661048b565b5081600286866040516104509291906107ca565b90815260405190819003602001902080546001600160a01b03929092166001600160a01b031990921691909117905550600191505092915050565b82805461049790610790565b90600052602060002090601f0160209004810192826104b957600085556104ff565b82601f106104d25782800160ff198235161785556104ff565b828001600101855582156104ff579182015b828111156104ff5782358255916020019190600101906104e4565b5061050b92915061050f565b5090565b5b8082111561050b5760008155600101610510565b80356001600160a01b038116811461053b57600080fd5b919050565b60006020828403121561055257600080fd5b61055b82610524565b9392505050565b600060208083528351808285015260005b8181101561058f57858101830151858201604001528201610573565b818111156105a1576000604083870101525b50601f01601f1916929092016040019392505050565b600080604083850312156105ca57600080fd5b6105d383610524565b91506105e160208401610524565b90509250929050565b60008083601f8401126105fc57600080fd5b50813567ffffffffffffffff81111561061457600080fd5b60208301915083602082850101111561062c57600080fd5b9250929050565b60008060006040848603121561064857600080fd5b833567ffffffffffffffff81111561065f57600080fd5b61066b868287016105ea565b909450925061067e905060208501610524565b90509250925092565b6000806020838503121561069a57600080fd5b823567ffffffffffffffff8111156106b157600080fd5b6106bd858286016105ea565b90969095509350505050565b634e487b7160e01b600052604160045260246000fd5b6000602082840312156106f157600080fd5b813567ffffffffffffffff8082111561070957600080fd5b818401915084601f83011261071d57600080fd5b81358181111561072f5761072f6106c9565b604051601f8201601f19908116603f01168101908382118183101715610757576107576106c9565b8160405282815287602084870101111561077057600080fd5b826020860160208301376000928101602001929092525095945050505050565b600181811c908216806107a457607f821691505b6020821081036107c457634e487b7160e01b600052602260045260246000fd5b50919050565b8183823760009101908152919050565b600080835481600182811c9150808316806107f657607f831692505b6020808410820361081557634e487b7160e01b86526022600452602486fd5b818015610829576001811461083a57610867565b60ff19861689528489019650610867565b60008a81526020902060005b8681101561085f5781548b820152908501908301610846565b505084890196505b50949897505050505050505056fea2646970667358221220cc078feaddf1a8dbaea418435e06bfab71bc1d51c43560a4c238a8a07d1b748964736f6c634300080e0033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 1188,
+        "contract": "contracts/Player.sol:Player",
+        "label": "devices",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_address,t_mapping(t_address,t_bool))"
+      },
+      {
+        "astId": 1192,
+        "contract": "contracts/Player.sol:Player",
+        "label": "name",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_address,t_string_storage)"
+      },
+      {
+        "astId": 1196,
+        "contract": "contracts/Player.sol:Player",
+        "label": "usernameToAddress",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_string_memory_ptr,t_address)"
+      },
+      {
+        "astId": 1200,
+        "contract": "contracts/Player.sol:Player",
+        "label": "deviceToPlayer",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_address,t_address)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_address)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => mapping(address => bool))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_address,t_bool)"
+      },
+      "t_mapping(t_address,t_string_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => string)",
+        "numberOfBytes": "32",
+        "value": "t_string_storage"
+      },
+      "t_mapping(t_string_memory_ptr,t_address)": {
+        "encoding": "mapping",
+        "key": "t_string_memory_ptr",
+        "label": "mapping(string => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      },
+      "t_string_memory_ptr": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

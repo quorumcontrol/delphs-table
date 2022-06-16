@@ -17,7 +17,7 @@ const func: DeployFunction = async function ({
   });
 
   if (player.newlyDeployed) {
-    execute(
+    await execute(
       "Player",
       {
         log: true,
