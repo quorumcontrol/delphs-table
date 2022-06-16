@@ -1,3 +1,3 @@
-const isTestnet = process.env.NEXT_PUBLIC_TEST_NET
+const isTestnet = !process.env.NEXT_PUBLIC_MAINNET
 
 export default isTestnet

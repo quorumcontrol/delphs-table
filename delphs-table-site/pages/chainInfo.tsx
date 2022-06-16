@@ -9,7 +9,7 @@ const ChainInfo: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Crypto Colosseum: Badge of Assembly Chain Info</title>
+        <title>Crypto Colosseum: Chain Info</title>
       </Head>
       <Layout>
         <Stack direction={["column", "row"]} spacing="10">
