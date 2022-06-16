@@ -33,10 +33,20 @@ describe("Player", function () {
     expect(await player.devices(alice.address, random.address)).to.be.false
   })
 
-  it('sets a username and device at same time', async () => {
+  it('sets initializes and maps the player to themselves', async () => {
     const random = ethers.Wallet.createRandom()
-    await player.setUsernameAndDevice('alice', await random.getAddress());
+    await player.initializePlayer('alice', await random.getAddress());
     expect(await player.devices(alice.address, random.address)).to.be.true
     expect(await player.name(alice.address)).to.eq('alice')
+    expect(await player.deviceToPlayer(alice.address)).to.eq(alice.address)
+  })
+
+  it('knows if a player is initalized', async () => {
+    const random = ethers.Wallet.createRandom()
+
+    expect(await player.isInitialized(alice.address)).to.be.false
+    await player.initializePlayer('alice', await random.getAddress());
+    expect(await player.isInitialized(alice.address)).to.be.true
+
   })
 });

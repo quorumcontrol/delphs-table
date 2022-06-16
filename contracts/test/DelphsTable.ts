@@ -14,11 +14,16 @@ describe("DelphsTable", function () {
   beforeEach(async () => {
     const signers = await ethers.getSigners()
     deployer = signers[0]
+    const PlayerFactory = await ethers.getContractFactory('Player');
+    const player = await PlayerFactory.deploy()
+    await player.deployed()
+    await player.initializePlayer('deployer', deployer.address);
+
     const DiceRollerFactory = await ethers.getContractFactory("TestDiceRoller");
     const diceRoller = await DiceRollerFactory.deploy();
     await diceRoller.deployed();
     const DelphsTableFactory = await ethers.getContractFactory("DelphsTable");
-    delphsTable = await DelphsTableFactory.deploy(diceRoller.address, deployer.address)
+    delphsTable = await DelphsTableFactory.deploy(diceRoller.address, player.address, deployer.address)
     await delphsTable.deployed()
   })
 
@@ -39,6 +44,27 @@ describe("DelphsTable", function () {
 
     it('sets the players', async () => {
       expect(await delphsTable.players(id)).to.have.members([deployer.address]).and.lengthOf(1)
+    })
+
+    it('gets onchain stats for the players', async () => {
+      await delphsTable.start(id)
+      await delphsTable.rollTheDice()
+      const stats = await delphsTable.statsForPlayer(id, deployer.address)
+      expect(stats.attack.gt(0)).to.be.true
+      expect(stats.defense.gt(0)).to.be.true
+      expect(stats.health.gt(0)).to.be.true
+    })
+
+    it('sets destinations for players', async () => {
+      await delphsTable.start(id)
+      await delphsTable.rollTheDice()
+      await delphsTable.setDestination(id, -1, 2);
+      const startedAt = (await delphsTable.tables(id)).startedAt
+      const dests = await delphsTable.destinationsForRoll(id, await delphsTable.latestRoll())
+      expect(dests).to.have.lengthOf(1)
+      expect(dests[0].x).to.equal(-1)
+      expect(dests[0].y).to.equal(2)
+      expect(dests[0].player).to.equal(deployer.address)
     })
   })
 });
