@@ -23,9 +23,10 @@ contract Player is IPlayer {
         return true;
     }
 
-    function addDevice(address addr) public returns (bool) {
+    function addDevice(address payable addr) public payable returns (bool) {
         devices[msg.sender][addr] = true;
         deviceToPlayer[addr] = msg.sender;
+        addr.transfer(msg.value);
         return true;
     }
 
@@ -35,7 +36,7 @@ contract Player is IPlayer {
         return true;
     }
 
-    function initializePlayer(string calldata _name, address device) external returns (bool) {
+    function initializePlayer(string calldata _name, address payable device) payable external returns (bool) {
         deviceToPlayer[msg.sender] = msg.sender; // map the player themselves as a device
         setUsername(_name);
         addDevice(device);

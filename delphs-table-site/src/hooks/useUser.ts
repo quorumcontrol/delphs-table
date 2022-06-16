@@ -12,6 +12,8 @@ const DEVICE_ID_KEY = 'delphs:deviceId'
 
 // const encryptedDeviceKey = localStorage.getItem(ENCRYPTED_KEY)
 
+
+
 export const useDeviceKey = () => {
   const isClientSide = useIsClientSide()
 
@@ -74,19 +76,26 @@ const useNewUser = () => {
         await tx.wait()
       }
     }
-    
+
     if (trustDevice) {
       const sig = await signer.signMessage(`I trust this device on Delphs Table. id: ${deviceKey}`)
       const wallet = Wallet.createRandom()
-      const encrypted = await wallet.encrypt(sig)
-      localStorage.setItem(ENCRYPTED_KEY, encrypted)
-
+      
+      return Promise.all([
+        player.connect(signer).initializePlayer(username, await wallet.getAddress(), {value: utils.parseEther('0.1')}),
+        (async () => {
+          const encrypted = await wallet.encrypt(sig)
+          localStorage.setItem(ENCRYPTED_KEY, encrypted)
+        })()
+      ])
       // get a signature
       // do nothing until we get the rest working here
     }
-    // first get the user to do their own initialization
-    //TODO: use the device key
-    await player.connect(signer).initializePlayer(username, await signer.getAddress())
+
+       // first get the user to do their own initialization
+    return player.connect(signer).initializePlayer(username, await signer.getAddress())
+    
+
 
     //TODO: save email
   })
