@@ -6,6 +6,11 @@ import "./interfaces/IPlayer.sol";
 error UsernameAlreadyClaimed();
 
 contract Player is IPlayer {
+    event DeviceAdded(address indexed device, address indexed player);
+    event DeviceRemoved(address indexed device, address indexed player);
+    event PlayerInitialized(address indexed player, string username);
+    event UserNameChanged(address indexed player, string username);
+
     mapping (address => mapping(address => bool)) public devices;
     mapping (address => string) public name;
     mapping (string => address) public usernameToAddress;
@@ -20,6 +25,7 @@ contract Player is IPlayer {
         delete usernameToAddress[name[sender]];
         name[sender] = _name;
         usernameToAddress[_name] = sender;
+        emit UserNameChanged(sender, _name);
         return true;
     }
 
@@ -27,12 +33,14 @@ contract Player is IPlayer {
         devices[msg.sender][addr] = true;
         deviceToPlayer[addr] = msg.sender;
         addr.transfer(msg.value);
+        emit DeviceAdded(addr, msg.sender);
         return true;
     }
 
     function removeDevice(address addr) external returns (bool) {
         delete devices[msg.sender][addr];
         delete deviceToPlayer[addr];
+        emit DeviceRemoved(addr, msg.sender);
         return true;
     }
 
@@ -40,6 +48,7 @@ contract Player is IPlayer {
         deviceToPlayer[msg.sender] = msg.sender; // map the player themselves as a device
         setUsername(_name);
         addDevice(device);
+        emit PlayerInitialized(msg.sender, _name);
         return true;
     }
 

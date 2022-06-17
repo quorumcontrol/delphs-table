@@ -4,7 +4,7 @@ import { useProvider } from "wagmi";
 import { Player__factory } from "../../contracts/typechain";
 import isTestnet from "../utils/isTestnet";
 
-const TESTNET_ADDRESS = "0xb0A616e35622c5eB72589cfE5cB1Ec46B35572C6";
+const TESTNET_ADDRESS = "0x0710E6e9869cEbc2666af31c89602dC0f9ffB663";
 const MAINNET_ADDRESS = "";
 
 export const PLAYER_ADDRESS = isTestnet ? TESTNET_ADDRESS : MAINNET_ADDRESS;

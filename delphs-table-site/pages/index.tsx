@@ -39,12 +39,18 @@ const Home: NextPage = () => {
               </VStack>
             )}
             {isClient && !isLoading && data?.address && isInitialized && (
-              <Box>
+              <VStack spacing="5">
                 <Text>Welcome back {username}.</Text>
                 {deviceSignerIsLoading && <Spinner />}
-                {isTrustedDevice && !deviceSigner && <Button>Login</Button>}
-                {deviceSigner && <Button>Play</Button>}
-              </Box>
+                {isTrustedDevice && !deviceSigner && !deviceSignerIsLoading && <Button onClick={login}>Login</Button>}
+                {deviceSigner && (
+                  <NextLink passHref href="/play">
+                    <Link>
+                      <Button>Play</Button>
+                    </Link>
+                  </NextLink>
+                )}
+              </VStack>
             )}
           </Box>
         </VStack>

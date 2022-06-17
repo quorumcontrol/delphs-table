@@ -1,68 +1,85 @@
 import { utils, Wallet } from "ethers";
-import { useMutation, useQuery } from "react-query"
+import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useSigner } from "wagmi";
 import { usePlayer } from "./Player";
 import { backOff } from "exponential-backoff";
 import { useCallback, useMemo } from "react";
-import { randomBytes } from "crypto";
+import { pbkdf2, randomBytes } from "crypto";
 import useIsClientSide from "./useIsClientSide";
 
-const ENCRYPTED_KEY = 'delphs:epk'
 const DEVICE_ID_KEY = 'delphs:deviceId'
-const signatureMessage = () => `I trust this device on Delphs Table. id: ${deviceKey()}`
+const signatureMessage = (deviceId:string) => `I trust this device on Delphs Table. id: ${deviceId}`
 // const encryptedDeviceKey = localStorage.getItem(ENCRYPTED_KEY)
-const deviceKey = () => localStorage.getItem(DEVICE_ID_KEY)
+const getDeviceId = () => typeof localStorage !== 'undefined' ? localStorage.getItem(DEVICE_ID_KEY) : undefined
 
-let decryptionKey:string|undefined = undefined
+let devicePrivateKey:Buffer|undefined = undefined
 let deviceSigner:Wallet|undefined = undefined
+
+const deriveKey = (msg:Buffer, salt:Buffer) => {
+  return new Promise<Buffer>((resolve, reject) => {
+    pbkdf2(msg, salt, 1000, 32, 'sha256', (err, derived) => {
+      if (err) {
+        return reject(err)
+      }
+      resolve(derived)
+    })
+  })
+}
 
 export const useDeviceSigner = () => {
   const signer = useSigner()
+  const queryClient = useQueryClient()
 
-  const isTrustedDevice = useMemo(() => {
-    return !!deviceKey()
-  }, [])
+  const isTrustedDevice = !!getDeviceId()
 
   const login = useCallback(async () => {
-    if (!signer.data || !deviceKey()) {
+    const deviceId = getDeviceId()
+    if (!signer.data || !deviceId) {
       throw new Error('no signer')
     }
-    const sig = await signer.data.signMessage(signatureMessage())
-    decryptionKey = sig
+    const sig = await signer.data.signMessage(signatureMessage(getDeviceId()!))
+    devicePrivateKey = await deriveKey(Buffer.from(sig.slice(2,-1), 'hex'), Buffer.from(deviceId))
+    queryClient.invalidateQueries('device-signer')
   }, [signer])
 
   const fetchDeviceSigner = async () => {
-    if (!decryptionKey) {
+    console.log("fetch device signer")
+    if (!devicePrivateKey) {
       throw new Error('can only fetch after decryption key is set')
     }
+
     if (deviceSigner) {
       return deviceSigner
     }
-    deviceSigner = await Wallet.fromEncryptedJson(localStorage.get(ENCRYPTED_KEY), decryptionKey)
+    console.log("decrypting")
+
+    deviceSigner = new Wallet(devicePrivateKey)
+    console.log("decrypted")
+
     return deviceSigner
   }
 
   const query = useQuery('device-signer', fetchDeviceSigner, {
-    enabled: !!decryptionKey && !!signer
+    enabled: !!devicePrivateKey && !!signer
   })
   return {...query, login, isTrustedDevice}
 }
 
 
-// export const useDeviceKey = () => {
-//   const isClientSide = useIsClientSide()
+export const useDeviceKey = () => {
+  const isClientSide = useIsClientSide()
 
-//   return useMemo(() => {
-//     if (!isClientSide) {
-//       return undefined
-//     }
-//     const deviceId = localStorage.getItem(DEVICE_ID_KEY)
-//     if (deviceId) {
-//       return deviceId
-//     }
-//     localStorage.setItem(DEVICE_ID_KEY, randomBytes(8).toString('hex'))
-//   }, [isClientSide])
-// }
+  return useMemo(() => {
+    if (!isClientSide) {
+      return undefined
+    }
+    const deviceId = localStorage.getItem(DEVICE_ID_KEY)
+    if (deviceId) {
+      return deviceId
+    }
+    localStorage.setItem(DEVICE_ID_KEY, randomBytes(8).toString('hex'))
+  }, [isClientSide])
+}
 
 export interface UserData {
   username: string;
@@ -75,6 +92,7 @@ const thresholdForFaucet = utils.parseEther('0.25')
 const useNewUser = () => {
   const player = usePlayer()
   const { data:signer } = useSigner()
+  const deviceKey = useDeviceKey()
 
   return useMutation(async ({ username, trustDevice}:UserData) => {
     if (!signer || !player) {
@@ -112,24 +130,16 @@ const useNewUser = () => {
     }
 
     if (trustDevice) {
-      const sig = await signer.signMessage(signatureMessage())
-      const wallet = Wallet.createRandom()
+      const sig = await signer.signMessage(signatureMessage(deviceKey!))
+      const wallet = new Wallet(await deriveKey(Buffer.from(sig.slice(2, -1), 'hex'), Buffer.from(deviceKey!)))
+      deviceSigner = wallet
       
-      return Promise.all([
-        player.connect(signer).initializePlayer(username, await wallet.getAddress(), {value: utils.parseEther('0.1')}),
-        (async () => {
-          const encrypted = await wallet.encrypt(sig)
-          localStorage.setItem(ENCRYPTED_KEY, encrypted)
-        })()
-      ])
-      // get a signature
-      // do nothing until we get the rest working here
+      return player.connect(signer).initializePlayer(username, await wallet.getAddress(), {value: utils.parseEther('0.1')})
     }
 
        // first get the user to do their own initialization
     return player.connect(signer).initializePlayer(username, await signer.getAddress())
     
-
 
     //TODO: save email
   })

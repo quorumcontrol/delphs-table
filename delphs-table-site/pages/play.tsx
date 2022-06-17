@@ -19,6 +19,7 @@ const Home: NextPage = () => {
           <Heading>Play</Heading>
           <Text>Find the Wootgump, don't get rekt.</Text>
           <Text>{isClient && username}</Text>
+          <Text>This is where the game would be.</Text>
         </VStack>
       </Layout>
     </>
