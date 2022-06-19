@@ -9,6 +9,23 @@ function hashString(msg:string) {
   return keccak256(Buffer.from(msg))
 }
 
+task('start')
+  .addParam('id')
+  .setAction(async ({ id }, hre) => {
+    const delphs = await getDelphsTableContract(hre)
+    const tx = await delphs.start(id)
+    console.log('tx', tx.hash)
+    await tx.wait()
+  })
+
+task('tick')
+  .setAction(async (_, hre) => {
+    const delphs = await getDelphsTableContract(hre)
+    const tx = await delphs.rollTheDice()
+    console.log('tx', tx.hash)
+    await tx.wait()
+  })
+
 task('test-board')
   .addParam('name')
   .setAction(async ({ name }, hre) => {
