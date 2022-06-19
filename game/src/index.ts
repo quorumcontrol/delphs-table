@@ -6,6 +6,7 @@ import "./board/BattleUI"
 import "./board/PlayerMarker"
 import "./board/CellSelector"
 import "./board/Hud"
+import "./board/chainConnector"
 import "./appWide/AppConnector"
 import "./appWide/SceneTransition"
 

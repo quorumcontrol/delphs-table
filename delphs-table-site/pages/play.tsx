@@ -19,7 +19,7 @@ const Home: NextPage = () => {
           <Heading>Play</Heading>
           <Text>Find the Wootgump, don't get rekt.</Text>
           <Text>{isClient && username}</Text>
-          <Text>This is where the game would be.</Text>
+          <iframe src="https://launch.playcanvas.com/1447015?debug=true&ministats=true" />
         </VStack>
       </Layout>
     </>

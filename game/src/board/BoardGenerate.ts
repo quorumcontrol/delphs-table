@@ -52,17 +52,17 @@ class BoardGenerate extends ScriptTypeBase {
   }
 
   update(dt: number) {
-    this.timer += dt;
-    if (this.timer >= 6) {
-      const tick = this.grid.doTick();
-      console.log(tick);
-      if (!this.entity.fire) {
-        throw new Error('no fire method')
-      }
-      this.entity.fire("tick", tick);
-      console.log('destination: ', this.getGameConfig().currentPlayer?.destination)
-      this.timer = 0;
-    }
+    // this.timer += dt;
+    // if (this.timer >= 6) {
+    //   const tick = this.grid.doTick();
+    //   console.log(tick);
+    //   if (!this.entity.fire) {
+    //     throw new Error('no fire method')
+    //   }
+    //   this.entity.fire("tick", tick);
+    //   console.log('destination: ', this.getGameConfig().currentPlayer?.destination)
+    //   this.timer = 0;
+    // }
   }
 
   getGameConfig():GameConfig {

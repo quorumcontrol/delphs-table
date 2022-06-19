@@ -1,12 +1,8 @@
-import { Chain } from "@rainbow-me/rainbowkit";
-import skaleLogo from '../../assets/images/SKALE_logo.svg'
 
-export const skaleTestnet: Chain = {
+export const skaleTestnet = {
   id: 132333505628089,
   name: 'Skale Testnet',
   network: 'skaletestnet',
-  iconUrl: skaleLogo.path,
-  iconBackground: '#fff',
   nativeCurrency: {
     decimals: 18,
     name: 'sFUEL',
@@ -22,12 +18,10 @@ export const skaleTestnet: Chain = {
   testnet: true,
 };
 
-export const skaleMainnet: Chain = {
+export const skaleMainnet = {
   id: 1032942172,
   name: 'Crypto Rome Network',
   network: 'cryptorome',
-  iconUrl: skaleLogo.path,
-  iconBackground: '#fff',
   nativeCurrency: {
     decimals: 18,
     name: 'sFUEL',
