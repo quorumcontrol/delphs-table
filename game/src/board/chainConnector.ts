@@ -12,7 +12,7 @@ import { DiceRolledEvent, StartedEvent } from "../typechain/DelphsTable";
 
 const log = console.log; //debug('chainConnector')
 
-const DELPHS_TESTNET_ADDRESS = "0x44b07581910b6CD9289AC06CFEDB89A275Ce9b7E";
+const DELPHS_TESTNET_ADDRESS = "0xA43F838DbE5558ba8836589b8052648D668BFBbD";
 const PLAYER_TESTNET_ADDRESS = "0x0710E6e9869cEbc2666af31c89602dC0f9ffB663";
 
 @createScript("chainConnector")
