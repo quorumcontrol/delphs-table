@@ -80,7 +80,6 @@ class Grid {
   everyCell(func:(cell:Cell)=>any) {
     for (let y = 0; y < this.sizeY; y++) {
       for (let x = 0; x < this.sizeX; x++) {
-        console.log('everyCell', this.grid)
         func(this.grid[x][y])
       }
     }

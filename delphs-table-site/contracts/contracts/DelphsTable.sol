@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 error NoTwoRollsPerBlock();
 error Unauthorized();
 error AlreadyExists();
+error AlreadyStarted();
 
 contract DelphsTable is AccessControl {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
@@ -103,6 +104,9 @@ contract DelphsTable is AccessControl {
         Table storage table = tables[id];
         if (msgSender() != table.owner) {
             revert Unauthorized();
+        }
+        if (table.startedAt > 0) {
+            revert AlreadyStarted();
         }
         uint firstRoll = latestRoll + 1;
         table.startedAt = firstRoll;
