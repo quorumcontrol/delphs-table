@@ -2,7 +2,7 @@ node_modules
 .env
 coverage
 coverage.json
-typechain
+#typechain :: for now check-in the typechain because we need it for a netlify build
 
 #Hardhat files
 cache
