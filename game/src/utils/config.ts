@@ -10,7 +10,7 @@ export const IS_DEV = Boolean(urlParams.get("debug") === "true");
 
 export interface GameConfig {
   currentPlayer?:Warrior
-  grid: Grid
+  grid?: Grid
   controller: Entity
 }
 

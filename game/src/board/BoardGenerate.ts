@@ -10,22 +10,25 @@ import { GameConfig } from "../utils/config";
 
 @createScript("boardGenerate")
 class BoardGenerate extends ScriptTypeBase {
-  @attrib({ type: "string", default: ''})
+  @attrib({ type: "string", default: "" })
   currentPlayer = "";
-  
-  @attrib({ type: "number", default: 10 })
-  numTilesX = 10;
-
-  @attrib({ type: "number", default: 10 })
-  numTilesY = 10;
 
   ground: GraphNode;
-  grid: Grid;
+  grid?: Grid;
 
   timer = 0;
 
+  started = false;
+
   initialize() {
     this.initialCellSetup = this.initialCellSetup.bind(this);
+    this.onStart = this.onStart.bind(this);
+    this.entity.on("start", this.onStart);
+  }
+
+  setGrid(grid: Grid) {
+    this.grid = grid;
+
     // We've created a couple of templates that are our world tiles
     // In the Editor hierarchy, we have disabled the templates because
     // we don't want them to be visible. We just want our generated
@@ -39,14 +42,13 @@ class BoardGenerate extends ScriptTypeBase {
       throw new Error("no ground");
     }
     this.ground = ground;
+    console.log("set grid: ", this.grid);
+  }
 
-    console.log("sizeX/sizeY: ", this.numTilesX, this.numTilesY);
-    this.grid = new Grid({
-      warriors: generateFakeWarriors(10, "test"),
-      seed: "test",
-      sizeX: this.numTilesX,
-      sizeY: this.numTilesY,
-    });
+  onStart() {
+    if (!this.grid) {
+      throw new Error("no grid");
+    }
 
     this.grid.everyCell(this.initialCellSetup);
   }
@@ -65,30 +67,39 @@ class BoardGenerate extends ScriptTypeBase {
     // }
   }
 
-  getGameConfig():GameConfig {
+  getGameConfig(): GameConfig {
     return {
-      currentPlayer: this.grid.warriors?.find((w) => w.id === this.currentPlayer),
+      currentPlayer: this.grid?.warriors?.find((w) => w.id === this.currentPlayer),
       grid: this.grid,
-      controller: this.entity
-    }
+      controller: this.entity,
+    };
   }
 
   private initialCellSetup(cell: Cell) {
-    const e = this.ground.clone();
-    const cellStateScript = this.getScript<CellState>(e as Entity, "cellState");
-    if (!cellStateScript) {
-      throw new Error("no script");
+    if (!this.grid) {
+      throw new Error("no grid");
     }
-    // Set the world position of the cloned tile. Note that because
-    // our tiles are 10x10 in X,Z dimensions, we have to multiply
-    // the position by 10
-    e.setPosition(
-      (cell.x - this.numTilesX / 2) * 1.01,
-      0.6,
-      (cell.y - this.numTilesX / 2) * 1.01
-    );
-    this.entity.addChild(e);
-    cellStateScript?.setCell(cell);
+    try {
+      const e = this.ground.clone();
+      const cellStateScript = this.getScript<CellState>(e as Entity, "cellState");
+      if (!cellStateScript) {
+        throw new Error("no script");
+      }
+      console.log("initial cell");
+      // Set the world position of the cloned tile. Note that because
+      // our tiles are 10x10 in X,Z dimensions, we have to multiply
+      // the position by 10
+      e.setPosition(
+        (cell.x - this.grid.sizeX / 2) * 1.01,
+        0.6,
+        (cell.y - this.grid.sizeY / 2) * 1.01
+      );
+      this.entity.addChild(e);
+      cellStateScript?.setCell(cell);
+    } catch (err) {
+      console.error("error initial cell: ", err);
+      throw err;
+    }
   }
 }
 

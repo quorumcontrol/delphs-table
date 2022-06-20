@@ -180,6 +180,7 @@ interface DelphsTableInterface extends ethers.utils.Interface {
     "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
     "RoleGranted(bytes32,address,address)": EventFragment;
     "RoleRevoked(bytes32,address,address)": EventFragment;
+    "Started(bytes32,uint256)": EventFragment;
     "TableCreated(bytes32)": EventFragment;
   };
 
@@ -187,6 +188,7 @@ interface DelphsTableInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Started"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TableCreated"): EventFragment;
 }
 
@@ -212,6 +214,10 @@ export type RoleGrantedEvent = TypedEvent<
 
 export type RoleRevokedEvent = TypedEvent<
   [string, string, string] & { role: string; account: string; sender: string }
+>;
+
+export type StartedEvent = TypedEvent<
+  [string, BigNumber] & { id: string; roll: BigNumber }
 >;
 
 export type TableCreatedEvent = TypedEvent<[string] & { id: string }>;
@@ -712,6 +718,16 @@ export class DelphsTable extends BaseContract {
       [string, string, string],
       { role: string; account: string; sender: string }
     >;
+
+    "Started(bytes32,uint256)"(
+      id?: BytesLike | null,
+      roll?: BigNumberish | null
+    ): TypedEventFilter<[string, BigNumber], { id: string; roll: BigNumber }>;
+
+    Started(
+      id?: BytesLike | null,
+      roll?: BigNumberish | null
+    ): TypedEventFilter<[string, BigNumber], { id: string; roll: BigNumber }>;
 
     "TableCreated(bytes32)"(
       id?: BytesLike | null

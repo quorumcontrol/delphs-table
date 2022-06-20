@@ -33,7 +33,7 @@ describe("Grid", () => {
     const warriors = generateFakeWarriors(10, seed);
     const grid = new Grid({ warriors, seed });
     for (let i = 0; i < 100; i++) {
-      expect(grid.doTick()).toBeTruthy();
+      expect(grid.doDevTick()).toBeTruthy();
     }
   });
 });

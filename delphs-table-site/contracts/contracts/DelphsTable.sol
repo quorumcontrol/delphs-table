@@ -17,7 +17,7 @@ contract DelphsTable is AccessControl {
         uint256 indexed blockNumber,
         bytes32 random
     );
-    event Started(bytes32 indexed id);
+    event Started(bytes32 indexed id, uint256 indexed roll);
     event TableCreated(bytes32 indexed id);
 
     IDiceRoller public immutable roller;
@@ -104,9 +104,10 @@ contract DelphsTable is AccessControl {
         if (msgSender() != table.owner) {
             revert Unauthorized();
         }
-        table.startedAt = latestRoll + 1;
-        emit Started(id);
-        return latestRoll + 1;
+        uint firstRoll = latestRoll + 1;
+        table.startedAt = firstRoll;
+        emit Started(id, firstRoll);
+        return firstRoll;
     }
 
     function players(bytes32 id) public view returns (address[] memory) {
