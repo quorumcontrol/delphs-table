@@ -26,6 +26,31 @@ task('tick')
     await tx.wait()
   })
 
+task('board')
+  .addParam('name')
+  .addParam('addresses')
+  .setAction(async ({ name, addresses }, hre) => {
+    const delphs = await getDelphsTableContract(hre)
+    const deployer = await getDeployer(hre)
+    const player = await getPlayerContract(hre)
+
+    const isOk = await Promise.all(addresses.split(',').map((addr:string) => {
+      return player.isInitialized(addr)
+    }))
+
+    isOk.forEach((is, i) => {
+      if (!is) {
+        console.error(`Uninitilized: ${addresses.split(',')[i]}`)
+        throw new Error('address is not initialized')
+      }
+    })
+
+
+    const id = hashString(name)
+    await (await delphs.createTable(id, addresses.split(','), [hashString(`1-${name}`), hashString(`2-${name}`)], 60, deployer.address)).wait()
+    console.log('table id: ', id)
+  })
+
 task('test-board')
   .addParam('name')
   .setAction(async ({ name }, hre) => {

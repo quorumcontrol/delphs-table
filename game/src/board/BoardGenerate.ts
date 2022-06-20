@@ -10,7 +10,6 @@ import { GameConfig } from "../utils/config";
 
 @createScript("boardGenerate")
 class BoardGenerate extends ScriptTypeBase {
-  @attrib({ type: "string", default: "" })
   currentPlayer = "";
 
   ground: GraphNode;
@@ -24,6 +23,9 @@ class BoardGenerate extends ScriptTypeBase {
     this.initialCellSetup = this.initialCellSetup.bind(this);
     this.onStart = this.onStart.bind(this);
     this.entity.on("start", this.onStart);
+    const urlParams = new URLSearchParams(window.location.search);
+    this.currentPlayer = urlParams.get("player") || "";
+    console.log('current player: ', this.currentPlayer)
   }
 
   setGrid(grid: Grid) {
@@ -69,7 +71,7 @@ class BoardGenerate extends ScriptTypeBase {
 
   getGameConfig(): GameConfig {
     return {
-      currentPlayer: this.grid?.warriors?.find((w) => w.id === this.currentPlayer),
+      currentPlayer: this.grid?.warriors?.find((w) => w.id.toLowerCase() === this.currentPlayer.toLowerCase()),
       grid: this.grid,
       controller: this.entity,
     };

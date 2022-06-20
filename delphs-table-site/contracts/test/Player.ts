@@ -1,5 +1,6 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
+import { utils } from "ethers";
 import { ethers } from "hardhat";
 import { Player } from "../typechain";
 
@@ -48,6 +49,16 @@ describe("Player", function () {
     expect(await player.isInitialized(alice.address)).to.be.false
     await player.initializePlayer('alice', await random.getAddress());
     expect(await player.isInitialized(alice.address)).to.be.true
-
   })
+
+  it('transfers the call value to the device', async () => {
+    const random = ethers.Wallet.createRandom()
+    const one = utils.parseEther('1')
+
+    expect(await player.isInitialized(alice.address)).to.be.false
+    await player.initializePlayer('alice', await random.getAddress(), {value: one});
+    expect(await player.isInitialized(alice.address)).to.be.true
+    expect(await ethers.provider.getBalance(random.address)).to.equal(one)
+  })
+
 });

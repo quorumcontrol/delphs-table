@@ -1,6 +1,6 @@
 import { utils, Wallet } from "ethers";
-import { useMutation, useQuery, useQueryClient } from "react-query"
-import { useSigner } from "wagmi";
+import { useMutation, useQuery, useQueryClient, UseQueryResult } from "react-query"
+import { useProvider, useSigner } from "wagmi";
 import { usePlayer } from "./Player";
 import { backOff } from "exponential-backoff";
 import { useCallback, useMemo } from "react";
@@ -29,6 +29,7 @@ const deriveKey = (msg:Buffer, salt:Buffer) => {
 export const useDeviceSigner = () => {
   const signer = useSigner()
   const queryClient = useQueryClient()
+  const provider = useProvider()
 
   const isTrustedDevice = !!getDeviceId()
 
@@ -52,15 +53,18 @@ export const useDeviceSigner = () => {
       return deviceSigner
     }
     console.log("decrypting")
+    if (!signer?.data?.provider) {
+      throw new Error('no signer yet')
+    }
 
-    deviceSigner = new Wallet(devicePrivateKey)
-    console.log("decrypted")
+    deviceSigner = new Wallet(devicePrivateKey).connect(provider)
+    console.log("decrypted", "device address: ", await deviceSigner.getAddress())
 
     return deviceSigner
   }
 
-  const query = useQuery('device-signer', fetchDeviceSigner, {
-    enabled: !!devicePrivateKey && !!signer
+  const query:UseQueryResult<Wallet, unknown> = useQuery('device-signer', fetchDeviceSigner, {
+    enabled: !!devicePrivateKey && !!provider
   })
   return {...query, login, isTrustedDevice}
 }
@@ -133,8 +137,10 @@ const useNewUser = () => {
       const sig = await signer.signMessage(signatureMessage(deviceKey!))
       const wallet = new Wallet(await deriveKey(Buffer.from(sig.slice(2, -1), 'hex'), Buffer.from(deviceKey!)))
       deviceSigner = wallet
+      const addr =  await wallet.getAddress()
+      console.log("device address: ", addr)
       
-      return player.connect(signer).initializePlayer(username, await wallet.getAddress(), {value: utils.parseEther('0.1')})
+      return player.connect(signer).initializePlayer(username, addr, {value: utils.parseEther('0.1')})
     }
 
        // first get the user to do their own initialization

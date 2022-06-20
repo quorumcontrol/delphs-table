@@ -32,6 +32,7 @@ class Warrior implements WarriorStats {
   currentHealth: number = 500;
 
   destination?: [number, number];
+  pendingDestination?: [number, number];
 
   wootgumpBalance;
 
@@ -74,6 +75,10 @@ class Warrior implements WarriorStats {
       grid.currentSeed
     );
     this.destination = [x, y];
+  }
+
+  clearPendingDestination() {
+    this.pendingDestination = undefined
   }
 }
 

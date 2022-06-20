@@ -78,18 +78,26 @@ class CellSelector extends ScriptTypeBase {
       const hitEntity = result.entity;
       console.log("You selected " + hitEntity.name);
       const currentPlayer = getGameConfig(this.app.root).currentPlayer
+      console.log('current player: ', currentPlayer)
       if (!currentPlayer) {
+        console.log('no current player')
         return
       }
       const cellState = this.getScript<CellState>(hitEntity, 'cellState')
       if (!cellState) {
-        console.error('no cel state')
+        console.error('no cell state')
         return
       }
       if (!cellState.cell) {
         throw new Error('no cell')
       }
-      currentPlayer.destination = [cellState.cell.x, cellState.cell.y]
+      console.log('posting message')
+      console.log('window.parent', window.parent)
+      parent.postMessage(JSON.stringify({
+        type: 'destinationSetter',
+        data: [cellState.cell.x, cellState.cell.y],
+      }), '*')
+      currentPlayer.pendingDestination = [cellState.cell.x, cellState.cell.y]
     }
   }
 }

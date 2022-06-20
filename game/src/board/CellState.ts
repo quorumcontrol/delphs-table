@@ -77,9 +77,14 @@ class CellState extends ScriptTypeBase {
       return;
     }
 
+    const pendingDest = gameConfig.currentPlayer.pendingDestination
+    const dest = gameConfig.currentPlayer.destination
+
+    const currentPlayerDest = pendingDest || dest
+
     if (
-      gameConfig.currentPlayer.destination[0] == this.cell.x &&
-      gameConfig.currentPlayer.destination[1] == this.cell.y
+      currentPlayerDest[0] == this.cell.x &&
+      currentPlayerDest[1] == this.cell.y
     ) {
       if (!this.destinationElement) {
         console.log(this.cell.x, this.cell.y, 'setting destination element')

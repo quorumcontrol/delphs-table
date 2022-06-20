@@ -31,6 +31,8 @@ class ChainConnector extends ScriptTypeBase {
 
   latest: BigNumber;
 
+  boardGenerate:BoardGenerate
+
   initialize() {
     log("chain connector initialized");
     this.handleTick = this.handleTick.bind(this);
@@ -39,6 +41,11 @@ class ChainConnector extends ScriptTypeBase {
     this.provider = new ethers.providers.WebSocketProvider(skaleTestnet.rpcUrls.wss);
     this.delphs = DelphsTable__factory.connect(DELPHS_TESTNET_ADDRESS, this.provider);
     this.player = Player__factory.connect(PLAYER_TESTNET_ADDRESS, this.provider);
+    const boardGenerate = this.getScript<BoardGenerate>(this.entity, 'boardGenerate')
+    if (!boardGenerate) {
+      throw new Error('do not use chain connector without boardgenerate')
+    }
+    this.boardGenerate = boardGenerate
     this.asyncSetup();
   }
 
@@ -94,13 +101,9 @@ class ChainConnector extends ScriptTypeBase {
       });
       this.grid = grid;
 
-      const boardGenerate = this.getScript<BoardGenerate>(this.entity, "boardGenerate");
-      if (!boardGenerate) {
-        throw new Error("no board generate");
-      }
-      boardGenerate.setGrid(grid);
+      this.boardGenerate.setGrid(grid);
 
-      if (latest.gte(table.startedAt)) {
+      if (table.startedAt.gt(0) && latest.gte(table.startedAt)) {
         log("table has already started, lets catch up");
         this.startedAt = table.startedAt;
         await this.catchUp(table.startedAt, latest);
@@ -175,14 +178,20 @@ class ChainConnector extends ScriptTypeBase {
         }
 
         // get the destinations for the roll
-        const destinations = await this.delphs.destinationsForRoll(this.tableId, index)
+        const destinations = await this.delphs.destinationsForRoll(this.tableId, index.sub(1))
+        console.log('destinations: ', destinations)
         destinations.forEach((dest) => {
-          const warrior = this.grid.warriors.find((w) => w.id === dest.player)
+          const warrior = this.grid.warriors.find((w) => w.id.toLowerCase() === dest.player.toLowerCase())
           if (!warrior) {
             throw new Error('bad warrior id')
           }
           warrior.destination = [dest.x.toNumber(), dest.y.toNumber()]
         })
+
+        const config = this.boardGenerate.getGameConfig()
+        //TODO: this will probably cause flickering here and there
+        config.currentPlayer?.clearPendingDestination()
+
         this.entity.fire("tick", this.grid.handleTick(random));
         this.latest = index;
       }

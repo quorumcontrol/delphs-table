@@ -4,6 +4,7 @@ if (typeof window !== "undefined") {
   window.addEventListener(
     "message",
     function (event) {
+      console.log('iframe game received message: ', event)
       // TODO: turn back on domain checking
       // if (event.origin === "http://example.com") {
         // always check message came from your website
