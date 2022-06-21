@@ -26,10 +26,67 @@ task('tick')
     await tx.wait()
   })
 
+task('setup-bots', async (_,hre) => {
+  const deployer = await getDeployer(hre)
+  const player = await getPlayerContract(hre)
+  const names = [
+    'Lawrence29',
+    'Buddy79',
+    'Lera_Christiansen',
+    'Rigoberto.Maggio97',
+    'Tad_Willms81',
+    'Marielle50',
+    'Ken_Kuhlman13',
+    'Vinnie93',
+    'Raven20',
+    'Joannie_Balistreri'
+  ]
+  const wallets = names.map((name) => {
+    return {
+      name,
+      wallet: Wallet.createRandom(),
+    }
+  })
+  for (const wallet of wallets) {
+    const addr = await wallet.wallet.getAddress()
+    await player.initializePlayer(wallet.name, addr)
+    await deployer.sendTransaction({
+      to: addr,
+      value: utils.parseEther('0.1')
+    })
+  }
+
+  console.log(wallets.reduce((memo, wallet) => {
+    return {
+      ...memo,
+      [wallet.name]: {
+        pk: wallet.wallet.privateKey,
+        address: wallet.wallet.address
+      }
+    }
+  }, {} as {[key:string]:any}))
+  
+})
+
+async function getBots(num:number) {
+  const botSetup:{[key:string]:any} = await import('../bots')
+
+  const botNames = Object.keys(botSetup)
+  return botNames.slice(0, num).map((name) => {
+    return {
+      name,
+      ...botSetup[name]
+    }
+  })
+}
+
 task('board')
   .addParam('name')
   .addParam('addresses')
-  .setAction(async ({ name, addresses }, hre) => {
+  .addOptionalParam('bots', 'number of bots to add to the board')
+  .setAction(async ({ name, addresses, bots:userBots }, hre) => {
+
+    const botNumber = userBots ? parseInt(userBots, 10) : 0
     const delphs = await getDelphsTableContract(hre)
     const deployer = await getDeployer(hre)
     const player = await getPlayerContract(hre)
@@ -45,9 +102,11 @@ task('board')
       }
     })
 
+    const tableAddrs:string[] = addresses.split(',').concat((await getBots(botNumber)).map((bot) => bot.address as string))
+    const seeds = tableAddrs.map((addr) => hashString(`${name}-${addr}`))
 
     const id = hashString(name)
-    await (await delphs.createTable(id, addresses.split(','), [hashString(`1-${name}`), hashString(`2-${name}`)], 50, deployer.address)).wait()
+    await (await delphs.createTable(id, tableAddrs, seeds, 50, deployer.address)).wait()
     console.log('table id: ', id)
   })
 
