@@ -10,6 +10,9 @@ class RandomTrees extends ScriptTypeBase {
     if (!this.entity.render) {
       throw new Error('no render')
     }
+    if (!this.entity.name.includes('cell')) {
+      return
+    }
     const tileBoundingBox = this.entity.render.meshInstances[0].aabb;
     const xSize = tileBoundingBox.halfExtents.x;
     const zSize = tileBoundingBox.halfExtents.z;

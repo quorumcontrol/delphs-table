@@ -53,6 +53,7 @@ class Cell {
 
   addWarrior(warrior:Warrior) {
     this.warriors.push(warrior)
+    warrior.location = this
   }
 
   handleOutcomes(tick:number, seed:string):CellOutComeDescriptor {

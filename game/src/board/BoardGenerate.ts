@@ -19,6 +19,8 @@ class BoardGenerate extends ScriptTypeBase {
 
   started = false;
 
+  next:(()=>any)[]
+
   initialize() {
     this.initialCellSetup = this.initialCellSetup.bind(this);
     this.onStart = this.onStart.bind(this);
@@ -26,6 +28,16 @@ class BoardGenerate extends ScriptTypeBase {
     const urlParams = new URLSearchParams(window.location.search);
     this.currentPlayer = urlParams.get("player") || "";
     console.log('current player: ', this.currentPlayer)
+    this.next = []
+  }
+
+  update() {
+    if (this.next.length > 0) {
+      this.next.forEach((func) => {
+        func()
+      })
+      this.next = []
+    }
   }
 
   setGrid(grid: Grid) {
@@ -53,20 +65,34 @@ class BoardGenerate extends ScriptTypeBase {
     }
 
     this.grid.everyCell(this.initialCellSetup);
+    this.focusOnPlayerCell()
   }
 
-  update(dt: number) {
-    // this.timer += dt;
-    // if (this.timer >= 6) {
-    //   const tick = this.grid.doTick();
-    //   console.log(tick);
-    //   if (!this.entity.fire) {
-    //     throw new Error('no fire method')
-    //   }
-    //   this.entity.fire("tick", tick);
-    //   console.log('destination: ', this.getGameConfig().currentPlayer?.destination)
-    //   this.timer = 0;
-    // }
+  focusOnPlayerCell() {
+    const config = this.getGameConfig()
+    const camera = this.app.root.findByName('Camera')
+    if (!camera) {
+      throw new Error('no camera')
+    }
+    const cameraScript = this.getScript<any>(camera as Entity, "orbitCamera");
+    if (!cameraScript) {
+      throw new Error('no camera script')
+    }
+    const location = config.currentPlayer?.location
+    if (location) {
+      console.log('focusing camera on player')
+      
+      const cellEntity = this.entity.findByName(this.cellNameFromCell(location))
+      this.next.push(() => {
+        console.log('calling focus on ', cellEntity)
+        cameraScript.focus(cellEntity)
+      })
+      return
+    }
+    // if no current player or no location, then lets see the whole board
+    this.next.push(() => {
+      cameraScript.focus(this.entity)
+    })
   }
 
   getGameConfig(): GameConfig {
@@ -75,6 +101,10 @@ class BoardGenerate extends ScriptTypeBase {
       grid: this.grid,
       controller: this.entity,
     };
+  }
+
+  private cellNameFromCell(cell:Cell) {
+    return `cell-${cell.x}-${cell.y}`
   }
 
   private initialCellSetup(cell: Cell) {
@@ -87,7 +117,6 @@ class BoardGenerate extends ScriptTypeBase {
       if (!cellStateScript) {
         throw new Error("no script");
       }
-      console.log("initial cell");
       // Set the world position of the cloned tile. Note that because
       // our tiles are 10x10 in X,Z dimensions, we have to multiply
       // the position by 10
@@ -96,6 +125,7 @@ class BoardGenerate extends ScriptTypeBase {
         0.6,
         (cell.y - this.grid.sizeY / 2) * 1.01
       );
+      e.name = this.cellNameFromCell(cell)
       this.entity.addChild(e);
       cellStateScript?.setCell(cell);
     } catch (err) {

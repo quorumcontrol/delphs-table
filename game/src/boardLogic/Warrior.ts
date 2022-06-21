@@ -1,3 +1,4 @@
+import Cell from "./Cell";
 import Grid from "./Grid";
 import { deterministicRandom } from "./random";
 
@@ -30,6 +31,8 @@ class Warrior implements WarriorStats {
   defense: number = 100;
   initialHealth: number = 500;
   currentHealth: number = 500;
+
+  location?: Cell
 
   destination?: [number, number];
   pendingDestination?: [number, number];
