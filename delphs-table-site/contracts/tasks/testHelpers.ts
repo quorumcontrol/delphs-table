@@ -47,7 +47,7 @@ task('board')
 
 
     const id = hashString(name)
-    await (await delphs.createTable(id, addresses.split(','), [hashString(`1-${name}`), hashString(`2-${name}`)], 60, deployer.address)).wait()
+    await (await delphs.createTable(id, addresses.split(','), [hashString(`1-${name}`), hashString(`2-${name}`)], 50, deployer.address)).wait()
     console.log('table id: ', id)
   })
 

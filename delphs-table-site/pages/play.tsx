@@ -8,8 +8,11 @@ import { DELPHS_TABLE_ADDRESS } from "../src/hooks/DelphsTable";
 import { useUsername } from "../src/hooks/Player";
 import useIsClientSide from "../src/hooks/useIsClientSide";
 import { useDeviceSigner } from "../src/hooks/useUser";
+import SingletonQueue from "../src/utils/singletonQueue";
 
-const tableId = '0xfc06bf6d9903056f5988cf49efdb41604886f39f728eab220170e37e2bb3fc69'
+const tableId = '0x7686f99f3fd9247226d3bd6537aa0370b224b3b77fc75d0ff340668c40577ae6'
+
+const txQueue = new SingletonQueue()
 
 const Play: NextPage = () => {
   const { data } = useAccount();
@@ -34,8 +37,11 @@ const Play: NextPage = () => {
           }
           const delphsTable = DelphsTable__factory.connect(DELPHS_TABLE_ADDRESS, signer)
           console.log('signer addr: ', await signer.getAddress(), 'params', tableId, appEvent.data[0], appEvent.data[1])
-          const tx = await delphsTable.setDestination(tableId, appEvent.data[0], appEvent.data[1])
-          console.log('destination tx: ', tx)
+          txQueue.push(async () => {
+            const tx = await delphsTable.setDestination(tableId, appEvent.data[0], appEvent.data[1])
+            console.log('destination tx: ', tx)
+            return tx.wait()
+          })
           iframe.current?.contentWindow?.postMessage('OK')
         }
       }
