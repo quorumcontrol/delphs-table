@@ -30,6 +30,12 @@ class Hud extends ScriptTypeBase {
       })
       .join("\n");
     this.uiText.element!.text = text || "";
+    if (config.grid?.isOver()) {
+      const gameOver = this.entity.findByName("GameOver")
+      if (gameOver) {
+        gameOver.enabled = true
+      }
+    }
   }
 }
 

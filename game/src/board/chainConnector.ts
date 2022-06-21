@@ -98,6 +98,7 @@ class ChainConnector extends ScriptTypeBase {
         seed: "nonsense",
         sizeX: 10,
         sizeY: 10,
+        gameLength: table.gameLength.toNumber()
       });
       this.grid = grid;
 
@@ -141,6 +142,9 @@ class ChainConnector extends ScriptTypeBase {
     random: BytesLike,
     evt?: DiceRolledEvent
   ) {
+    if (this.grid.isOver()) {
+      return
+    }
     log("tick: ", index.toString(), evt);
     if (this.inProgress) {
       this.inProgress = this.inProgress.finally(() => {

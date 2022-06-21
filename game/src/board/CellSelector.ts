@@ -4,7 +4,7 @@ import { getGameConfig } from "../utils/config";
 import { createScript } from "../utils/createScriptDecorator";
 import CellState from "./CellState";
 
-const TRACE_AT = 0.4 // number of seconds to start tracing
+const TRACE_AT = 0.8 // number of seconds to start tracing
 
 @createScript("cellSelector")
 class CellSelector extends ScriptTypeBase {
@@ -59,6 +59,10 @@ class CellSelector extends ScriptTypeBase {
   }
 
   doRaycast(screenX: number, screenY: number) {
+    const config = getGameConfig(this.app.root)
+    if (config.grid?.isOver()) {
+      return
+    }
     // The pc.Vec3 to raycast from (the position of the camera)
     const from = this.entity.getPosition();
 

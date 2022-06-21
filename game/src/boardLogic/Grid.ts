@@ -12,6 +12,7 @@ interface GridOptions {
   seed:string
   sizeX?: number
   sizeY?: number
+  gameLength: number
 }
 
 class Grid {
@@ -25,12 +26,15 @@ class Grid {
   warriors: Warrior[]
 
   tick = 0
+  gameLength:number
+
   // 2x2 array of locations
   grid:Cell[][] = []
 
   started = false
   
   constructor(opts:GridOptions) {
+    this.gameLength = opts.gameLength
     this.currentSeed = opts.seed
     this.id = `grid-${this.currentSeed}`
     this.sizeX = opts.sizeX || 20
@@ -61,6 +65,9 @@ class Grid {
   }
 
   handleTick(randomness:BytesLike) {
+    if (this.isOver()) {
+      throw new Error('ticking when already over')
+    }
     this.currentSeed = randomness.toString()
     this.everyCell((cell) => {
       cell.handleOutcomes(this.tick, this.currentSeed)
@@ -70,6 +77,10 @@ class Grid {
     })
     this.tick++;
     return { tick: this.tick, seed: this.currentSeed }
+  }
+
+  isOver() {
+    return this.tick >= this.gameLength
   }
 
   private newRandomSeed() {
