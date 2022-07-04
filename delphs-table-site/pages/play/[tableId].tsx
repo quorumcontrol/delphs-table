@@ -21,8 +21,8 @@ const Play: NextPage = () => {
   console.log(router.query)
   const { tableId:untypedTableId } = router.query
   const tableId = untypedTableId as string
-  const { data } = useAccount();
-  const { data:username } = useUsername(data?.address);
+  const { address } = useAccount();
+  const { data:username } = useUsername(address);
   const isClient = useIsClientSide();
   const iframe = useRef<HTMLIFrameElement>(null);
   const { data:signer } = useDeviceSigner()

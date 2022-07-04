@@ -9,9 +9,9 @@ import useIsClientSide from "../src/hooks/useIsClientSide";
 import { useDeviceSigner } from "../src/hooks/useUser";
 
 const Home: NextPage = () => {
-  const { data } = useAccount();
-  const { isInitialized, isLoading } = useIsInitialized(data?.address);
-  const { data: username } = useUsername(data?.address);
+  const { address } = useAccount();
+  const { isInitialized, isLoading } = useIsInitialized(address);
+  const { data: username } = useUsername(address);
   const {
     data: deviceSigner,
     isLoading: deviceSignerIsLoading,
@@ -28,7 +28,7 @@ const Home: NextPage = () => {
           <Text>Find the Wootgump, don't get rekt.</Text>
           <Box pt="16">
             {isClient && isLoading && <Spinner />}
-            {isClient && !isLoading && data?.address && !isInitialized && (
+            {isClient && !isLoading && address && !isInitialized && (
               <VStack>
                 <Text>Looks like this is your first time here. Let's get you setup.</Text>
                 <NextLink passHref href="/new">
@@ -38,7 +38,7 @@ const Home: NextPage = () => {
                 </NextLink>
               </VStack>
             )}
-            {isClient && !isLoading && data?.address && isInitialized && (
+            {isClient && !isLoading && address && isInitialized && (
               <VStack spacing="5">
                 <Text>Welcome back {username}.</Text>
                 {deviceSignerIsLoading && <Spinner />}

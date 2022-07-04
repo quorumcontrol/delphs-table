@@ -8,8 +8,8 @@ import useIsClientSide from "../../src/hooks/useIsClientSide";
 import { useDeviceSigner } from "../../src/hooks/useUser";
 
 const Play: NextPage = () => {
-  const { data } = useAccount();
-  const { data:username } = useUsername(data?.address);
+  const { address } = useAccount();
+  const { data:username } = useUsername(address);
   const isClient = useIsClientSide();
   const { data:signer } = useDeviceSigner()
 
