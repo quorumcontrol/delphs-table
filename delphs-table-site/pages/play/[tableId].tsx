@@ -1,20 +1,23 @@
-import { VStack, Text, Heading, Box, Spinner, Link, Button} from "@chakra-ui/react";
+import { VStack, Text, Heading, Box } from "@chakra-ui/react";
 import type { NextPage } from "next";
-import { useCallback, useEffect, useRef } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useRef } from "react";
 import { useAccount } from "wagmi";
-import { DelphsTable__factory } from "../contracts/typechain";
-import Layout from "../src/components/Layout";
-import { DELPHS_TABLE_ADDRESS } from "../src/hooks/DelphsTable";
-import { useUsername } from "../src/hooks/Player";
-import useIsClientSide from "../src/hooks/useIsClientSide";
-import { useDeviceSigner } from "../src/hooks/useUser";
-import SingletonQueue from "../src/utils/singletonQueue";
-
-const tableId = '0x05ca6b4614be265d8297bcba3da48cd9881606c0e72ad5beafcabb9aebfad78e'
+import { DelphsTable__factory } from "../../contracts/typechain";
+import Layout from "../../src/components/Layout";
+import { DELPHS_TABLE_ADDRESS } from "../../src/hooks/DelphsTable";
+import { useUsername } from "../../src/hooks/Player";
+import useIsClientSide from "../../src/hooks/useIsClientSide";
+import { useDeviceSigner } from "../../src/hooks/useUser";
+import SingletonQueue from "../../src/utils/singletonQueue";
 
 const txQueue = new SingletonQueue()
 
 const Play: NextPage = () => {
+  const router = useRouter()
+  console.log(router.query)
+  const { tableId:untypedTableId } = router.query
+  const tableId = untypedTableId as string
   const { data } = useAccount();
   const { data:username } = useUsername(data?.address);
   const isClient = useIsClientSide();
