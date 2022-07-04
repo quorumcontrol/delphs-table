@@ -88,6 +88,24 @@ task('player')
     console.log(await player.name(addr))
   })
 
+task('run-game')
+  .addParam('id')
+  .setAction(async ({ id }, hre) => {
+    const delphs = await getDelphsTableContract(hre)
+    const table = await delphs.tables(id)
+    const started = table.startedAt
+    const len = table.gameLength
+    const latest = await delphs.latestRoll()
+    const remaining = len.sub(latest.sub(started)).toNumber()
+    for (let i = 0; i < remaining; i++) {
+      const tx = await delphs.rollTheDice()
+      console.log('dice roll: ', tx.hash)
+      await tx.wait()
+      console.log('ok')
+    }
+    console.log('done')
+  })
+
 task('board')
   .addParam('name')
   .addParam('addresses')
