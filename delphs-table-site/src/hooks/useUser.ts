@@ -111,6 +111,7 @@ const useNewUser = () => {
         method: 'post',
       })
       if (![200,201].includes(resp.status)) {
+        console.error('bad response from faucet: ', resp.status)
         throw new Error(`Bad response: ${resp.status} ${JSON.stringify(resp.json()) }`)
       }
       const hash:string|undefined = (await resp.json()).transactionId
