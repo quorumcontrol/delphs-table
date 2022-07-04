@@ -13,6 +13,7 @@ class PlayerMarker extends ScriptTypeBase {
   name: Entity
   healthText: Entity
   gumpText: Entity
+  threeDName: any // textMesh script
 
   initialize() {
     if (!this.entity.render) {
@@ -21,6 +22,7 @@ class PlayerMarker extends ScriptTypeBase {
     this.name = mustFindByName(this.entity, "Name")
     this.healthText = mustFindByName(this.entity, "HealthText")
     this.gumpText = mustFindByName(this.entity, "GumpText")
+    this.threeDName = this.getScript(mustFindByName(this.entity, "3DName"), "textMesh")!
   }
 
   update() {
@@ -36,6 +38,7 @@ class PlayerMarker extends ScriptTypeBase {
   setWarrior(warrior:Warrior) {
     this.warrior = warrior
     this.name.element!.text = warrior.name
+    this.threeDName.text = warrior.name
     const config = getGameConfig(this.app.root)
     if (config.currentPlayer === warrior) {
       mustFindByName(this.entity, 'PlayerArrow').enabled = true

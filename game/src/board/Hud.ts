@@ -21,13 +21,13 @@ class Hud extends ScriptTypeBase {
     if (!grid) {
       return;
     }
-    const text = grid.warriors
+    const text = [`Round ${grid.tick}/${grid.gameLength}\n`].concat(grid.warriors
       ?.map((w) => {
         const prefix = config.currentPlayer?.id === w.id ? "-> " : "";
         return `${prefix}${w.name} (A: ${w.attack}, D: ${w.defense}): ${Math.ceil(
           w.currentHealth
         )} HP / ${w.wootgumpBalance} WG`;
-      })
+      }))
       .join("\n");
     this.uiText.element!.text = text || "";
     if (config.grid?.isOver()) {

@@ -10,7 +10,7 @@ import useIsClientSide from "../src/hooks/useIsClientSide";
 import { useDeviceSigner } from "../src/hooks/useUser";
 import SingletonQueue from "../src/utils/singletonQueue";
 
-const tableId = '0x7686f99f3fd9247226d3bd6537aa0370b224b3b77fc75d0ff340668c40577ae6'
+const tableId = '0x05ca6b4614be265d8297bcba3da48cd9881606c0e72ad5beafcabb9aebfad78e'
 
 const txQueue = new SingletonQueue()
 

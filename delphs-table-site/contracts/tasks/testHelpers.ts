@@ -21,9 +21,11 @@ task('start')
 task('tick')
   .setAction(async (_, hre) => {
     const delphs = await getDelphsTableContract(hre)
+    const start = new Date()
     const tx = await delphs.rollTheDice()
     console.log('tx', tx.hash)
     await tx.wait()
+    console.log('time: ', (new Date().getTime() - start.getTime())/1000)
   })
 
 task('setup-bots', async (_,hre) => {
@@ -49,11 +51,11 @@ task('setup-bots', async (_,hre) => {
   })
   for (const wallet of wallets) {
     const addr = await wallet.wallet.getAddress()
-    await player.initializePlayer(wallet.name, addr)
     await deployer.sendTransaction({
       to: addr,
       value: utils.parseEther('0.1')
     })
+    await player.connect(wallet.wallet.connect(hre.ethers.provider)).initializePlayer(wallet.name, addr)
   }
 
   console.log(wallets.reduce((memo, wallet) => {
@@ -69,8 +71,7 @@ task('setup-bots', async (_,hre) => {
 })
 
 async function getBots(num:number) {
-  const botSetup:{[key:string]:any} = await import('../bots')
-
+  const { default: botSetup } = await import('../bots')
   const botNames = Object.keys(botSetup)
   return botNames.slice(0, num).map((name) => {
     return {
@@ -79,6 +80,13 @@ async function getBots(num:number) {
     }
   })
 }
+
+task('player')
+  .addParam('addr')
+  .setAction(async ({ addr }, hre) => {
+    const player = await getPlayerContract(hre)
+    console.log(await player.name(addr))
+  })
 
 task('board')
   .addParam('name')
