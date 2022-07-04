@@ -11,7 +11,7 @@ const log = debug('faucet')
 debug.enable('faucet')
 
 if (!process.env.DELPHS_PRIVATE_KEY) {
-  throw new Error("must have a badge minter private key")
+  throw new Error("must have a DELPHS private key")
 }
 
 const rpcUrl = isTestnet ? skaleTestnet.rpcUrls.default : skaleMainnet.rpcUrls.default
