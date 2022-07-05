@@ -8,7 +8,7 @@ import { BOA_ADDRESS } from "../../src/hooks/BadgeOfAssembly";
 import debug from 'debug'
 
 const log = debug('faucet')
-debug.enable('faucet')
+debug.enable('*')
 
 if (!process.env.DELPHS_PRIVATE_KEY) {
   throw new Error("must have a DELPHS private key")
