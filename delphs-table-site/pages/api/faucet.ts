@@ -1,5 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { ethers, utils, Wallet } from "ethers";
+import { ethers, providers, Transaction, utils, Wallet } from "ethers";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { BadgeOfAssembly__factory } from "../../badge-of-assembly-types/typechain";
 import { skaleMainnet, skaleTestnet } from '../../src/utils/SkaleChains'
@@ -28,7 +28,6 @@ export default async function handler(
   res: NextApiResponse<{message?: string, transactionId?: string}>
 ) {
   const address = JSON.parse(req.body).address
-  log(address)
 
   // first get the balances
   const [sfuelBalance, badgeBalance] = await Promise.all([
@@ -50,11 +49,19 @@ export default async function handler(
     return
   }
 
+  let tx:providers.TransactionResponse
   log('sending sfuel')
-  const tx = await schainSigner.sendTransaction({
-    to: address,
-    value: highWaterForSFuel,
-  })
+  try {
+    tx = await schainSigner.sendTransaction({
+      to: address,
+      value: highWaterForSFuel,
+    })
+  } catch (err) {
+    console.error('error: ', err)
+    res.status(500).json({message: (err as any).toString()})
+    return
+  }
+
   log(address, 'tx submitted: ', tx.hash)
 
   res.status(201).json({message: 'ok', transactionId: tx.hash})

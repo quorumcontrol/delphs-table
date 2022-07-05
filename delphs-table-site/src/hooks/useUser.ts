@@ -115,17 +115,20 @@ const useNewUser = () => {
         throw new Error(`Bad response: ${resp.status} ${JSON.stringify(resp.json()) }`)
       }
       const hash:string|undefined = (await resp.json()).transactionId
-
+      console.log('received: ', hash)
+      
       if (hash) {
         console.log('waiting on: ', hash)
         const tx = await backOff(() => {
           if (!signer.provider) {
+            console.error('missing provider')
             throw new Error('missing provider')
           }
           return signer.provider.getTransaction(hash)
         }, {
           startingDelay: 500,
-          numOfAttempts: 5,
+          maxDelay: 1000,
+          numOfAttempts: 10,
         })
         if (!tx) {
           throw new Error('missing tx')
