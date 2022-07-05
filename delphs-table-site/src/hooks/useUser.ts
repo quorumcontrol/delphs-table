@@ -42,6 +42,13 @@ export const useDeviceSigner = () => {
     }
     const sig = await signer.data.signMessage(signatureMessage(getDeviceId()!))
     devicePrivateKey = await deriveKey(Buffer.from(sig.slice(2,-1), 'hex'), Buffer.from(deviceId))
+    const device = await fetchDeviceSigner()
+    if ((await device.getBalance()).lt(utils.parseEther('0.05'))) {
+      await signer.data.sendTransaction({
+        to: await device.getAddress(),
+        value: 0.05
+      })
+    }
     queryClient.invalidateQueries('device-signer')
   }, [signer])
 
@@ -98,7 +105,7 @@ const thresholdForFaucet = utils.parseEther('0.25')
 const useNewUser = () => {
   const player = usePlayer()
   const { data:signer } = useSigner()
-  const deviceKey = useDeviceKey()
+  const deviceId = useDeviceKey()
 
   return useMutation(async ({ username, trustDevice}:UserData) => {
     if (!signer || !player) {
@@ -140,8 +147,8 @@ const useNewUser = () => {
     }
 
     if (trustDevice) {
-      const sig = await signer.signMessage(signatureMessage(deviceKey!))
-      const wallet = new Wallet(await deriveKey(Buffer.from(sig.slice(2, -1), 'hex'), Buffer.from(deviceKey!)))
+      const sig = await signer.signMessage(signatureMessage(deviceId!))
+      const wallet = new Wallet(await deriveKey(Buffer.from(sig.slice(2, -1), 'hex'), Buffer.from(deviceId!)))
       deviceSigner = wallet
       const addr =  await wallet.getAddress()
       console.log("device address: ", addr)

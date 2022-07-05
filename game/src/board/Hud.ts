@@ -48,9 +48,13 @@ class Hud extends ScriptTypeBase {
     events.forEach(this.playEvent.bind(this))
 
     if (config.grid?.isOver()) {
-      const gameOver = this.entity.findByName("GameOver");
-      if (gameOver) {
-        gameOver.enabled = true;
+      const gameOver = mustFindByName(this.entity, "GameOver");
+      gameOver.enabled = true;
+      
+      if (player) {
+        const endGameStats = mustFindByName(this.entity, "EndGameStats")
+        endGameStats.enabled = true;
+        endGameStats.element!.text = `You harvested ${player.wootgumpBalance} Wootgump.`
       }
     }
   }

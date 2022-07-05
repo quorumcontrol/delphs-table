@@ -193,8 +193,15 @@ class ChainConnector extends ScriptTypeBase {
         })
 
         const config = this.boardGenerate.getGameConfig()
-        //TODO: this will probably cause flickering here and there
-        config.currentPlayer?.clearPendingDestination()
+        if (
+          config.currentPlayer &&
+          config.currentPlayer.pendingDestination &&
+          config.currentPlayer.destination &&
+          config.currentPlayer.pendingDestination[0] === config.currentPlayer.destination[0] &&
+          config.currentPlayer.pendingDestination[1] === config.currentPlayer.destination[1]
+        ) {
+            config.currentPlayer.clearPendingDestination()
+        }
 
         this.entity.fire("tick", this.grid.handleTick(random));
         this.latest = index;
