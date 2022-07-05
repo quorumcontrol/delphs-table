@@ -1,7 +1,6 @@
-import { generateFakeWarriors } from "../boardLogic/Warrior";
 import { ScriptTypeBase } from "../types/ScriptTypeBase";
 
-import { createScript, attrib } from "../utils/createScriptDecorator";
+import { createScript } from "../utils/createScriptDecorator";
 import Grid from "../boardLogic/Grid";
 import Cell from "../boardLogic/Cell";
 import { Entity, GraphNode } from "playcanvas";

@@ -1,11 +1,17 @@
 
-import Cell from './Cell'
+import Cell, { CellOutComeDescriptor } from './Cell'
 import { deterministicRandom, fakeRandomSeed } from './random'
 import Warrior from './Warrior'
 import debug from 'debug'
 import {  BytesLike } from 'ethers'
 
 const log = debug('Grid')
+
+export interface TickOutput {
+  tick: number
+  seed: string
+  outcomes: CellOutComeDescriptor[][]
+}
 
 interface GridOptions {
   warriors: Warrior[]
@@ -64,19 +70,21 @@ class Grid {
     this.started = true
   }
 
-  handleTick(randomness:BytesLike) {
+  handleTick(randomness:BytesLike):TickOutput {
     if (this.isOver()) {
       throw new Error('ticking when already over')
     }
     this.currentSeed = randomness.toString()
+    let outcomes:CellOutComeDescriptor[][] = []
     this.everyCell((cell) => {
-      cell.handleOutcomes(this.tick, this.currentSeed)
+      outcomes[cell.x] ||= []
+      outcomes[cell.x][cell.y] = cell.handleOutcomes(this.tick, this.currentSeed)
     })
     this.everyCell((cell) => {
       cell.doMovement(this.tick, this.currentSeed)
     })
     this.tick++;
-    return { tick: this.tick, seed: this.currentSeed }
+    return { tick: this.tick, seed: this.currentSeed, outcomes }
   }
 
   isOver() {

@@ -12,7 +12,7 @@ type HarvestReport = {[index: string]: Wootgump[]}
 type RejuvanizeReport = {[index: string]: number}
 
 
-interface CellOutComeDescriptor {
+export interface CellOutComeDescriptor {
   incoming: Warrior[]
   outgoing: Warrior[]
   spawned: Wootgump[]
@@ -188,9 +188,9 @@ class Cell {
       this.log('rejuvanizing')
     }
     // if there isn't a battle going on then the wootgump can restore the health of warriors
-    // TODO: we can make this way more complicated if we want with nearby wootgump, etc... for now it's 10%
+    // TODO: we can make this way more complicated if we want with nearby wootgump, etc... for now it's 20%
     return this.warriors.reduce((healthIncreases, w) => {
-      healthIncreases[w.id] = w.recover(0.10)
+      healthIncreases[w.id] = w.recover(0.20)
       return healthIncreases
     }, {} as RejuvanizeReport)
   }

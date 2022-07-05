@@ -58,6 +58,11 @@ class Warrior implements WarriorStats {
     if (this.currentHealth >= this.initialHealth) {
       return 0;
     }
+    if (this.currentHealth < 0) {
+      const amountToTopUp = this.currentHealth * -1
+      this.currentHealth = 0
+      return amountToTopUp
+    }
     const amountToUp = Math.min(
       this.initialHealth * percentage,
       this.initialHealth - this.currentHealth
