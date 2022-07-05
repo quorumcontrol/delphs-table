@@ -7,6 +7,8 @@ import { useCallback, useMemo } from "react";
 import { pbkdf2, randomBytes } from "crypto";
 import useIsClientSide from "./useIsClientSide";
 
+const FAUCET_URL = 'https://larvamaiorumfaucet5sqygfv0-first.functions.fnc.fr-par.scw.cloud'
+
 const DEVICE_ID_KEY = 'delphs:deviceId'
 const signatureMessage = (deviceId:string) => `I trust this device on Delphs Table. id: ${deviceId}`
 // const encryptedDeviceKey = localStorage.getItem(ENCRYPTED_KEY)
@@ -106,7 +108,7 @@ const useNewUser = () => {
     const balance = await signer.getBalance()
     
     if (balance.lte(thresholdForFaucet)) {
-      const resp = await fetch('/api/faucet', {
+      const resp = await fetch(FAUCET_URL, {
         body: JSON.stringify({address: await signer.getAddress()}),
         method: 'post',
       })
@@ -116,7 +118,7 @@ const useNewUser = () => {
       }
       const hash:string|undefined = (await resp.json()).transactionId
       console.log('received: ', hash)
-      
+
       if (hash) {
         console.log('waiting on: ', hash)
         const tx = await backOff(() => {
