@@ -36,7 +36,7 @@ const { chains, provider } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: "Badge of Assembly",
+  appName: "Delph's Table",
   chains,
 });
 
@@ -92,7 +92,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <meta charSet="utf-8" />
               <meta
                 property="og:site_name"
-                content="Crypto Colosseum: Badge of Assembly"
+                content="Crypto Colosseum: Delph's Table"
                 key="ogsitename"
               />
               <link rel="icon" href="/favicon.ico" />
@@ -103,7 +103,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <link rel="icon" href="/favicon.ico" />
               <meta
                 property="og:title"
-                content="Crypto Colosseum: Badge of Assembly"
+                content="Crypto Colosseum: Delph's Table"
                 key="ogtitle"
               />
               <meta
@@ -121,7 +121,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
               <meta
                 property="og:url"
-                content="https://boa.larvamaiorum.com"
+                content="https://delphs.larvamaiorum.com"
                 key="ogurl"
               />
             </Head>

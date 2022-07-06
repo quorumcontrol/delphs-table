@@ -18,7 +18,7 @@ const ChainInfo: NextPage = () => {
               <Box>
                 <Heading fontSize="md">Our chain</Heading>
                 <Text fontSize="md">
-                  Badge of Assembly uses a{" "}
+                  Delph's Table uses a{" "}
                   <NextLink passHref href="https://skale.network/">
                     <Link>SKALE sChain</Link>
                   </NextLink> which may not be added

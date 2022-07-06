@@ -110,8 +110,10 @@ task('board')
   .addParam('name')
   .addParam('addresses')
   .addOptionalParam('bots', 'number of bots to add to the board')
-  .setAction(async ({ name, addresses, bots:userBots }, hre) => {
+  .addOptionalParam('rounds', 'number of rounds')
+  .setAction(async ({ name, addresses, bots:userBots, rounds:userRounds }, hre) => {
 
+    const rounds = userRounds ? parseInt(userRounds, 10) : 50
     const botNumber = userBots ? parseInt(userBots, 10) : 0
     const delphs = await getDelphsTableContract(hre)
     const deployer = await getDeployer(hre)
@@ -132,7 +134,7 @@ task('board')
     const seeds = tableAddrs.map((addr) => hashString(`${name}-${addr}`))
 
     const id = hashString(name)
-    await (await delphs.createTable(id, tableAddrs, seeds, 50, deployer.address)).wait()
+    await (await delphs.createTable(id, tableAddrs, seeds, rounds, deployer.address)).wait()
     console.log('table id: ', id)
   })
 
