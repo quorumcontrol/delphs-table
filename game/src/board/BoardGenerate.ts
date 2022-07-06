@@ -6,6 +6,7 @@ import Cell from "../boardLogic/Cell";
 import { Entity, GraphNode } from "playcanvas";
 import CellState from "./CellState";
 import { GameConfig } from "../utils/config";
+import { UI_FOCUS_REQUEST } from "../appWide/Focuser";
 
 @createScript("boardGenerate")
 class BoardGenerate extends ScriptTypeBase {
@@ -36,6 +37,9 @@ class BoardGenerate extends ScriptTypeBase {
         func()
       })
       this.next = []
+    }
+    if (this.app.keyboard.wasPressed(pc.KEY_P)) {
+      this.focusOnPlayerCell()
     }
   }
 
@@ -69,28 +73,19 @@ class BoardGenerate extends ScriptTypeBase {
 
   focusOnPlayerCell() {
     const config = this.getGameConfig()
-    const camera = this.app.root.findByName('Camera')
-    if (!camera) {
-      throw new Error('no camera')
-    }
-    const cameraScript = this.getScript<any>(camera as Entity, "orbitCamera");
-    if (!cameraScript) {
-      throw new Error('no camera script')
-    }
     const location = config.currentPlayer?.location
     if (location) {
       console.log('focusing camera on player')
       
       const cellEntity = this.entity.findByName(this.cellNameFromCell(location))
       this.next.push(() => {
-        console.log('calling focus on ', cellEntity)
-        cameraScript.focus(cellEntity)
+        this.app.fire(UI_FOCUS_REQUEST, cellEntity)
       })
       return
     }
     // if no current player or no location, then lets see the whole board
     this.next.push(() => {
-      cameraScript.focus(this.entity)
+      this.app.fire(UI_FOCUS_REQUEST, this.entity)
     })
   }
 

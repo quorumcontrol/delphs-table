@@ -1,4 +1,4 @@
-import { Entity, GraphNode } from "playcanvas";
+import { Entity, GraphNode, SoundComponent } from "playcanvas";
 import Battle, { BattleTickReport } from "../boardLogic/Battle";
 import Warrior from "../boardLogic/Warrior";
 import { ScriptTypeBase } from "../types/ScriptTypeBase";
@@ -18,6 +18,7 @@ class BattleUI extends ScriptTypeBase {
   battle?: Battle
   textTemplate: Entity; // for now
   playerMarkerTemplate: Entity
+  soundComponent: SoundComponent
 
   initialize() {
     this.handleTick = this.handleTick.bind(this);
@@ -33,12 +34,23 @@ class BattleUI extends ScriptTypeBase {
     this.textTemplate.enabled = false;
     const templates = mustFindByName(this.app.root, 'Templates')
     this.playerMarkerTemplate = mustFindByName(templates, 'PlayerMarker')
+    const soundComponent = mustFindByName(this.entity, "Sound").findComponent('sound') as SoundComponent
+    if (!soundComponent) {
+      throw new Error('missing sound component for battle')
+    }
+    this.soundComponent = soundComponent
+    Object.values(this.soundComponent.slots).forEach((slot) => {
+      slot.play()
+    })
   }
 
   destroy() {
     if (this.battle) {
       this.battle.off('tick', this.handleTick)
     }
+    Object.values(this.soundComponent.slots).forEach((slot) => {
+      slot.stop()
+    })
     this.entity.destroy()
   }
 
