@@ -50,7 +50,7 @@ class Hud extends ScriptTypeBase {
     if (config.grid?.isOver()) {
       const gameOver = mustFindByName(this.entity, "GameOver");
       gameOver.enabled = true;
-      
+
       if (player) {
         const endGameStats = mustFindByName(this.entity, "EndGameStats")
         endGameStats.enabled = true;
@@ -104,7 +104,7 @@ class Hud extends ScriptTypeBase {
         }
         outcome.battleTicks.forEach((battleTick) => {
           if (battleTick.isOver) {
-            return interestingEvents.push(`${battleTick.attacker.name} defeats ${battleTick.attacker.name}`)
+            return interestingEvents.push(`${battleTick.winner?.name} defeats ${battleTick.loser?.name}`)
           }
           if (battleTick.attackRoll > battleTick.defenseRoll) {
             return interestingEvents.push(`${battleTick.attacker.name} attacks ${battleTick.defender.name} for ${battleTick.attackRoll - battleTick.defenseRoll} damage.`)

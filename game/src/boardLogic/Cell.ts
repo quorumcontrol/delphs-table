@@ -11,7 +11,6 @@ const log = debug('Cell')
 type HarvestReport = {[index: string]: Wootgump[]}
 type RejuvanizeReport = {[index: string]: number}
 
-
 export interface CellOutComeDescriptor {
   incoming: Warrior[]
   outgoing: Warrior[]
@@ -20,7 +19,6 @@ export interface CellOutComeDescriptor {
   battleTicks: BattleTickReport[]
   rejuvanized: RejuvanizeReport
 }
-
 
 interface CellInitializeOptions {
   x:number
