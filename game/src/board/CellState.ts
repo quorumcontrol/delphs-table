@@ -186,7 +186,7 @@ class CellState extends ScriptTypeBase {
   private destroyGump(id:string) {
     const gump = this.gumps[id]
     const start = gump.getLocalPosition()
-    gump.tween(start).to({x: start.x, y: start.y + 200, z: start.z}, 2.0).on('end', () => {
+    gump.tween(start).to({x: start.x, y: start.y + 200, z: start.z}, 2.0).on('complete', () => {
       gump.destroy()
     }).start()
   }
