@@ -183,6 +183,14 @@ class CellState extends ScriptTypeBase {
     });
   }
 
+  private destroyGump(id:string) {
+    const gump = this.gumps[id]
+    const start = gump.getLocalPosition()
+    gump.tween(start).to({x: start.x, y: start.y + 200, z: start.z}, 2.0).on('end', () => {
+      gump.destroy()
+    }).start()
+  }
+
   private updateGump() {
     if (!this.cell) {
       throw new Error("trying to update cellSTate with no cell");
@@ -194,7 +202,7 @@ class CellState extends ScriptTypeBase {
       .filter((id) => !cellIds.includes(id))
       .forEach((id) => {
         try {
-          this.gumps[id].destroy();
+          this.destroyGump(id);
           delete this.gumps[id];
         } catch (err) {
           console.error("error: ", err);
