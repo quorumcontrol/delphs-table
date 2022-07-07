@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "./interfaces/IPlayer.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+// import "hardhat/console.sol";
 
 error Unauthorized();
 

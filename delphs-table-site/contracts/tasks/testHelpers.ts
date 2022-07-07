@@ -2,12 +2,27 @@ import "@nomiclabs/hardhat-ethers"
 import { utils, Wallet } from "ethers"
 import { keccak256 } from "ethers/lib/utils"
 import { task } from 'hardhat/config'
-import { getDelphsTableContract, getDeployer, getPlayerContract } from "./helpers"
-
+import { getDelphsTableContract, getDeployer, getLobbyContract, getPlayerContract } from "./helpers"
+import { faker } from '@faker-js/faker'
+import { ethers } from "hardhat"
 
 function hashString(msg:string) {
   return keccak256(Buffer.from(msg))
 }
+
+task('xxx', async (_, hre) => {
+  const player = await getPlayerContract(hre)
+  // const filter = player.filters.DeviceAdded(null, '0xe109BDB684c84ee13e973cd837d9f27193A42cbE')
+  // const evts = await player.queryFilter(filter)
+  // console.log(evts)
+  const lobby = await getLobbyContract(hre)
+  const wallet = new Wallet('0x7ff2e7a183c3f83a46f83ad83c308810c2c16845c589f505002f5262a4a5696e').connect(hre.ethers.provider)
+  console.log(await player.deviceToPlayer('0x126DAa9f37b065a4c67c3e51c4547bfC125A910e'))
+  console.log(await player.deviceToPlayer(await wallet.getAddress()))
+  // const tx = await lobby.connect(wallet).registerInterest()
+  // console.log('tx hash: ', tx.hash)
+  // console.log(await tx.wait())
+})
 
 task('start')
   .addParam('id')
@@ -28,47 +43,40 @@ task('tick')
     console.log('time: ', (new Date().getTime() - start.getTime())/1000)
   })
 
-task('setup-bots', async (_,hre) => {
-  const deployer = await getDeployer(hre)
-  const player = await getPlayerContract(hre)
-  const names = [
-    'Lawrence29',
-    'Buddy79',
-    'Lera_Christiansen',
-    'Rigoberto.Maggio97',
-    'Tad_Willms81',
-    'Marielle50',
-    'Ken_Kuhlman13',
-    'Vinnie93',
-    'Raven20',
-    'Joannie_Balistreri'
-  ]
-  const wallets = names.map((name) => {
-    return {
-      name,
-      wallet: Wallet.createRandom(),
-    }
-  })
-  for (const wallet of wallets) {
-    const addr = await wallet.wallet.getAddress()
-    await deployer.sendTransaction({
-      to: addr,
-      value: utils.parseEther('0.1')
-    })
-    await player.connect(wallet.wallet.connect(hre.ethers.provider)).initializePlayer(wallet.name, addr)
-  }
-
-  console.log(wallets.reduce((memo, wallet) => {
-    return {
-      ...memo,
-      [wallet.name]: {
-        pk: wallet.wallet.privateKey,
-        address: wallet.wallet.address
+task('setup-bots', 'setup a number of bots')
+  .addParam('amount', 'the number of bots to create')
+  .setAction(async ({ amount }, hre) => {
+      const deployer = await getDeployer(hre)
+      const player = await getPlayerContract(hre)
+      const names = Array(parseInt(amount, 10)).fill(true).map(() => {
+        return faker.internet.userName()
+      })
+      const wallets = names.map((name) => {
+        return {
+          name,
+          wallet: Wallet.createRandom(),
+        }
+      })
+      for (const wallet of wallets) {
+        const addr = await wallet.wallet.getAddress()
+        await deployer.sendTransaction({
+          to: addr,
+          value: utils.parseEther('0.2')
+        })
+        await player.connect(wallet.wallet.connect(hre.ethers.provider)).initializePlayer(wallet.name, addr)
       }
-    }
-  }, {} as {[key:string]:any}))
-  
-})
+    
+      console.log(wallets.reduce((memo, wallet) => {
+        return {
+          ...memo,
+          [wallet.name]: {
+            pk: wallet.wallet.privateKey,
+            address: wallet.wallet.address
+          }
+        }
+      }, {} as {[key:string]:any}))
+      
+  })
 
 async function getBots(num:number) {
   const { default: botSetup } = await import('../bots')

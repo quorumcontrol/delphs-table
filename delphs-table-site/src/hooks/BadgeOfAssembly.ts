@@ -6,8 +6,7 @@ import { BadgeOfAssembly, BadgeOfAssembly__factory } from "../../badge-of-assemb
 import isTestnet from "../utils/isTestnet"
 import { memoize } from "../utils/memoize"
 import ThenArg from "../utils/ThenArg"
-import { MulticallWrapper } from 'kasumah-multicall'
-import { skaleMainnet, skaleTestnet } from "../utils/SkaleChains"
+import multicallWrapper from "../utils/multicallWrapper"
 
 const TESTNET_BOA = "0xd8929b56BaD3B72068B682F19Cdeff92b2f5164B";
 const MAINNET_BOA = "0x2C6FD25071Fd516947682f710f6e9F5eD610207F";
@@ -15,8 +14,7 @@ const MAINNET_BOA = "0x2C6FD25071Fd516947682f710f6e9F5eD610207F";
 export const BOA_ADDRESS = isTestnet ? TESTNET_BOA : MAINNET_BOA
 
 const badgeOfAssemblyContract = memoize((provider:providers.Provider) => {
-  const chainId = isTestnet ? skaleTestnet.id : skaleMainnet.id
-  const multiCall = new MulticallWrapper(provider, chainId)
+  const multiCall = multicallWrapper(provider)
   return multiCall.syncWrap<BadgeOfAssembly>(BadgeOfAssembly__factory.connect(BOA_ADDRESS, provider))
 })
 

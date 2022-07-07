@@ -1,11 +1,13 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
+import { utils, Wallet } from "ethers";
 import { defaultAbiCoder, keccak256 } from "ethers/lib/utils";
 import { ethers } from "hardhat";
-import { Lobby } from "../typechain";
+import { Lobby, Player } from "../typechain";
 
 describe("Lobby", function () {
   let lobby:Lobby
+  let player:Player
   let signers:SignerWithAddress[]
 
   beforeEach(async () => {
@@ -13,7 +15,7 @@ describe("Lobby", function () {
     const deployer = signers[0]
 
     const PlayerFactory = await ethers.getContractFactory('Player');
-    const player = await PlayerFactory.deploy()
+    player = await PlayerFactory.deploy()
     await player.deployed()
     await player.initializePlayer('deployer', deployer.address);
 
@@ -27,6 +29,15 @@ describe("Lobby", function () {
     await expect(lobby.connect(alice).registerInterest()).to.not.be.reverted
     expect(await lobby.waitingAddresses()).to.have.members([alice.address])
   });
+
+  it.only('registers interest when the sender is a device', async () => {
+    const alice = signers[1]
+    const wallet = Wallet.createRandom().connect(ethers.provider)
+    await alice.sendTransaction({to: await wallet.getAddress(), value: utils.parseEther('0.1')})
+    await player.connect(alice).initializePlayer('test', wallet.address)
+    await lobby.connect(wallet).registerInterest()
+    expect(await lobby.waitingAddresses()).to.have.members([alice.address])
+  })
 
   it('can take addresses to play', async () => {
     const alice = signers[1]

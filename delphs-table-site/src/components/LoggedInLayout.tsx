@@ -9,7 +9,7 @@ const LoggedInLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
   const router = useRouter()
   const isClient = useIsClientSide();
   const { data:signer, isFetched, isLoading, login, isTrustedDevice } = useDeviceSigner()
-
+  
   useEffect(() => {
     if (isClient && isFetched && !isTrustedDevice) {
       router.push('/')

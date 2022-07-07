@@ -24,6 +24,18 @@ export async function getDelphsTableContract(
   return DelphsTable__factory.connect(deploy.address, await getDeployer(hre));
 }
 
+export async function getLobbyContract(
+  hre: HardhatRuntimeEnvironment
+) {
+  const deploy = await import(
+    `../deployments/${hre.network.name}/Lobby.json`
+  );
+
+  const { Lobby__factory } = await import("../typechain");
+
+  return Lobby__factory.connect(deploy.address, await getDeployer(hre));
+}
+
 export async function getDeployer(hre: HardhatRuntimeEnvironment) {
   return (await hre.ethers.getSigners())[0];
 }
