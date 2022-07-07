@@ -1,7 +1,7 @@
 import { providers, Signer } from "ethers";
 import { useEffect } from "react";
 import { useMutation, useQueryClient } from "react-query";
-import { useProvider, useQuery } from "wagmi";
+import { useAccount, useProvider, useQuery } from "wagmi";
 import { Lobby, Lobby__factory } from "../../contracts/typechain";
 import isTestnet from "../utils/isTestnet";
 import { memoize } from "../utils/memoize";
@@ -54,12 +54,31 @@ export const useWaitingPlayers = () => {
   return useQuery(['waiting-players'], async () => {
     console.log('waiting addresses: ', lobbyContract)
     const addrs = await lobbyContract!.waitingAddresses()
-    return Promise.all(addrs.map((addr) => {
-      return player.name(addr)
+    return Promise.all(addrs.map(async (addr) => {
+      return { name: await player.name(addr), addr }
     }))
   }, {
     enabled: !!lobbyContract
   })
+}
+
+export const useWaitForTable = (onTableStarted:(tableId?:string)=>any) => {
+  const { address } = useAccount()
+  const { data: lobbyContract } = useLobbyContract()
+
+  useEffect(() => {
+    if (!address || !lobbyContract) {
+      return
+    }
+    const handle = (_:string, tableId:string, _evt:any) => {
+      onTableStarted(tableId)
+    }
+    const filter = lobbyContract.filters.GameStarted(address, null)
+    lobbyContract.on(filter, handle)
+    return () => {
+      lobbyContract.off(filter, handle)
+    }
+  }, [address, lobbyContract])
 }
 
 export const useRegisterInterest = () => {
