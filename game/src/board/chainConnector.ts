@@ -213,7 +213,7 @@ class ChainConnector extends ScriptTypeBase {
   }
 
   handleStarted(_tableId: string, startedAt: BigNumber, evt?: StartedEvent) {
-    log("received starting event", evt, "setting started at to ");
+    log("received starting event", evt, "setting started at to ", startedAt.toNumber());
     this.startedAt = startedAt;
   }
 }

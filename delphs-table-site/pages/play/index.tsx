@@ -18,7 +18,7 @@ const Play: NextPage = () => {
   const registerInterestMutation = useRegisterInterest()
   const router = useRouter()
 
-  const handleTableRunning = useCallback((tableId:string) => {
+  const handleTableRunning = useCallback((tableId?:string) => {
     router.push(`/play/${tableId}`)
   }, [router])
 

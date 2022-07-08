@@ -1,5 +1,5 @@
 import { providers, Signer } from "ethers";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { useAccount, useProvider, useQuery } from "wagmi";
 import { Lobby, Lobby__factory } from "../../contracts/typechain";
@@ -17,24 +17,27 @@ export const LOBBY_ADDRESS = isTestnet ? TESTNET_LOBBY : MAINNET_LOBBY
 
 const lobbyContract = memoize((signer:Signer, provider: providers.Provider) => {
   const multiCall = multicallWrapper(provider)
-  return multiCall.syncWrap<Lobby>(Lobby__factory.connect(LOBBY_ADDRESS, signer))
+  const unwrapped = Lobby__factory.connect(LOBBY_ADDRESS, signer)
+  const wrapped = multiCall.syncWrap<Lobby>(unwrapped)
+  return wrapped
 })
 
 const useLobbyContract = () => {
   const { data:signer } = useDeviceSigner()
   const provider = useProvider()
 
-  return useQuery(['lobby-contract', signer], () => {
-    return lobbyContract(signer!, provider)
-  }, {
-    enabled: !!signer
-  })  
+  return useMemo(() => {
+    if (!signer) {
+      return undefined
+    }
+    return lobbyContract(signer, provider)
+  }, [signer]) 
 }
 
 export const useWaitingPlayers = () => {
   const wssProvider = useWSSProvider()
   const queryClient = useQueryClient()
-  const { data: lobbyContract } = useLobbyContract()
+  const lobbyContract = useLobbyContract()
   const player = usePlayer()
 
   useEffect(() => {
@@ -44,7 +47,8 @@ export const useWaitingPlayers = () => {
     const handleEvt = () => {
       queryClient.invalidateQueries('waiting-player', { refetchInactive: true })
     }
-    const filter = lobbyContract!.filters.RegisteredInterest(null)
+    console.log('lobby contract: ', lobbyContract)
+    const filter = lobbyContract!.filters["RegisteredInterest(address)"](null)
     lobbyContract!.connect(wssProvider).on(filter, handleEvt)
     return () => {
       lobbyContract.connect(wssProvider).off(filter, handleEvt)
@@ -64,7 +68,7 @@ export const useWaitingPlayers = () => {
 
 export const useWaitForTable = (onTableStarted:(tableId?:string)=>any) => {
   const { address } = useAccount()
-  const { data: lobbyContract } = useLobbyContract()
+  const lobbyContract = useLobbyContract()
 
   useEffect(() => {
     if (!address || !lobbyContract) {
@@ -82,7 +86,7 @@ export const useWaitForTable = (onTableStarted:(tableId?:string)=>any) => {
 }
 
 export const useRegisterInterest = () => {
-  const { data: lobbyContract } = useLobbyContract()
+  const lobbyContract = useLobbyContract()
   const queryClient = useQueryClient()
 
   return useMutation(async () => {

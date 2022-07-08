@@ -4,11 +4,48 @@ import { keccak256 } from "ethers/lib/utils"
 import { task } from 'hardhat/config'
 import { getDelphsTableContract, getDeployer, getLobbyContract, getPlayerContract } from "./helpers"
 import { faker } from '@faker-js/faker'
-import { ethers } from "hardhat"
 
 function hashString(msg:string) {
   return keccak256(Buffer.from(msg))
 }
+
+task('do-table', async (_,hre) => {
+  const lobby = await getLobbyContract(hre)
+  const delphs = await getDelphsTableContract(hre)
+  const deployer = await getDeployer(hre)
+  const player = await getPlayerContract(hre)
+
+  const waiting = await lobby.waitingAddresses()
+  const rounds = 100
+
+  const botNumber = Math.max(10 - waiting.length, 0)
+
+  const playersWithNamesAndSeeds = (await Promise.all(waiting.concat((await getBots(botNumber)).map((b) => b.address)).map(async (address) => {
+    const name = await player.name(address)
+    if (!name) {
+      console.log(`${address} has no name`)
+      return null
+    }
+    return {
+      name,
+      address
+    }
+  })))
+    .filter((p) => !!p)
+    .map((p) => {
+      return {
+        ...p,
+        seed: hashString(`${player!.name}-${player!.address}`)
+      }
+    })
+
+  const id = hashString(`${faker.company.companyName()}: ${faker.company.bs()}}`)
+  const tx = await delphs.createTable(id, playersWithNamesAndSeeds.map((p) => p.address!), playersWithNamesAndSeeds.map((p) => p.seed), rounds, deployer.address)
+  console.log('table id: ', id, 'tx: ', tx.hash)
+  await tx.wait()
+  await (await lobby.takeAddresses(waiting, id)).wait()
+  console.log('done')
+})
 
 task('xxx', async (_, hre) => {
   const player = await getPlayerContract(hre)
