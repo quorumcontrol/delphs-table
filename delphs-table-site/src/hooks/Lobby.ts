@@ -36,26 +36,9 @@ const useLobbyContract = () => {
 
 export const useWaitingPlayers = () => {
   const wssProvider = useWSSProvider()
-  const queryClient = useQueryClient()
   const lobbyContract = useLobbyContract()
   const player = usePlayer()
-
-  useEffect(() => {
-    if (!lobbyContract) {
-      return
-    }
-    const handleEvt = () => {
-      queryClient.invalidateQueries('waiting-player', { refetchInactive: true })
-    }
-    console.log('lobby contract: ', lobbyContract)
-    const filter = lobbyContract!.filters["RegisteredInterest(address)"](null)
-    lobbyContract!.connect(wssProvider).on(filter, handleEvt)
-    return () => {
-      lobbyContract.connect(wssProvider).off(filter, handleEvt)
-    }
-  }, [lobbyContract])
-
-  return useQuery(['waiting-players'], async () => {
+  const query = useQuery(['waiting-players'], async () => {
     console.log('waiting addresses: ', lobbyContract)
     const addrs = await lobbyContract!.waitingAddresses()
     return Promise.all(addrs.map(async (addr) => {
@@ -64,6 +47,24 @@ export const useWaitingPlayers = () => {
   }, {
     enabled: !!lobbyContract
   })
+
+  useEffect(() => {
+    if (!lobbyContract) {
+      return
+    }
+    const handleEvt = () => {
+      query.refetch()
+      // queryClient.invalidateQueries('waiting-player', { refetchInactive: true })
+    }
+    console.log('lobby contract: ', lobbyContract)
+    const filter = lobbyContract!.filters["RegisteredInterest(address)"](null)
+    lobbyContract!.connect(wssProvider).on(filter, handleEvt)
+    return () => {
+      lobbyContract.connect(wssProvider).off(filter, handleEvt)
+    }
+  }, [lobbyContract, query])
+
+  return query
 }
 
 export const useWaitForTable = (onTableStarted:(tableId?:string)=>any) => {
@@ -93,7 +94,8 @@ export const useRegisterInterest = () => {
     if (!lobbyContract) {
       throw new Error('need a loby contract')
     }
-    return lobbyContract.registerInterest().catch((err) => {
+    const tx = await lobbyContract.registerInterest()
+    return tx.wait().catch((err) => {
       console.error('error doing register: ', err)
       throw err
     }).then(() => {

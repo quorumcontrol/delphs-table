@@ -19,6 +19,7 @@ task('do-table', async (_,hre) => {
   const rounds = 100
 
   const botNumber = Math.max(10 - waiting.length, 0)
+  const id = hashString(`${faker.company.companyName()}: ${faker.company.bs()}}`)
 
   const playersWithNamesAndSeeds = (await Promise.all(waiting.concat((await getBots(botNumber)).map((b) => b.address)).map(async (address) => {
     const name = await player.name(address)
@@ -35,11 +36,10 @@ task('do-table', async (_,hre) => {
     .map((p) => {
       return {
         ...p,
-        seed: hashString(`${player!.name}-${player!.address}`)
+        seed: hashString(`${id}-${player!.name}-${player!.address}`)
       }
     })
 
-  const id = hashString(`${faker.company.companyName()}: ${faker.company.bs()}}`)
   const tx = await delphs.createTable(id, playersWithNamesAndSeeds.map((p) => p.address!), playersWithNamesAndSeeds.map((p) => p.seed), rounds, deployer.address)
   console.log('table id: ', id, 'tx: ', tx.hash)
   await tx.wait()
@@ -137,8 +137,9 @@ task('run-game')
   .addParam('id')
   .setAction(async ({ id }, hre) => {
     const delphs = await getDelphsTableContract(hre)
+    const id = hashString(`${faker.company.companyName()}: ${faker.company.bs()}}`)
     const table = await delphs.tables(id)
-    const started = table.startedAt
+≈    const started = table.startedAt
     const len = table.gameLength
     const latest = await delphs.latestRoll()
     const remaining = len.sub(latest.sub(started)).toNumber()
