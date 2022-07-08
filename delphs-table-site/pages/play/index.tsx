@@ -29,7 +29,7 @@ const Play: NextPage = () => {
   const onJoinClick = async () => {
     console.log('join click')
     try {
-      return await registerInterestMutation.mutateAsync()
+      return registerInterestMutation.mutate()
     } finally {
       console.log('tx complete')
     }
@@ -51,7 +51,8 @@ const Play: NextPage = () => {
             return <Text key={`waiting-addr-${waiting.addr}`}>{waiting.name}</Text>
           })}
           </VStack>
-          {!isWaiting && <Button onClick={onJoinClick}>Join Table</Button>}
+          {registerInterestMutation.isLoading && <Spinner />}
+          {!isWaiting && !registerInterestMutation.isLoading && <Button onClick={onJoinClick}>Join Table</Button>}
           {isWaiting &&  (
             <HStack>
               <Text>Waiting</Text>
