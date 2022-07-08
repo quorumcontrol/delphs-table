@@ -97,7 +97,7 @@ export const useRegisterInterest = () => {
       console.error('error doing register: ', err)
       throw err
     }).then(() => {
-      queryClient.invalidateQueries(['waiting-players'], {
+      queryClient.invalidateQueries('waiting-players', {
         refetchInactive: true,
       })
     })
