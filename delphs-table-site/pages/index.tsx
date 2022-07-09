@@ -30,7 +30,14 @@ const Home: NextPage = () => {
             {isClient && isLoading && <Spinner />}
             {isClient && !isLoading && address && !isInitialized && (
               <VStack>
-                <Text>Looks like this is your first time here. Let's get you setup.</Text>
+                <Text>
+                  Looks like this is your first time here. Let's get you setup. You'll
+                  need to have a
+                  <NextLink passHref href="https://boa.larvamaiorum.com/claim">
+                    <Link>a badge of assembly</Link>
+                  </NextLink>
+                  to play.
+                </Text>
                 <NextLink passHref href="/new">
                   <Link>
                     <Button>Create Account</Button>
@@ -42,7 +49,9 @@ const Home: NextPage = () => {
               <VStack spacing="5">
                 <Text>Welcome back {username}.</Text>
                 {deviceSignerIsLoading && <Spinner />}
-                {isTrustedDevice && !deviceSigner && !deviceSignerIsLoading && <Button onClick={login}>Login</Button>}
+                {isTrustedDevice && !deviceSigner && !deviceSignerIsLoading && (
+                  <Button onClick={login}>Login</Button>
+                )}
                 {deviceSigner && (
                   <NextLink passHref href="/play">
                     <Link>

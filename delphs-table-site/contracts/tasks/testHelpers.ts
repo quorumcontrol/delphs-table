@@ -137,9 +137,9 @@ task('run-game')
   .addParam('id')
   .setAction(async ({ id }, hre) => {
     const delphs = await getDelphsTableContract(hre)
-    const id = hashString(`${faker.company.companyName()}: ${faker.company.bs()}}`)
+    await (await delphs.start(id)).wait()
     const table = await delphs.tables(id)
-≈    const started = table.startedAt
+    const started = table.startedAt
     const len = table.gameLength
     const latest = await delphs.latestRoll()
     const remaining = len.sub(latest.sub(started)).toNumber()

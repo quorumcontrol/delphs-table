@@ -22,7 +22,6 @@ const Play: NextPage = () => {
   const { tableId:untypedTableId } = router.query
   const tableId = untypedTableId as string
   const { address } = useAccount();
-  const { data:username } = useUsername(address);
   const isClient = useIsClientSide();
   const iframe = useRef<HTMLIFrameElement>(null);
   const { data:signer } = useDeviceSigner()
@@ -65,9 +64,8 @@ const Play: NextPage = () => {
   return (
     <LoggedInLayout>
       <VStack spacing={10}>
-        <Heading>Play</Heading>
-        <Text>Find the Wootgump, don't get rekt.</Text>
-        <Text>{isClient && username}</Text>
+        <Heading>Find the Wootgump, don't get rekt.</Heading>
+        <Text>Left Mouse (single finger) to orbit, right mouse (2 fingers) to pan, click-and-hold to set your player's destination.</Text>
         {isClient && <Box
           id="game"
           as='iframe'

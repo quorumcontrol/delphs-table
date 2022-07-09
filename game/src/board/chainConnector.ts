@@ -65,12 +65,6 @@ class ChainConnector extends ScriptTypeBase {
       ]);
       log("table", table, 'latest', latest, 'players', players);
 
-      const stats = await Promise.all(
-        players.map(async (addr) => {
-          return this.delphs.statsForPlayer(tableId, addr);
-        })
-      );
-      log("stats", stats);
       const names = await Promise.all(
         players.map(async (addr) => {
           return this.player.name(addr);
@@ -79,17 +73,16 @@ class ChainConnector extends ScriptTypeBase {
       log("names", names);
 
       const warriors = players.map((p, i) => {
-        const warriorStats = stats[i];
         const name = names[i];
-        if (!name || !warriorStats) {
+        if (!name) {
           throw new Error("weirdness, non matching lengths");
         }
         return new Warrior({
           id: p,
           name: name,
-          attack: warriorStats.attack.toNumber(),
-          defense: warriorStats.defense.toNumber(),
-          initialHealth: warriorStats.health.toNumber(),
+          attack: 0,
+          defense: 0,
+          initialHealth: 0,
         });
       });
       log("warriors: ", warriors);
@@ -118,6 +111,22 @@ class ChainConnector extends ScriptTypeBase {
       console.error("error", err);
       throw err;
     }
+  }
+
+  async updateWarriorStats() {
+    if (!this.tableId) {
+      throw new Error('updating without a table')
+    }
+    return Promise.all(
+      this.grid.warriors.map(async (warrior) => {
+        const addr = warrior.id
+        const stats = await this.delphs.statsForPlayer(this.tableId!, addr);
+        warrior.attack = stats.attack.toNumber()
+        warrior.defense = stats.defense.toNumber()
+        warrior.initialHealth = stats.health.toNumber()
+        warrior.currentHealth = stats.health.toNumber()
+      })
+    );
   }
 
   // start and end are inclusive
@@ -177,6 +186,7 @@ class ChainConnector extends ScriptTypeBase {
         if (!this.started) {
           log("starting the game");
           this.started = true;
+          await this.updateWarriorStats()
           this.grid.start(random);
           this.entity.fire("start");
         }

@@ -15,8 +15,14 @@ import Image from "next/image";
 import NextLink from "next/link";
 import logo from "../../assets/images/logo.svg";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import useIsClientSide from "../hooks/useIsClientSide";
+import { useUsername } from "../hooks/Player";
+import { useAccount } from "wagmi";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const isClient = useIsClientSide();
+  const { address } = useAccount();
+  const { data: username } = useUsername(address);
 
   return (
     <Container p={10} maxW="1200">
@@ -32,9 +38,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </NextLink>
         </LinkBox>
         <Spacer />
-        <NextLink href="/" passHref>
-          <Link>coming soon</Link>
-        </NextLink>
+        {isClient && username && (
+          <NextLink href="/" passHref>
+            <Text>{username}</Text>
+          </NextLink>
+        )}
         <Box ml="5">
           <ConnectButton showBalance={false} />
         </Box>
@@ -46,7 +54,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <Box as="footer" mt="200" textAlign="center">
         <Text fontSize="sm">
           <Link href="https://larvamaiorum.com/">
-           A Crypto Colosseum: Larva Maiorum experience.
+            A Crypto Colosseum: Larva Maiorum experience.
           </Link>
         </Text>
       </Box>

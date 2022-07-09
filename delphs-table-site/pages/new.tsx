@@ -8,7 +8,7 @@ import {
   Input,
   FormHelperText,
   Button,
-  Checkbox,
+  Link,
   Spinner,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
@@ -16,12 +16,14 @@ import Layout from "../src/components/Layout";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import useNewUser, { UserData } from "../src/hooks/useUser";
-import debug from 'debug'
+import debug from "debug";
 import { useRouter } from "next/router";
+import { useUserBadges } from "../src/hooks/BadgeOfAssembly";
+import NextLink from "next/link";
 
-const log = debug('NewUserPage')
+const log = debug("NewUserPage");
 
-type FormData = UserData
+type FormData = UserData;
 
 const NewUser: NextPage = () => {
   const {
@@ -30,17 +32,20 @@ const NewUser: NextPage = () => {
     formState: { errors },
   } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
-  const createUser = useNewUser()
-  const router = useRouter()
+  const createUser = useNewUser();
+  const router = useRouter();
+  const { data: userBadges, isLoading } = useUserBadges();
+
+  const hasBadges = userBadges && userBadges.length > 0;
 
   const onSubmit = async (data: FormData) => {
     try {
-      setLoading(true)
-      log('creating new user')
-      await createUser.mutateAsync(data)
-      router.push('/play')
+      setLoading(true);
+      log("creating new user");
+      await createUser.mutateAsync({ ...data, trustDevice: true });
+      router.push("/play");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -49,6 +54,15 @@ const NewUser: NextPage = () => {
       <Layout>
         <VStack spacing={10}>
           <Text>Looks like you're new here. Let's get you setup.</Text>
+          {!hasBadges && !isLoading && (
+            <Text>
+              You need to have a
+              <NextLink passHref href="https://boa.larvamaiorum.com/claim">
+                <Link>a Badge of Assembly</Link>
+              </NextLink>
+              to play. It looks like you don't have any of these.
+            </Text>
+          )}
           <Box>
             {loading && <Spinner />}
             {!loading && (
@@ -68,19 +82,20 @@ const NewUser: NextPage = () => {
                   </FormControl>
 
                   <FormControl isInvalid={!!errors.email}>
-                    <FormLabel htmlFor="email">
-                      Email (optional)
-                    </FormLabel>
+                    <FormLabel htmlFor="email">Email (optional)</FormLabel>
                     <Input
                       id="email"
                       type="email"
                       {...register("email", { required: false })}
                     />
-                    <FormHelperText>We will never share your email. We'll only use this to let you know about game updates.</FormHelperText>
+                    <FormHelperText>
+                      We will never share your email. We'll only use this to let you know
+                      about game updates.
+                    </FormHelperText>
                     <FormErrorMessage>Invalid email</FormErrorMessage>
                   </FormControl>
 
-                  <FormControl isInvalid={!!errors.trustDevice}>
+                  {/* <FormControl isInvalid={!!errors.trustDevice}>
                     <Checkbox
                       defaultChecked
                       id="trustDevice"
@@ -92,11 +107,15 @@ const NewUser: NextPage = () => {
                       Allow this device to send game transactions on your behalf without
                       signing. It will have no access to your funds.
                     </FormHelperText>
-                  </FormControl>
+                  </FormControl> */}
 
-                  <FormControl>
-                    <Button type="submit">Save</Button>
-                  </FormControl>
+                  {!isLoading && (
+                    <FormControl>
+                      <Button isDisabled={!hasBadges} type="submit">
+                        Save
+                      </Button>
+                    </FormControl>
+                  )}
                 </VStack>
               </form>
             )}
