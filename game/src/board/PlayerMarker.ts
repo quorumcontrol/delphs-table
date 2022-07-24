@@ -16,9 +16,6 @@ class PlayerMarker extends ScriptTypeBase {
   threeDName: any // textMesh script
 
   initialize() {
-    if (!this.entity.render) {
-      throw new Error('no render')
-    }
     this.name = mustFindByName(this.entity, "Name")
     this.healthText = mustFindByName(this.entity, "HealthText")
     this.gumpText = mustFindByName(this.entity, "GumpText")

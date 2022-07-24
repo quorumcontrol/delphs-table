@@ -248,7 +248,7 @@ class CellState extends ScriptTypeBase {
     const rndX = randomBounded(this.xSize);
     const rndZ = randomBounded(this.zSize);
 
-    playerMarker.setLocalPosition(rndX, 5, rndZ);
+    playerMarker.setLocalPosition(rndX, 22.5, rndZ);
     playerMarker.setRotation(0, randomBounded(0.2), 0, 1);
     this.playerMarkers[warrior.id] = playerMarker as Entity;
     return playerMarker;
