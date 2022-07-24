@@ -92,7 +92,7 @@ class BattleUI extends ScriptTypeBase {
     this.entity.addChild(playerMarker);
     this.getScript<PlayerMarker>(playerMarker as Entity, 'playerMarker')?.setWarrior(warrior)
 
-    playerMarker.setLocalScale(0.1, 10, 0.1);
+    playerMarker.setLocalScale(0.1, 22.5, 0.1);
 
     playerMarker.setLocalPosition(...standardPlaces[index]);
     playerMarker.setRotation(0, randomBounded(0.2), 0, 1);
