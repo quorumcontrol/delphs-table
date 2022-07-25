@@ -20,6 +20,7 @@ import debug from "debug";
 import { useRouter } from "next/router";
 import { useUserBadges } from "../src/hooks/BadgeOfAssembly";
 import NextLink from "next/link";
+import { useAccount } from "wagmi";
 
 const log = debug("NewUserPage");
 
@@ -34,7 +35,9 @@ const NewUser: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const createUser = useNewUser();
   const router = useRouter();
-  const { data: userBadges, isLoading } = useUserBadges();
+  const { address } = useAccount()
+  const { data: userBadges, isLoading } = useUserBadges(address);
+  console.log("user badges", userBadges, isLoading)
 
   const hasBadges = userBadges && userBadges.length > 0;
 
@@ -56,11 +59,11 @@ const NewUser: NextPage = () => {
           <Text>Looks like you're new here. Let's get you setup.</Text>
           {!hasBadges && !isLoading && (
             <Text>
-              You need to have a
+              You need to have{" "}
               <NextLink passHref href="https://boa.larvamaiorum.com/claim">
                 <Link>a Badge of Assembly</Link>
               </NextLink>
-              to play. It looks like you don't have any of these.
+              {" "}to play. It looks like you don't have any of these.
             </Text>
           )}
           <Box>
@@ -81,7 +84,7 @@ const NewUser: NextPage = () => {
                     <FormErrorMessage>Username is required.</FormErrorMessage>
                   </FormControl>
 
-                  <FormControl isInvalid={!!errors.email}>
+                  {/* <FormControl isInvalid={!!errors.email}>
                     <FormLabel htmlFor="email">Email (optional)</FormLabel>
                     <Input
                       id="email"
@@ -93,7 +96,7 @@ const NewUser: NextPage = () => {
                       about game updates.
                     </FormHelperText>
                     <FormErrorMessage>Invalid email</FormErrorMessage>
-                  </FormControl>
+                  </FormControl> */}
 
                   {/* <FormControl isInvalid={!!errors.trustDevice}>
                     <Checkbox

@@ -64,10 +64,10 @@ const Play: NextPage = () => {
           <Heading>Play</Heading>
           <Text>Find the Wootgump, don't get rekt.</Text>
           <VStack p="4" spacing="2" borderWidth={1} borderColor="white">
-            <Text>Waiting players</Text>
+            <Text mb="4">Other waiting players</Text>
             {isLoading && <Spinner />}
             {((isClient && !isLoading && waitingPlayers) || []).map((waiting) => {
-              return <Text key={`waiting-addr-${waiting.addr}`}>{waiting.name}</Text>;
+              return <Text fontSize="md" key={`waiting-addr-${waiting.addr}`}>{waiting.name}</Text>;
             })}
           </VStack>
           {registerInterestMutation.isLoading && <Spinner />}

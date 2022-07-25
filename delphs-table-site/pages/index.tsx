@@ -31,11 +31,11 @@ const Home: NextPage = () => {
               <VStack>
                 <Text>
                   Looks like this is your first time here. Let's get you setup. You'll
-                  need to have a
+                  need to have{" "}
                   <NextLink passHref href="https://boa.larvamaiorum.com/claim">
-                    <Link>a badge of assembly</Link>
+                    <Link>a Badge of Assembly</Link>
                   </NextLink>
-                  to play.
+                  {" "}to play.
                 </Text>
                 <NextLink passHref href="/new">
                   <Link>

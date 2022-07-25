@@ -3,7 +3,7 @@ import { useMemo } from "react"
 import { useInfiniteQuery, useQuery } from "react-query"
 import { useProvider } from "wagmi"
 import { BadgeOfAssembly, BadgeOfAssembly__factory } from "../../badge-of-assembly-types/typechain"
-import isTestnet from "../utils/isTestnet"
+import { isTestnet } from "../utils/networks"
 import { memoize } from "../utils/memoize"
 import ThenArg from "../utils/ThenArg"
 import multicallWrapper from "../utils/multicallWrapper"
@@ -30,6 +30,7 @@ export const useUserBadges = (address?:string) => {
   const badgeOfAssembly = useBadgeOfAssembly()
   const fetchUserTokens = async () => {
     const userTokenIds = await badgeOfAssembly.userTokens(address!)
+    console.log('user tokens: ', userTokenIds, address)
     return Promise.all(userTokenIds.map(async (tokenId) => {
       const metadata = await badgeOfAssembly.metadata(tokenId)
       return {

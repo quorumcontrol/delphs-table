@@ -93,7 +93,7 @@ export const useDeviceSigner = () => {
       throw new Error("no signer yet");
     }
 
-    deviceSigner = new Wallet(devicePrivateKey).connect(provider);
+    deviceSigner = new Wallet(devicePrivateKey).connect(signer.provider);
     console.log("decrypted", "device address: ", await deviceSigner.getAddress());
 
     return deviceSigner;
