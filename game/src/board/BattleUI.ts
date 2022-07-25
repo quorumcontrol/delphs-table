@@ -8,7 +8,7 @@ import mustFindByName from "../utils/mustFindByName";
 import { randomBounded } from "../utils/randoms";
 import PlayerMarker from "./PlayerMarker";
 
-const standardPlaces:[number,number,number][] = [[0.2,43,0.35],[0.15,43.5,-0.2]]
+const standardPlaces:[number,number,number][] = [[0.3,43,0.5],[-0.1,43.5,-0.4]]
 
 @createScript("battleUI")
 class BattleUI extends ScriptTypeBase {
@@ -90,12 +90,20 @@ class BattleUI extends ScriptTypeBase {
     playerMarker.name = `${this.battle?.battleId()}-marker-${warrior.id}`;
 
     this.entity.addChild(playerMarker);
-    this.getScript<PlayerMarker>(playerMarker as Entity, 'playerMarker')?.setWarrior(warrior)
+    const playerMarkerScript = this.getScript<PlayerMarker>(playerMarker as Entity, 'playerMarker')
+    if (!playerMarkerScript) {
+      throw new Error('missing script')
+    }
+    playerMarkerScript.setWarrior(warrior)
+    setTimeout(() => {
+      playerMarkerScript.setBattling(true)
+    }, randomBounded(1000)) // don't set it immediately here, so that the animations don't sync up
 
     playerMarker.setLocalScale(0.1, 10, 0.1);
 
     playerMarker.setLocalPosition(...standardPlaces[index]);
-    playerMarker.setRotation(0, randomBounded(0.2), 0, 1);
+    const yRotation = (index == 1) ? 180 : 0;
+    playerMarker.setLocalEulerAngles(0, yRotation, 0);
     return playerMarker;
   }
 }

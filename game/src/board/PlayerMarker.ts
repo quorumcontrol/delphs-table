@@ -26,9 +26,17 @@ class PlayerMarker extends ScriptTypeBase {
     if (this.warrior) {
       this.healthText.element!.text = `${Math.ceil(this.warrior.currentHealth)}`
       this.gumpText.element!.text = `Gump: ${this.warrior.wootgumpBalance}`
-      // if (this.warrior.currentHealth <= 0) {
-      //   console.log('dead')
-      // }
+    }
+  }
+
+  setBattling(isBattling: boolean) {
+    try {
+      const model = mustFindByName(this.entity, 'HumanoidModel')
+      model.anim?.setBoolean('isBattling', isBattling)
+    } catch(err) {
+      // sometimes during replay this item is destroyed before there is a chance foor the isBattling
+      // to be set by the battleUI. This just ignores that error
+      console.error('error setBattling: ', err)
     }
   }
   
