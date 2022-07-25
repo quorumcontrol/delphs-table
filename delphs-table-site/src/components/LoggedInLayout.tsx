@@ -8,13 +8,13 @@ import Layout from './Layout'
 const LoggedInLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter()
   const isClient = useIsClientSide();
-  const { data:signer, isFetched, isLoading, login, isTrustedDevice } = useDeviceSigner()
+  const { data:signer, isFetched, isLoading, login } = useDeviceSigner()
   
   useEffect(() => {
-    if (isClient && isFetched && !isTrustedDevice) {
+    if (isClient && isFetched && !signer) {
       router.push('/')
     }
-  }, [isClient, isFetched, isTrustedDevice])
+  }, [isClient, isFetched])
 
   if (!isClient || (!signer && isLoading)) {
     return (
@@ -24,7 +24,7 @@ const LoggedInLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
     )
   }
 
-  if (!signer && !isLoading && isTrustedDevice) {
+  if (!signer && !isLoading) {
     return (
       <Layout>
         <Text>You must sign in</Text>

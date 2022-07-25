@@ -15,11 +15,11 @@ import { useAccount } from "wagmi";
 import Layout from "../../src/components/Layout";
 import LoggedInLayout from "../../src/components/LoggedInLayout";
 import {
+  useLobbyContract,
   useRegisterInterest,
   useWaitForTable,
   useWaitingPlayers,
 } from "../../src/hooks/Lobby";
-import { useUsername } from "../../src/hooks/Player";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
 import { useDeviceSigner } from "../../src/hooks/useUser";
 
@@ -28,7 +28,9 @@ const Play: NextPage = () => {
   const { data: signer } = useDeviceSigner();
   const isClient = useIsClientSide();
   const { data: waitingPlayers, isLoading } = useWaitingPlayers();
-  const registerInterestMutation = useRegisterInterest();
+  const lobbyContract = useLobbyContract()
+  console.log("lobby: ", lobbyContract)
+  const registerInterestMutation = useRegisterInterest({ lobbyContract });
   const router = useRouter();
 
   const handleTableRunning = useCallback(

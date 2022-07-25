@@ -22,7 +22,7 @@ const lobbyContract = memoize((signer:Signer, provider: providers.Provider) => {
   return wrapped
 })
 
-const useLobbyContract = () => {
+export const useLobbyContract = () => {
   const { data:signer } = useDeviceSigner()
   const provider = useProvider()
 
@@ -86,8 +86,7 @@ export const useWaitForTable = (onTableStarted:(tableId?:string)=>any) => {
   }, [address, lobbyContract])
 }
 
-export const useRegisterInterest = () => {
-  const lobbyContract = useLobbyContract()
+export const useRegisterInterest = ({ lobbyContract }:{ lobbyContract?:Lobby }) => {
   const queryClient = useQueryClient()
 
   return useMutation(async () => {

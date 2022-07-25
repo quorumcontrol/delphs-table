@@ -16,7 +16,6 @@ const Home: NextPage = () => {
     data: deviceSigner,
     isLoading: deviceSignerIsLoading,
     login,
-    isTrustedDevice,
   } = useDeviceSigner();
   const isClient = useIsClientSide();
 
@@ -49,7 +48,7 @@ const Home: NextPage = () => {
               <VStack spacing="5">
                 <Text>Welcome back {username}.</Text>
                 {deviceSignerIsLoading && <Spinner />}
-                {isTrustedDevice && !deviceSigner && !deviceSignerIsLoading && (
+                {!deviceSigner && !deviceSignerIsLoading && (
                   <Button onClick={login}>Login</Button>
                 )}
                 {deviceSigner && (

@@ -14,8 +14,15 @@ const DEVICE_ID_KEY = "delphs:deviceId";
 const signatureMessage = (deviceId: string) =>
   `I trust this device on Delphs Table. id: ${deviceId}`;
 // const encryptedDeviceKey = localStorage.getItem(ENCRYPTED_KEY)
-const getDeviceId = () =>
-  typeof localStorage !== "undefined" ? localStorage.getItem(DEVICE_ID_KEY) : undefined;
+const getDeviceId = () => {
+  let deviceId = localStorage.getItem(DEVICE_ID_KEY);
+  if (!deviceId) {
+    deviceId = randomBytes(8).toString("hex")
+    localStorage.setItem(DEVICE_ID_KEY, deviceId);
+  }
+  return deviceId;
+}
+
 
 let devicePrivateKey: Buffer | undefined = undefined;
 let deviceSigner: Wallet | undefined = undefined;
@@ -36,8 +43,6 @@ export const useDeviceSigner = () => {
   const queryClient = useQueryClient();
   const provider = useProvider();
   const player = usePlayer();
-
-  const isTrustedDevice = !!getDeviceId();
 
   const login = useCallback(async () => {
     const deviceId = getDeviceId();
@@ -68,6 +73,7 @@ export const useDeviceSigner = () => {
       });
     }
     console.log('invaliating query')
+    queryClient.cancelQueries(["device-signer"])
     queryClient.invalidateQueries(["device-signer"], {
       refetchInactive: true
     });
@@ -100,7 +106,7 @@ export const useDeviceSigner = () => {
       enabled: !!devicePrivateKey && !!provider,
     }
   );
-  return { ...query, login, isTrustedDevice };
+  return { ...query, login };
 };
 
 export const useDeviceKey = () => {
@@ -110,11 +116,7 @@ export const useDeviceKey = () => {
     if (!isClientSide) {
       return undefined;
     }
-    const deviceId = localStorage.getItem(DEVICE_ID_KEY);
-    if (deviceId) {
-      return deviceId;
-    }
-    localStorage.setItem(DEVICE_ID_KEY, randomBytes(8).toString("hex"));
+    return getDeviceId()
   }, [isClientSide]);
 };
 
