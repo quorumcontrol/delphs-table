@@ -52,13 +52,17 @@ task('xxx', async (_, hre) => {
   // const filter = player.filters.DeviceAdded(null, '0xe109BDB684c84ee13e973cd837d9f27193A42cbE')
   // const evts = await player.queryFilter(filter)
   // console.log(evts)
-  const lobby = await getLobbyContract(hre)
-  const wallet = new Wallet('0x7ff2e7a183c3f83a46f83ad83c308810c2c16845c589f505002f5262a4a5696e').connect(hre.ethers.provider)
-  console.log(await player.deviceToPlayer('0x126DAa9f37b065a4c67c3e51c4547bfC125A910e'))
-  console.log(await player.deviceToPlayer(await wallet.getAddress()))
+  // const lobby = await getLobbyContract(hre)
+  // const wallet = new Wallet('0x7ff2e7a183c3f83a46f83ad83c308810c2c16845c589f505002f5262a4a5696e').connect(hre.ethers.provider)
+  // console.log(await player.deviceToPlayer('0x126DAa9f37b065a4c67c3e51c4547bfC125A910e'))
+  // console.log(await player.deviceToPlayer(await wallet.getAddress()))
   // const tx = await lobby.connect(wallet).registerInterest()
   // console.log('tx hash: ', tx.hash)
   // console.log(await tx.wait())
+
+
+  const tx = await hre.ethers.provider.getTransaction('0xba9144cd2942dd4ae33f8c6e5e6a76e5143354cc0369fa3d2d05731bf61702d5')
+  console.log('tx: ', tx)
 })
 
 task('start')

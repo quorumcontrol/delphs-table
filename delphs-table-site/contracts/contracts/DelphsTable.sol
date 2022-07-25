@@ -133,21 +133,21 @@ contract DelphsTable is AccessControl {
 
         return
             Stats({
-                attack: determinsticRandom(
+                attack: uintMax(determinsticRandom(
                     rnd,
                     abi.encodePacked(playerAddress, "a"),
                     1000
-                ),
-                defense: determinsticRandom(
+                ), 400),
+                defense: uintMax(determinsticRandom(
                     rnd,
                     abi.encodePacked(playerAddress, "d"),
-                    900
-                ),
-                health: determinsticRandom(
+                    800
+                ), 200),
+                health: uintMax(determinsticRandom(
                     rnd,
                     abi.encodePacked(playerAddress, "h"),
-                    2000
-                )
+                    700
+                ), 200)
             });
     }
 
@@ -197,6 +197,13 @@ contract DelphsTable is AccessControl {
             }
         }
         return false;
+    }
+
+    function uintMax(uint a, uint b) private pure returns (uint) {
+        if (a >= b) {
+            return a;
+        }
+        return b;
     }
 
     function msgSender() private view returns (address) {
