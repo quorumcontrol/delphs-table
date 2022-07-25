@@ -14,7 +14,7 @@ import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Script from "next/script";
 import { skaleTestnet, skaleMainnet } from "../src/utils/SkaleChains";
-import isTestnet from "../src/utils/isTestnet";
+import { isTestnet } from "../src/utils/networks";
 import "../styles/video-background.css";
 
 const { chains, provider } = configureChains(

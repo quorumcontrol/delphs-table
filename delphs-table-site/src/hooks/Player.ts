@@ -3,14 +3,11 @@ import { useMemo } from "react";
 import { useQuery } from "react-query";
 import { useProvider } from "wagmi";
 import { Player, Player__factory } from "../../contracts/typechain";
-import isTestnet from "../utils/isTestnet";
+import { addresses } from "../utils/networks";
 import { memoize } from "../utils/memoize";
 import multicallWrapper from "../utils/multicallWrapper";
 
-const TESTNET_ADDRESS = "0x0710E6e9869cEbc2666af31c89602dC0f9ffB663";
-const MAINNET_ADDRESS = "";
-
-export const PLAYER_ADDRESS = isTestnet ? TESTNET_ADDRESS : MAINNET_ADDRESS;
+export const PLAYER_ADDRESS = addresses().Player
 
 const playerContract = memoize((provider: providers.Provider) => {
   const multiCall = multicallWrapper(provider)

@@ -1,6 +1,6 @@
 import { providers } from "ethers";
 import MulticallWrapper from "kasumah-multicall";
-import isTestnet from "./isTestnet";
+import { isTestnet } from "./networks";
 import { memoize } from "./memoize";
 import { skaleMainnet, skaleTestnet } from "./SkaleChains";
 

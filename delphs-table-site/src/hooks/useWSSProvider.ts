@@ -1,6 +1,6 @@
 import { providers } from "ethers"
 import { Chain } from "wagmi"
-import isTestnet from "../utils/isTestnet"
+import { isTestnet } from "../utils/networks"
 import { memoize } from "../utils/memoize"
 import { skaleMainnet, skaleTestnet } from "../utils/SkaleChains"
 
