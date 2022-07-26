@@ -98,9 +98,12 @@ class ChainConnector extends ScriptTypeBase {
 
       this.boardGenerate.setGrid(grid);
 
-      if (table.startedAt.gt(0) && latest.gte(table.startedAt)) {
-        log("table has already started, lets catch up");
+      if (table.startedAt.gt(0)) {
         this.startedAt = table.startedAt;
+      }
+
+      if (table.startedAt.gt(0) && latest.gte(table.startedAt)) {
+        log("table is already in progress, let's catch up");
         await this.catchUp(table.startedAt, latest);
       }
 
