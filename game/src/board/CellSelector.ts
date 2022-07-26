@@ -10,7 +10,7 @@ const TRACE_AT = 0.8 // number of seconds to start tracing
 class CellSelector extends ScriptTypeBase {
 
   timer = 0
-  startedEvent?:{x:number,y:number}
+  startedEvent?: { x: number, y: number }
 
   initialize() {
     if (!this.entity.camera) {
@@ -34,26 +34,27 @@ class CellSelector extends ScriptTypeBase {
     window.addEventListener('message', this.handleExternalEvent)
   }
 
-  handleExternalEvent(evt:any) {
+  handleExternalEvent(evt: any) {
     console.log('external message: ', evt)
     const config = getGameConfig(this.app.root)
     if (config.grid?.isOver()) {
       return
     }
     const msg = JSON.parse(evt.data)
-    switch(msg.type) {
+    switch (msg.type) {
       case "destinationStarting":
-        config.currentPlayer?.setPendingDestination(msg.x,msg.y)
+        config.currentPlayer?.setPendingDestination(msg.x, msg.y)
         break;
       case "destinationComplete":
         config.currentPlayer?.clearPendingDestination()
+        config.currentPlayer?.setDestination(msg.x, msg.y)
         break;
       default:
         console.error('unknown message type: ', msg)
     }
   }
 
-  update(dt:number) {
+  update(dt: number) {
     if (this.startedEvent) {
       this.timer += dt
       if (this.timer > TRACE_AT) {
@@ -64,19 +65,19 @@ class CellSelector extends ScriptTypeBase {
     }
   }
 
-  clearEvent(e:pc.MouseEvent) {
+  clearEvent(e: pc.MouseEvent) {
     this.startedEvent = undefined
     e.event.preventDefault()
   }
 
-  mouseDown(e:pc.MouseEvent) {
-    this.startedEvent = {x: e.x, y: e.y}
+  mouseDown(e: pc.MouseEvent) {
+    this.startedEvent = { x: e.x, y: e.y }
   }
 
-  touchStart(e:pc.TouchEvent) {
+  touchStart(e: pc.TouchEvent) {
     // Only perform the raycast if there is one finger on the screen
     if (e.touches.length === 1) {
-      this.startedEvent = {x:e.touches[0].x, y: e.touches[0].y }
+      this.startedEvent = { x: e.touches[0].x, y: e.touches[0].y }
     }
     e.event.preventDefault();
   }
@@ -118,13 +119,12 @@ class CellSelector extends ScriptTypeBase {
       if (!cellState.cell) {
         throw new Error('no cell')
       }
-      console.log('posting message')
-      console.log('window.parent', window.parent)
+      console.log('posting message from game')
       parent.postMessage(JSON.stringify({
         type: 'destinationSetter',
         data: [cellState.cell.x, cellState.cell.y],
       }), '*')
-      currentPlayer.pendingDestination = [cellState.cell.x, cellState.cell.y]
+      currentPlayer.setPendingDestination(cellState.cell.x, cellState.cell.y)
     }
   }
 }

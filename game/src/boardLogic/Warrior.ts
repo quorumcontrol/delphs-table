@@ -85,6 +85,10 @@ class Warrior implements WarriorStats {
     this.destination = [x, y];
   }
 
+  setDestination(x:number, y:number) {
+    this.destination = [x,y]
+  }
+
   setPendingDestination(x:number, y:number) {
     this.pendingDestination = [x, y]
   }
