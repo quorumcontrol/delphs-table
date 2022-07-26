@@ -9,11 +9,12 @@ import Warrior from "../boardLogic/Warrior";
 import Grid from "../boardLogic/Grid";
 import BoardGenerate from "./BoardGenerate";
 import { DiceRolledEvent, StartedEvent } from "../typechain/DelphsTable";
+import addresses from '../deployments/skaletest/addresses.json'
 
 const log = console.log; //debug('chainConnector')
 
-const DELPHS_TESTNET_ADDRESS = "0xA43F838DbE5558ba8836589b8052648D668BFBbD";
-const PLAYER_TESTNET_ADDRESS = "0x0710E6e9869cEbc2666af31c89602dC0f9ffB663";
+const DELPHS_TESTNET_ADDRESS = addresses.DelphsTable
+const PLAYER_TESTNET_ADDRESS = addresses.Player
 
 @createScript("chainConnector")
 class ChainConnector extends ScriptTypeBase {

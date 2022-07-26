@@ -1,0 +1,392 @@
+{
+  "address": "0x9274f3b56045C9FD6b3CCae364A309dD3B1dbA83",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "UsernameAlreadyClaimed",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "device",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "player",
+          "type": "address"
+        }
+      ],
+      "name": "DeviceAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "device",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "player",
+          "type": "address"
+        }
+      ],
+      "name": "DeviceRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "player",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "username",
+          "type": "string"
+        }
+      ],
+      "name": "PlayerInitialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "player",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "username",
+          "type": "string"
+        }
+      ],
+      "name": "UserNameChanged",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address payable",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "addDevice",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "deviceToPlayer",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "devices",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "address payable",
+          "name": "device",
+          "type": "address"
+        }
+      ],
+      "name": "initializePlayer",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "player",
+          "type": "address"
+        }
+      ],
+      "name": "isInitialized",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "name",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "removeDevice",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        }
+      ],
+      "name": "setUsername",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "name": "usernameToAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x14ae4d4ad2a0a54559e2bfe1816ffdd9b1ff90765f92d137e3e88a7568a13296",
+  "receipt": {
+    "to": "0x0000000000000000000000000000000000000000",
+    "from": "0x905173B6C0A51925d3C9B619466c623c754Fb7BB",
+    "contractAddress": "0x9274f3b56045C9FD6b3CCae364A309dD3B1dbA83",
+    "transactionIndex": 0,
+    "gasUsed": "619556",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x141e348ca2eb1a0413f8299fb4408dc1310978c8396c5d8cd27cc08e6241dd25",
+    "transactionHash": "0x14ae4d4ad2a0a54559e2bfe1816ffdd9b1ff90765f92d137e3e88a7568a13296",
+    "logs": [],
+    "blockNumber": 1438233,
+    "cumulativeGasUsed": "619556",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "97157c461dfce63d17d6ba0db57d1208",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.14+commit.80d49f37\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"UsernameAlreadyClaimed\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"device\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"player\",\"type\":\"address\"}],\"name\":\"DeviceAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"device\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"player\",\"type\":\"address\"}],\"name\":\"DeviceRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"player\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"username\",\"type\":\"string\"}],\"name\":\"PlayerInitialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"player\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"username\",\"type\":\"string\"}],\"name\":\"UserNameChanged\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address payable\",\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"addDevice\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"deviceToPlayer\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"devices\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"},{\"internalType\":\"address payable\",\"name\":\"device\",\"type\":\"address\"}],\"name\":\"initializePlayer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"player\",\"type\":\"address\"}],\"name\":\"isInitialized\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"removeDevice\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_name\",\"type\":\"string\"}],\"name\":\"setUsername\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"name\":\"usernameToAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/Player.sol\":\"Player\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/Player.sol\":{\"content\":\"//SPDX-License-Identifier: Unlicense\\npragma solidity ^0.8.0;\\n\\nimport \\\"./interfaces/IPlayer.sol\\\";\\n\\nerror UsernameAlreadyClaimed();\\n\\ncontract Player is IPlayer {\\n    event DeviceAdded(address indexed device, address indexed player);\\n    event DeviceRemoved(address indexed device, address indexed player);\\n    event PlayerInitialized(address indexed player, string username);\\n    event UserNameChanged(address indexed player, string username);\\n\\n    mapping (address => mapping(address => bool)) public devices;\\n    mapping (address => string) public name;\\n    mapping (string => address) public usernameToAddress;\\n    mapping (address => address) public deviceToPlayer;\\n\\n    function setUsername(string calldata _name) public returns (bool) {\\n        address sender = deviceToPlayer[msg.sender];\\n        address existing = usernameToAddress[_name];\\n        if (!(existing == sender || existing == address(0))) {\\n            revert UsernameAlreadyClaimed();\\n        }\\n        delete usernameToAddress[name[sender]];\\n        name[sender] = _name;\\n        usernameToAddress[_name] = sender;\\n        emit UserNameChanged(sender, _name);\\n        return true;\\n    }\\n\\n    function addDevice(address payable addr) public payable returns (bool) {\\n        devices[msg.sender][addr] = true;\\n        deviceToPlayer[addr] = msg.sender;\\n        addr.transfer(msg.value);\\n        emit DeviceAdded(addr, msg.sender);\\n        return true;\\n    }\\n\\n    function removeDevice(address addr) external returns (bool) {\\n        delete devices[msg.sender][addr];\\n        delete deviceToPlayer[addr];\\n        emit DeviceRemoved(addr, msg.sender);\\n        return true;\\n    }\\n\\n    function initializePlayer(string calldata _name, address payable device) payable external returns (bool) {\\n        deviceToPlayer[msg.sender] = msg.sender; // map the player themselves as a device\\n        setUsername(_name);\\n        addDevice(device);\\n        emit PlayerInitialized(msg.sender, _name);\\n        return true;\\n    }\\n\\n    function isInitialized(address player) external view returns (bool) {\\n        return deviceToPlayer[player] == player;\\n    }\\n\\n}\\n\",\"keccak256\":\"0xc172d420e0087eeba7adeae38a74ba7487e9d107e40d033e50fc339306f1d6cb\",\"license\":\"Unlicense\"},\"contracts/interfaces/IPlayer.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface IPlayer {\\n\\n  function deviceToPlayer(address device) external view returns (address player);\\n\\n}\",\"keccak256\":\"0x35f8d4db856c72e25d7b4278ce054f88ba514f385d4eea73fb04ba6826a3bd1e\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50610a3f806100206000396000f3fe6080604052600436106100865760003560e01c80634bf7494b116100595780634bf7494b14610177578063b111cb841461018a578063d60b347f1461019d578063ed59313a146101d9578063f825f143146101f957600080fd5b8063019848921461008b5780631a1bd7e4146100c15780631f7b63241461010957806336ec7a7714610129575b600080fd5b34801561009757600080fd5b506100ab6100a636600461069a565b61023a565b6040516100b891906106be565b60405180910390f35b3480156100cd57600080fd5b506100f96100dc366004610713565b600060208181529281526040808220909352908152205460ff1681565b60405190151581526020016100b8565b34801561011557600080fd5b506100f961012436600461069a565b6102d4565b34801561013557600080fd5b5061015f61014436600461069a565b6003602052600090815260409020546001600160a01b031681565b6040516001600160a01b0390911681526020016100b8565b6100f9610185366004610795565b610346565b6100f961019836600461069a565b6103c9565b3480156101a957600080fd5b506100f96101b836600461069a565b6001600160a01b039081166000818152600360205260409020549091161490565b3480156101e557600080fd5b506100f96101f43660046107ec565b61047b565b34801561020557600080fd5b5061015f610214366004610844565b80516020818301810180516002825292820191909301209152546001600160a01b031681565b60016020526000908152604090208054610253906108f5565b80601f016020809104026020016040519081016040528092919081815260200182805461027f906108f5565b80156102cc5780601f106102a1576101008083540402835291602001916102cc565b820191906000526020600020905b8154815290600101906020018083116102af57829003601f168201915b505050505081565b336000818152602081815260408083206001600160a01b038616808552908352818420805460ff19169055600390925280832080546001600160a01b0319169055519192917f96928e7ed6b140d9e04d8779b58861204239a7ad15d9a6c7052f7347d911c89a908490a3506001919050565b33600081815260036020526040812080546001600160a01b031916909217909155610371848461047b565b5061037b826103c9565b50336001600160a01b03167faeaec344d68529c7c12e9c1588bf127f95ee2dbe0a7f121e44e870c7e6e9092b85856040516103b792919061092f565b60405180910390a25060019392505050565b336000818152602081815260408083206001600160a01b038616808552908352818420805460ff19166001179055600390925280832080546001600160a01b03191690941790935591519091903480156108fc029184818181858888f1935050505015801561043c573d6000803e3d6000fd5b5060405133906001600160a01b038416907ffe60226b9c524c49ff3f012aea1c16166e24616cba2a64f33ad1befdf911891890600090a3506001919050565b336000908152600360205260408082205490516001600160a01b039091169082906002906104ac908790879061095e565b908152604051908190036020019020546001600160a01b03908116915082168114806104df57506001600160a01b038116155b6104fc57604051634804ba5b60e01b815260040160405180910390fd5b6001600160a01b0382166000908152600160205260409081902090516002916105249161096e565b908152604080516020928190038301902080546001600160a01b03191690556001600160a01b0384166000908152600190925290206105649086866105e9565b50816002868660405161057892919061095e565b90815260405190819003602001812080546001600160a01b039384166001600160a01b0319909116179055908316907f9df5b3e0e60fff9b971dcb675e7193614408ac9f4ed701f4dfd04863c66beac1906105d6908890889061092f565b60405180910390a2506001949350505050565b8280546105f5906108f5565b90600052602060002090601f016020900481019282610617576000855561065d565b82601f106106305782800160ff1982351617855561065d565b8280016001018555821561065d579182015b8281111561065d578235825591602001919060010190610642565b5061066992915061066d565b5090565b5b80821115610669576000815560010161066e565b6001600160a01b038116811461069757600080fd5b50565b6000602082840312156106ac57600080fd5b81356106b781610682565b9392505050565b600060208083528351808285015260005b818110156106eb578581018301518582016040015282016106cf565b818111156106fd576000604083870101525b50601f01601f1916929092016040019392505050565b6000806040838503121561072657600080fd5b823561073181610682565b9150602083013561074181610682565b809150509250929050565b60008083601f84011261075e57600080fd5b50813567ffffffffffffffff81111561077657600080fd5b60208301915083602082850101111561078e57600080fd5b9250929050565b6000806000604084860312156107aa57600080fd5b833567ffffffffffffffff8111156107c157600080fd5b6107cd8682870161074c565b90945092505060208401356107e181610682565b809150509250925092565b600080602083850312156107ff57600080fd5b823567ffffffffffffffff81111561081657600080fd5b6108228582860161074c565b90969095509350505050565b634e487b7160e01b600052604160045260246000fd5b60006020828403121561085657600080fd5b813567ffffffffffffffff8082111561086e57600080fd5b818401915084601f83011261088257600080fd5b8135818111156108945761089461082e565b604051601f8201601f19908116603f011681019083821181831017156108bc576108bc61082e565b816040528281528760208487010111156108d557600080fd5b826020860160208301376000928101602001929092525095945050505050565b600181811c9082168061090957607f821691505b60208210810361092957634e487b7160e01b600052602260045260246000fd5b50919050565b60208152816020820152818360408301376000818301604090810191909152601f909201601f19160101919050565b8183823760009101908152919050565b600080835481600182811c91508083168061098a57607f831692505b602080841082036109a957634e487b7160e01b86526022600452602486fd5b8180156109bd57600181146109ce576109fb565b60ff198616895284890196506109fb565b60008a81526020902060005b868110156109f35781548b8201529085019083016109da565b505084890196505b50949897505050505050505056fea26469706673582212205a89002927acd2d8d746036bee020b44ca3ce6df4d90def995bc3a6f4c1b183264736f6c634300080e0033",
+  "deployedBytecode": "0x6080604052600436106100865760003560e01c80634bf7494b116100595780634bf7494b14610177578063b111cb841461018a578063d60b347f1461019d578063ed59313a146101d9578063f825f143146101f957600080fd5b8063019848921461008b5780631a1bd7e4146100c15780631f7b63241461010957806336ec7a7714610129575b600080fd5b34801561009757600080fd5b506100ab6100a636600461069a565b61023a565b6040516100b891906106be565b60405180910390f35b3480156100cd57600080fd5b506100f96100dc366004610713565b600060208181529281526040808220909352908152205460ff1681565b60405190151581526020016100b8565b34801561011557600080fd5b506100f961012436600461069a565b6102d4565b34801561013557600080fd5b5061015f61014436600461069a565b6003602052600090815260409020546001600160a01b031681565b6040516001600160a01b0390911681526020016100b8565b6100f9610185366004610795565b610346565b6100f961019836600461069a565b6103c9565b3480156101a957600080fd5b506100f96101b836600461069a565b6001600160a01b039081166000818152600360205260409020549091161490565b3480156101e557600080fd5b506100f96101f43660046107ec565b61047b565b34801561020557600080fd5b5061015f610214366004610844565b80516020818301810180516002825292820191909301209152546001600160a01b031681565b60016020526000908152604090208054610253906108f5565b80601f016020809104026020016040519081016040528092919081815260200182805461027f906108f5565b80156102cc5780601f106102a1576101008083540402835291602001916102cc565b820191906000526020600020905b8154815290600101906020018083116102af57829003601f168201915b505050505081565b336000818152602081815260408083206001600160a01b038616808552908352818420805460ff19169055600390925280832080546001600160a01b0319169055519192917f96928e7ed6b140d9e04d8779b58861204239a7ad15d9a6c7052f7347d911c89a908490a3506001919050565b33600081815260036020526040812080546001600160a01b031916909217909155610371848461047b565b5061037b826103c9565b50336001600160a01b03167faeaec344d68529c7c12e9c1588bf127f95ee2dbe0a7f121e44e870c7e6e9092b85856040516103b792919061092f565b60405180910390a25060019392505050565b336000818152602081815260408083206001600160a01b038616808552908352818420805460ff19166001179055600390925280832080546001600160a01b03191690941790935591519091903480156108fc029184818181858888f1935050505015801561043c573d6000803e3d6000fd5b5060405133906001600160a01b038416907ffe60226b9c524c49ff3f012aea1c16166e24616cba2a64f33ad1befdf911891890600090a3506001919050565b336000908152600360205260408082205490516001600160a01b039091169082906002906104ac908790879061095e565b908152604051908190036020019020546001600160a01b03908116915082168114806104df57506001600160a01b038116155b6104fc57604051634804ba5b60e01b815260040160405180910390fd5b6001600160a01b0382166000908152600160205260409081902090516002916105249161096e565b908152604080516020928190038301902080546001600160a01b03191690556001600160a01b0384166000908152600190925290206105649086866105e9565b50816002868660405161057892919061095e565b90815260405190819003602001812080546001600160a01b039384166001600160a01b0319909116179055908316907f9df5b3e0e60fff9b971dcb675e7193614408ac9f4ed701f4dfd04863c66beac1906105d6908890889061092f565b60405180910390a2506001949350505050565b8280546105f5906108f5565b90600052602060002090601f016020900481019282610617576000855561065d565b82601f106106305782800160ff1982351617855561065d565b8280016001018555821561065d579182015b8281111561065d578235825591602001919060010190610642565b5061066992915061066d565b5090565b5b80821115610669576000815560010161066e565b6001600160a01b038116811461069757600080fd5b50565b6000602082840312156106ac57600080fd5b81356106b781610682565b9392505050565b600060208083528351808285015260005b818110156106eb578581018301518582016040015282016106cf565b818111156106fd576000604083870101525b50601f01601f1916929092016040019392505050565b6000806040838503121561072657600080fd5b823561073181610682565b9150602083013561074181610682565b809150509250929050565b60008083601f84011261075e57600080fd5b50813567ffffffffffffffff81111561077657600080fd5b60208301915083602082850101111561078e57600080fd5b9250929050565b6000806000604084860312156107aa57600080fd5b833567ffffffffffffffff8111156107c157600080fd5b6107cd8682870161074c565b90945092505060208401356107e181610682565b809150509250925092565b600080602083850312156107ff57600080fd5b823567ffffffffffffffff81111561081657600080fd5b6108228582860161074c565b90969095509350505050565b634e487b7160e01b600052604160045260246000fd5b60006020828403121561085657600080fd5b813567ffffffffffffffff8082111561086e57600080fd5b818401915084601f83011261088257600080fd5b8135818111156108945761089461082e565b604051601f8201601f19908116603f011681019083821181831017156108bc576108bc61082e565b816040528281528760208487010111156108d557600080fd5b826020860160208301376000928101602001929092525095945050505050565b600181811c9082168061090957607f821691505b60208210810361092957634e487b7160e01b600052602260045260246000fd5b50919050565b60208152816020820152818360408301376000818301604090810191909152601f909201601f19160101919050565b8183823760009101908152919050565b600080835481600182811c91508083168061098a57607f831692505b602080841082036109a957634e487b7160e01b86526022600452602486fd5b8180156109bd57600181146109ce576109fb565b60ff198616895284890196506109fb565b60008a81526020902060005b868110156109f35781548b8201529085019083016109da565b505084890196505b50949897505050505050505056fea26469706673582212205a89002927acd2d8d746036bee020b44ca3ce6df4d90def995bc3a6f4c1b183264736f6c634300080e0033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 2071,
+        "contract": "contracts/Player.sol:Player",
+        "label": "devices",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_address,t_mapping(t_address,t_bool))"
+      },
+      {
+        "astId": 2075,
+        "contract": "contracts/Player.sol:Player",
+        "label": "name",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_address,t_string_storage)"
+      },
+      {
+        "astId": 2079,
+        "contract": "contracts/Player.sol:Player",
+        "label": "usernameToAddress",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_string_memory_ptr,t_address)"
+      },
+      {
+        "astId": 2083,
+        "contract": "contracts/Player.sol:Player",
+        "label": "deviceToPlayer",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_address,t_address)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_address)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => mapping(address => bool))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_address,t_bool)"
+      },
+      "t_mapping(t_address,t_string_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => string)",
+        "numberOfBytes": "32",
+        "value": "t_string_storage"
+      },
+      "t_mapping(t_string_memory_ptr,t_address)": {
+        "encoding": "mapping",
+        "key": "t_string_memory_ptr",
+        "label": "mapping(string => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      },
+      "t_string_memory_ptr": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}
