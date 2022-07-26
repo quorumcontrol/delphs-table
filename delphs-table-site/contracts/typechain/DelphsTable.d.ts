@@ -24,6 +24,7 @@ interface DelphsTableInterface extends ethers.utils.Interface {
     "ADMIN_ROLE()": FunctionFragment;
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "blockOfRoll(uint256)": FunctionFragment;
+    "createAndStart(bytes32,address[],bytes32[],uint256,address)": FunctionFragment;
     "createTable(bytes32,address[],bytes32[],uint256,address)": FunctionFragment;
     "destinations(bytes32,uint256,uint256)": FunctionFragment;
     "destinationsForRoll(bytes32,uint256)": FunctionFragment;
@@ -57,6 +58,10 @@ interface DelphsTableInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "blockOfRoll",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "createAndStart",
+    values: [BytesLike, string[], BytesLike[], BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "createTable",
@@ -125,6 +130,10 @@ interface DelphsTableInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "blockOfRoll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "createAndStart",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -275,6 +284,15 @@ export class DelphsTable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    createAndStart(
+      id: BytesLike,
+      playerAddresses: string[],
+      statSeeds: BytesLike[],
+      length: BigNumberish,
+      owner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     createTable(
       id: BytesLike,
       playerAddresses: string[],
@@ -406,6 +424,15 @@ export class DelphsTable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  createAndStart(
+    id: BytesLike,
+    playerAddresses: string[],
+    statSeeds: BytesLike[],
+    length: BigNumberish,
+    owner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   createTable(
     id: BytesLike,
     playerAddresses: string[],
@@ -532,6 +559,15 @@ export class DelphsTable extends BaseContract {
       arg0: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    createAndStart(
+      id: BytesLike,
+      playerAddresses: string[],
+      statSeeds: BytesLike[],
+      length: BigNumberish,
+      owner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     createTable(
       id: BytesLike,
@@ -748,6 +784,15 @@ export class DelphsTable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    createAndStart(
+      id: BytesLike,
+      playerAddresses: string[],
+      statSeeds: BytesLike[],
+      length: BigNumberish,
+      owner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     createTable(
       id: BytesLike,
       playerAddresses: string[],
@@ -851,6 +896,15 @@ export class DelphsTable extends BaseContract {
     blockOfRoll(
       arg0: BigNumberish,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    createAndStart(
+      id: BytesLike,
+      playerAddresses: string[],
+      statSeeds: BytesLike[],
+      length: BigNumberish,
+      owner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     createTable(

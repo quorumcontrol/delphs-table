@@ -11,7 +11,6 @@ error AlreadyExists();
 error AlreadyStarted();
 
 contract DelphsTable is AccessControl {
-
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
     event DiceRolled(
@@ -101,6 +100,17 @@ contract DelphsTable is AccessControl {
         emit TableCreated(id);
     }
 
+    function createAndStart(
+        bytes32 id,
+        address[] calldata playerAddresses,
+        bytes32[] calldata statSeeds,
+        uint256 length,
+        address owner
+    ) external {
+        createTable(id, playerAddresses, statSeeds, length, owner);
+        start(id);
+    }
+
     function start(bytes32 id) public returns (uint256) {
         Table storage table = tables[id];
         if (msgSender() != table.owner) {
@@ -109,7 +119,7 @@ contract DelphsTable is AccessControl {
         if (table.startedAt > 0) {
             revert AlreadyStarted();
         }
-        uint firstRoll = latestRoll + 1;
+        uint256 firstRoll = latestRoll + 1;
         table.startedAt = firstRoll;
         emit Started(id, firstRoll);
         return firstRoll;
@@ -134,21 +144,30 @@ contract DelphsTable is AccessControl {
 
         return
             Stats({
-                attack: uintMax(determinsticRandom(
-                    rnd,
-                    abi.encodePacked(playerAddress, "a"),
-                    1000
-                ), 400),
-                defense: uintMax(determinsticRandom(
-                    rnd,
-                    abi.encodePacked(playerAddress, "d"),
-                    800
-                ), 200),
-                health: uintMax(determinsticRandom(
-                    rnd,
-                    abi.encodePacked(playerAddress, "h"),
-                    700
-                ), 200)
+                attack: uintMax(
+                    determinsticRandom(
+                        rnd,
+                        abi.encodePacked(playerAddress, "a"),
+                        1000
+                    ),
+                    400
+                ),
+                defense: uintMax(
+                    determinsticRandom(
+                        rnd,
+                        abi.encodePacked(playerAddress, "d"),
+                        800
+                    ),
+                    200
+                ),
+                health: uintMax(
+                    determinsticRandom(
+                        rnd,
+                        abi.encodePacked(playerAddress, "h"),
+                        700
+                    ),
+                    200
+                )
             });
     }
 
@@ -200,7 +219,7 @@ contract DelphsTable is AccessControl {
         return false;
     }
 
-    function uintMax(uint a, uint b) private pure returns (uint) {
+    function uintMax(uint256 a, uint256 b) private pure returns (uint256) {
         if (a >= b) {
             return a;
         }
