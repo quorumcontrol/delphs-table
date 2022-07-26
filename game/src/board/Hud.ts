@@ -111,10 +111,13 @@ class Hud extends ScriptTypeBase {
           if (battleTick.isOver) {
             return interestingEvents.push(`${battleTick.winner?.name} defeats ${battleTick.loser?.name}`)
           }
-          // if (battleTick.attackRoll > battleTick.defenseRoll) {
-          //   return interestingEvents.push(`${battleTick.attacker.name} attacks ${battleTick.defender.name} for ${battleTick.attackRoll - battleTick.defenseRoll} damage.`)
-          // }
-          // interestingEvents.push(`${battleTick.defender.name} blocks ${battleTick.attacker.name}.`)
+          if (player && (battleTick.attacker.id === player || battleTick.defender.id === player)) {
+            if (battleTick.attackRoll > battleTick.defenseRoll) {
+              return interestingEvents.push(`${battleTick.attacker.name} attacks ${battleTick.defender.name} for ${battleTick.attackRoll - battleTick.defenseRoll} damage.`)
+            }
+            interestingEvents.push(`${battleTick.defender.name} blocks ${battleTick.attacker.name}.`)
+          }
+
         })
       })
     })
