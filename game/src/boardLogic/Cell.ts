@@ -196,10 +196,10 @@ class Cell {
   private chanceOfSpawningWootgump() {
     let multiplier = 1
     if (this.wootgump.length > 0) {
-      multiplier += 3
+      multiplier += 10
     }
     if (this.anyNearbyCellHasWootgump()) {
-      multiplier += 2
+     multiplier += 1
     }
     return this.grid.chanceOfSpawningWootGumpIn1000 * multiplier
   }
@@ -208,7 +208,7 @@ class Cell {
     for (let xDelta = -1; xDelta <= 1; xDelta++) {
       for (let yDelta = -1; yDelta <= 1; yDelta++) {
         if (xDelta === 0 && yDelta === 0) {
-          continue; // skip *this* cell and only look ar surrounding
+          continue; // skip *this* cell and only look at surrounding
         }
         const row = this.grid.grid[this.x + xDelta]
         if (!row) {

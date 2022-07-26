@@ -87,11 +87,11 @@ class BattleUI extends ScriptTypeBase {
   }
 
   private placeWarrior(warrior: Warrior, index:number) {
-    const playerMarker = this.playerMarkerTemplate.clone();
+    const playerMarker:Entity = this.playerMarkerTemplate.clone() as Entity;
     playerMarker.name = `${this.battle?.battleId()}-marker-${warrior.id}`;
 
     this.entity.addChild(playerMarker);
-    const playerMarkerScript = this.getScript<PlayerMarker>(playerMarker as Entity, 'playerMarker')
+    const playerMarkerScript = this.getScript<PlayerMarker>(playerMarker, 'playerMarker')
     if (!playerMarkerScript) {
       throw new Error('missing script')
     }
@@ -103,8 +103,13 @@ class BattleUI extends ScriptTypeBase {
     playerMarker.setLocalScale(0.1, 10, 0.1);
 
     playerMarker.setLocalPosition(...standardPlaces[index]);
-    const yRotation = (index == 1) ? 180 : 0;
-    playerMarker.setLocalEulerAngles(0, yRotation, 0);
+    playerMarker.setLocalEulerAngles(0, 0, 0);
+
+    if (index === 1) {
+      // flip around one of the characters so they are facing the other one.
+      const humanoid = mustFindByName(playerMarker, 'Humanoid')
+      humanoid.setEulerAngles(0, 180, 0);
+    }
     return playerMarker;
   }
 }

@@ -26,7 +26,7 @@ class Grid {
 
   sizeX
   sizeY
-  chanceOfSpawningWootGumpIn1000 = 10
+  chanceOfSpawningWootGumpIn1000 = 5
   currentSeed:string
 
   warriors: Warrior[]
