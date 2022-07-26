@@ -1,22 +1,10 @@
-import { BigNumber, providers } from "ethers"
+import { BigNumber } from "ethers"
 import { useMemo } from "react"
 import { useInfiniteQuery, useQuery } from "react-query"
 import { useProvider } from "wagmi"
-import { BadgeOfAssembly, BadgeOfAssembly__factory } from "../../badge-of-assembly-types/typechain"
-import { isTestnet } from "../utils/networks"
-import { memoize } from "../utils/memoize"
+import { BadgeOfAssembly } from "../../badge-of-assembly-types/typechain"
 import ThenArg from "../utils/ThenArg"
-import multicallWrapper from "../utils/multicallWrapper"
-
-const TESTNET_BOA = "0xd8929b56BaD3B72068B682F19Cdeff92b2f5164B";
-const MAINNET_BOA = "0x2C6FD25071Fd516947682f710f6e9F5eD610207F";
-
-export const BOA_ADDRESS = isTestnet ? TESTNET_BOA : MAINNET_BOA
-
-const badgeOfAssemblyContract = memoize((provider:providers.Provider) => {
-  const multiCall = multicallWrapper(provider)
-  return multiCall.syncWrap<BadgeOfAssembly>(BadgeOfAssembly__factory.connect(BOA_ADDRESS, provider))
-})
+import { badgeOfAssemblyContract } from "../utils/contracts"
 
 const useBadgeOfAssembly = () => {
   const provider = useProvider()

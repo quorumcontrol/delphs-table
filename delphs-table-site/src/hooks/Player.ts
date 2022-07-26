@@ -1,18 +1,7 @@
-import { providers } from "ethers";
 import { useMemo } from "react";
 import { useQuery } from "react-query";
 import { useProvider } from "wagmi";
-import { Player, Player__factory } from "../../contracts/typechain";
-import { addresses } from "../utils/networks";
-import { memoize } from "../utils/memoize";
-import multicallWrapper from "../utils/multicallWrapper";
-
-export const PLAYER_ADDRESS = addresses().Player
-
-export const playerContract = memoize((provider: providers.Provider) => {
-  const multiCall = multicallWrapper(provider)
-  return multiCall.syncWrap<Player>(Player__factory.connect(PLAYER_ADDRESS, provider))
-})
+import { playerContract } from "../utils/contracts";
 
 export const usePlayer = () => {
   const provider = useProvider();

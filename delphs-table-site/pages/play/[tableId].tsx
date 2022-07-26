@@ -4,12 +4,10 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef } from "react";
 import { useAccount } from "wagmi";
 import { DelphsTable__factory } from "../../contracts/typechain";
-import Layout from "../../src/components/Layout";
 import LoggedInLayout from "../../src/components/LoggedInLayout";
-import { DELPHS_TABLE_ADDRESS } from "../../src/hooks/DelphsTable";
-import { useUsername } from "../../src/hooks/Player";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
 import { useDeviceSigner } from "../../src/hooks/useUser";
+import { delphsContract } from "../../src/utils/contracts";
 import SingletonQueue from "../../src/utils/singletonQueue";
 
 const txQueue = new SingletonQueue()
@@ -34,7 +32,7 @@ const Play: NextPage = () => {
     if (!signer) {
       throw new Error('no signer')
     }
-    const delphsTable = DelphsTable__factory.connect(DELPHS_TABLE_ADDRESS, signer)
+    const delphsTable = delphsContract(signer, signer.provider)
     console.log('signer addr: ', await signer.getAddress(), 'params', tableId, appEvent.data[0], appEvent.data[1])
     txQueue.push(async () => {
       const tx = await delphsTable.setDestination(tableId, appEvent.data[0], appEvent.data[1])

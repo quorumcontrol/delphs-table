@@ -1,11 +1,10 @@
 import { Chain } from "@rainbow-me/rainbowkit";
-import skaleLogo from '../../assets/images/SKALE_logo.svg'
 
 export const skaleTestnet: Chain = {
   id: 132333505628089,
   name: 'Skale Testnet',
   network: 'skaletestnet',
-  iconUrl: skaleLogo.path,
+  iconUrl: '/SKALE_logo.svg',
   iconBackground: '#fff',
   nativeCurrency: {
     decimals: 18,
@@ -26,7 +25,7 @@ export const skaleMainnet: Chain = {
   id: 1032942172,
   name: 'Crypto Rome Network',
   network: 'cryptorome',
-  iconUrl: skaleLogo.path,
+  iconUrl: '/SKALE_logo.svg',
   iconBackground: '#fff',
   nativeCurrency: {
     decimals: 18,

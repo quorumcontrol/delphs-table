@@ -1,23 +1,11 @@
-import { providers, Signer } from "ethers";
 import { useEffect, useMemo } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { useAccount, useProvider, useQuery } from "wagmi";
-import { Lobby, Lobby__factory } from "../../contracts/typechain";
-import { addresses } from "../utils/networks";
-import { memoize } from "../utils/memoize";
-import multicallWrapper from "../utils/multicallWrapper";
+import { Lobby } from "../../contracts/typechain";
+import { lobbyContract } from "../utils/contracts";
 import { usePlayer } from "./Player";
 import { useDeviceSigner } from "./useUser";
 import useWSSProvider from "./useWSSProvider";
-
-export const LOBBY_ADDRESS = addresses().Lobby
-
-export const lobbyContract = memoize((signer: Signer, provider: providers.Provider) => {
-  const multiCall = multicallWrapper(provider);
-  const unwrapped = Lobby__factory.connect(LOBBY_ADDRESS, signer);
-  const wrapped = multiCall.syncWrap<Lobby>(unwrapped);
-  return wrapped;
-});
 
 export const useLobbyContract = () => {
   const { data: signer } = useDeviceSigner();
