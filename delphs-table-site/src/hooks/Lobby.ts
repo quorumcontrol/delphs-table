@@ -12,7 +12,7 @@ import useWSSProvider from "./useWSSProvider";
 
 export const LOBBY_ADDRESS = addresses().Lobby
 
-const lobbyContract = memoize((signer: Signer, provider: providers.Provider) => {
+export const lobbyContract = memoize((signer: Signer, provider: providers.Provider) => {
   const multiCall = multicallWrapper(provider);
   const unwrapped = Lobby__factory.connect(LOBBY_ADDRESS, signer);
   const wrapped = multiCall.syncWrap<Lobby>(unwrapped);

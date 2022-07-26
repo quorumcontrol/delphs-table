@@ -9,7 +9,7 @@ import multicallWrapper from "../utils/multicallWrapper";
 
 export const PLAYER_ADDRESS = addresses().Player
 
-const playerContract = memoize((provider: providers.Provider) => {
+export const playerContract = memoize((provider: providers.Provider) => {
   const multiCall = multicallWrapper(provider)
   return multiCall.syncWrap<Player>(Player__factory.connect(PLAYER_ADDRESS, provider))
 })
