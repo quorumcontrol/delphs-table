@@ -193,9 +193,42 @@ class Cell {
     }, {} as RejuvanizeReport)
   }
 
+  private chanceOfSpawningWootgump() {
+    let multiplier = 1
+    if (this.wootgump.length > 0) {
+      multiplier += 3
+    }
+    if (this.anyNearbyCellHasWootgump()) {
+      multiplier += 2
+    }
+    return this.grid.chanceOfSpawningWootGumpIn1000 * multiplier
+  }
+
+  private anyNearbyCellHasWootgump() {
+    for (let xDelta = -1; xDelta <= 1; xDelta++) {
+      for (let yDelta = -1; yDelta <= 1; yDelta++) {
+        if (xDelta === 0 && yDelta === 0) {
+          continue; // skip *this* cell and only look ar surrounding
+        }
+        const row = this.grid.grid[this.x + xDelta]
+        if (!row) {
+          continue;
+        }
+        const cell = row[this.y + yDelta]
+        if (!cell) {
+          continue;
+        }
+        if (cell.wootgump.length > 0) {
+          return true
+        }
+      }
+    }
+    return false
+  }
+
   private maybeSpawnWootgump(tick:number, seed:string) {
     const wootGumpRoll = this.rand(1000, tick, seed)
-    if (wootGumpRoll <= this.grid.chanceOfSpawningWootGumpIn1000) {
+    if (wootGumpRoll <= this.chanceOfSpawningWootgump()) {
       this.log('adding wootgump')
       const wootgump = new Wootgump()
       this.wootgump.push(wootgump)
