@@ -27,4 +27,14 @@ describe("OrchestratorState", function () {
     await expect(orchestrator.remove(bytes32)).to.not.be.reverted
     expect(await orchestrator.all()).to.have.lengthOf(0)
   })
+
+  it('bulk removes', async () => {
+    const second = keccak256(Buffer.from('test2'))
+
+    await expect(orchestrator.add(bytes32)).to.not.be.reverted
+    await expect(orchestrator.add(second)).to.not.be.reverted
+    expect(await orchestrator.all()).to.have.lengthOf(2)
+    await expect(orchestrator.bulkRemove([bytes32, second])).to.not.be.reverted
+    expect(await orchestrator.all()).to.have.lengthOf(0)
+  })
 });

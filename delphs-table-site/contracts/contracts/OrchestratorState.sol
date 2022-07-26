@@ -40,6 +40,14 @@ contract OrchestratorState is AccessControl {
     return true;
   }
 
+  function bulkRemove(bytes32[] calldata tableIds) external returns (bool) {
+    uint256 len = tableIds.length;
+    for (uint256 i = 0; i < len; i++) {
+      _activeTables.remove(tableIds[i]);
+    }
+    return true;
+  }
+
   function all() external view returns (bytes32[] memory ids) {
     return _activeTables.values();
   }

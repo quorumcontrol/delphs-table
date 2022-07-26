@@ -25,6 +25,7 @@ interface OrchestratorStateInterface extends ethers.utils.Interface {
     "DEFAULT_ADMIN_ROLE()": FunctionFragment;
     "add(bytes32)": FunctionFragment;
     "all()": FunctionFragment;
+    "bulkRemove(bytes32[])": FunctionFragment;
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
@@ -44,6 +45,10 @@ interface OrchestratorStateInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "add", values: [BytesLike]): string;
   encodeFunctionData(functionFragment: "all", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "bulkRemove",
+    values: [BytesLike[]]
+  ): string;
   encodeFunctionData(
     functionFragment: "getRoleAdmin",
     values: [BytesLike]
@@ -77,6 +82,7 @@ interface OrchestratorStateInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "add", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "all", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "bulkRemove", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRoleAdmin",
     data: BytesLike
@@ -184,6 +190,11 @@ export class OrchestratorState extends BaseContract {
 
     all(overrides?: CallOverrides): Promise<[string[]] & { ids: string[] }>;
 
+    bulkRemove(
+      tableIds: BytesLike[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     grantRole(
@@ -232,6 +243,11 @@ export class OrchestratorState extends BaseContract {
 
   all(overrides?: CallOverrides): Promise<string[]>;
 
+  bulkRemove(
+    tableIds: BytesLike[],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   grantRole(
@@ -276,6 +292,11 @@ export class OrchestratorState extends BaseContract {
     add(tableId: BytesLike, overrides?: CallOverrides): Promise<boolean>;
 
     all(overrides?: CallOverrides): Promise<string[]>;
+
+    bulkRemove(
+      tableIds: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
 
@@ -395,6 +416,11 @@ export class OrchestratorState extends BaseContract {
 
     all(overrides?: CallOverrides): Promise<BigNumber>;
 
+    bulkRemove(
+      tableIds: BytesLike[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     getRoleAdmin(
       role: BytesLike,
       overrides?: CallOverrides
@@ -448,6 +474,11 @@ export class OrchestratorState extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     all(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    bulkRemove(
+      tableIds: BytesLike[],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     getRoleAdmin(
       role: BytesLike,
