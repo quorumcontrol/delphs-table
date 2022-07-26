@@ -98,7 +98,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <link rel="icon" href="/favicon.ico" />
               <meta
                 name="description"
-                content="Generate badges for the warriors attending your events."
+                content="A game of harvest and battle."
               />
               <link rel="icon" href="/favicon.ico" />
               <meta
@@ -108,7 +108,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               />
               <meta
                 property="og:description"
-                content="Generate badges for the warriors attending your events."
+                content="A game of harvest and battle."
                 key="ogdesc"
               />
 
