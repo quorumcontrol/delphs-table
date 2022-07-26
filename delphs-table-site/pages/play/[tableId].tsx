@@ -35,9 +35,26 @@ const Play: NextPage = () => {
     const delphsTable = delphsContract(signer, signer.provider)
     console.log('signer addr: ', await signer.getAddress(), 'params', tableId, appEvent.data[0], appEvent.data[1])
     txQueue.push(async () => {
+      console.log('content window: ', iframe.current?.contentWindow)
+      iframe.current?.contentWindow?.postMessage(JSON.stringify({
+        type: 'destinationStarting',
+        x: appEvent.data[0],
+        y: appEvent.data[1],
+      }), '*')
       const tx = await delphsTable.setDestination(tableId, appEvent.data[0], appEvent.data[1])
       console.log('destination tx: ', tx)
-      return tx.wait()
+      const receiptPromise = tx.wait()
+      receiptPromise.then((receipt) => {
+        console.log('destination receipt: ', receipt)
+        iframe.current?.contentWindow?.postMessage(JSON.stringify({
+          type: 'destinationComplete',
+          x: appEvent.data[0],
+          y: appEvent.data[1],
+        }), '*')
+      }).catch((err) => {
+        console.error('error with destinationSetter', err)
+      })
+      return receiptPromise
     })
   }, [signer])
 
@@ -48,13 +65,15 @@ const Play: NextPage = () => {
         if (appEvent.type === 'destinationSetter') {
           console.log('set destination received')
           await handleMessage(appEvent)
-          iframe.current?.contentWindow?.postMessage('OK')
+          // iframe.current?.contentWindow?.postMessage()
         }
       }
 
     }
+    console.log('add destination listener')
     window.addEventListener('message', handler)
     return () => {
+      console.log('removing destination listener')
       window.removeEventListener('message', handler)
     }
   }, [signer])
