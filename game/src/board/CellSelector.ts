@@ -18,6 +18,8 @@ class CellSelector extends ScriptTypeBase {
       return;
     }
 
+    this.handleExternalEvent = this.handleExternalEvent.bind(this)
+
     // Add a mousedown event handler
     this.app.mouse.on(pc.EVENT_MOUSEDOWN, this.mouseDown, this);
     this.app.mouse.on(pc.EVENT_MOUSEUP, this.clearEvent, this);
@@ -27,6 +29,27 @@ class CellSelector extends ScriptTypeBase {
     if (this.app.touch) {
       this.app.touch.on(pc.EVENT_TOUCHSTART, this.touchStart, this);
       this.app.touch.on(pc.EVENT_TOUCHMOVE, this.clearEvent, this);
+    }
+
+    window.addEventListener('message', this.handleExternalEvent)
+  }
+
+  handleExternalEvent(evt:any) {
+    console.log('external message: ', evt)
+    const config = getGameConfig(this.app.root)
+    if (config.grid?.isOver()) {
+      return
+    }
+    const msg = JSON.parse(evt.data)
+    switch(msg.type) {
+      case "destinationStarting":
+        config.currentPlayer?.setPendingDestination(msg.x,msg.y)
+        break;
+      case "destinationComplete":
+        config.currentPlayer?.clearPendingDestination()
+        break;
+      default:
+        console.error('unknown message type: ', msg)
     }
   }
 
