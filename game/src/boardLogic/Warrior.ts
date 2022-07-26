@@ -86,6 +86,7 @@ class Warrior implements WarriorStats {
   }
 
   setDestination(x:number, y:number) {
+    console.log('setting destination: ', x, y, ' existing: ', this.destination)
     this.destination = [x,y]
   }
 

@@ -39,18 +39,18 @@ class BattleUI extends ScriptTypeBase {
       throw new Error('missing sound component for battle')
     }
     this.soundComponent = soundComponent
-    // Object.values(this.soundComponent.slots).forEach((slot) => {
-    //   slot.play()
-    // })
+    Object.values(this.soundComponent.slots).forEach((slot) => {
+      slot.play()
+    })
   }
 
   destroy() {
     if (this.battle) {
       this.battle.off('tick', this.handleTick)
     }
-    // Object.values(this.soundComponent.slots).forEach((slot) => {
-    //   slot.stop()
-    // })
+    Object.values(this.soundComponent.slots).forEach((slot) => {
+      slot.stop()
+    })
     this.entity.destroy()
   }
 

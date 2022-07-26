@@ -22,8 +22,6 @@ export const badgeOfAssemblyContract = memoize((provider:providers.Provider) => 
   return multiCall.syncWrap<BadgeOfAssembly>(BadgeOfAssembly__factory.connect(BOA_ADDRESS, provider))
 })
 
-
-
 export const lobbyContract = memoize((signer: Signer, provider: providers.Provider) => {
   const multiCall = multicallWrapper(provider);
   const unwrapped = Lobby__factory.connect(addresses().Lobby, signer);

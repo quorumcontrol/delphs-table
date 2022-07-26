@@ -87,6 +87,7 @@ class CellState extends ScriptTypeBase {
       currentPlayerDest[1] == this.cell.y
     ) {
       if (!this.destinationElement) {
+        console.log('current player dest: ', currentPlayerDest)
         console.log(this.cell.x, this.cell.y, 'setting destination element')
         this.destinationElement = this.destinationTemplate.clone() as Entity;
         this.entity.addChild(this.destinationElement);
