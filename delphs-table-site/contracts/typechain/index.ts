@@ -10,6 +10,7 @@ export type { DiceRoller } from "./DiceRoller";
 export type { IDiceRoller } from "./IDiceRoller";
 export type { IPlayer } from "./IPlayer";
 export type { Lobby } from "./Lobby";
+export type { OrchestratorState } from "./OrchestratorState";
 export type { Player } from "./Player";
 export type { TestDiceRoller } from "./TestDiceRoller";
 
@@ -22,5 +23,6 @@ export { DiceRoller__factory } from "./factories/DiceRoller__factory";
 export { IDiceRoller__factory } from "./factories/IDiceRoller__factory";
 export { IPlayer__factory } from "./factories/IPlayer__factory";
 export { Lobby__factory } from "./factories/Lobby__factory";
+export { OrchestratorState__factory } from "./factories/OrchestratorState__factory";
 export { Player__factory } from "./factories/Player__factory";
 export { TestDiceRoller__factory } from "./factories/TestDiceRoller__factory";

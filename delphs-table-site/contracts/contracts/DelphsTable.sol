@@ -11,6 +11,7 @@ error AlreadyExists();
 error AlreadyStarted();
 
 contract DelphsTable is AccessControl {
+
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
     event DiceRolled(

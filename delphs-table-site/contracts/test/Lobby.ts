@@ -30,7 +30,7 @@ describe("Lobby", function () {
     expect(await lobby.waitingAddresses()).to.have.members([alice.address])
   });
 
-  it.only('registers interest when the sender is a device', async () => {
+  it('registers interest when the sender is a device', async () => {
     const alice = signers[1]
     const wallet = Wallet.createRandom().connect(ethers.provider)
     await alice.sendTransaction({to: await wallet.getAddress(), value: utils.parseEther('0.1')})
