@@ -31,7 +31,9 @@ class Hud extends ScriptTypeBase {
     }
     const text = [`Round ${grid.tick}/${grid.gameLength}\n`]
       .concat(
-        grid.warriors?.map((w) => {
+        grid.warriors?.sort((a,b) => {
+          return b.wootgumpBalance - a.wootgumpBalance
+        }).map((w) => {
           const prefix = config.currentPlayer?.id === w.id ? "-> " : "";
           return `${prefix}${w.name} (A: ${w.attack}, D: ${w.defense}): ${Math.ceil(
             w.currentHealth
@@ -103,13 +105,16 @@ class Hud extends ScriptTypeBase {
           interestingEvents.push(`You harvested ${outcome.harvested[player].length} Wootgump`)
         }
         outcome.battleTicks.forEach((battleTick) => {
+          if (battleTick.tick === battleTick.startingTick) {
+            interestingEvents.push(`${battleTick.attacker.name} battles ${battleTick.defender.name}`)
+          }
           if (battleTick.isOver) {
             return interestingEvents.push(`${battleTick.winner?.name} defeats ${battleTick.loser?.name}`)
           }
-          if (battleTick.attackRoll > battleTick.defenseRoll) {
-            return interestingEvents.push(`${battleTick.attacker.name} attacks ${battleTick.defender.name} for ${battleTick.attackRoll - battleTick.defenseRoll} damage.`)
-          }
-          interestingEvents.push(`${battleTick.defender.name} blocks ${battleTick.attacker.name}.`)
+          // if (battleTick.attackRoll > battleTick.defenseRoll) {
+          //   return interestingEvents.push(`${battleTick.attacker.name} attacks ${battleTick.defender.name} for ${battleTick.attackRoll - battleTick.defenseRoll} damage.`)
+          // }
+          // interestingEvents.push(`${battleTick.defender.name} blocks ${battleTick.attacker.name}.`)
         })
       })
     })

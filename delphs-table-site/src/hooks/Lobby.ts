@@ -47,7 +47,6 @@ export const useWaitingPlayers = () => {
       query.refetch();
       // queryClient.invalidateQueries('waiting-player', { refetchInactive: true })
     };
-    console.log("lobby contract: ", lobbyContract);
     const filter = lobbyContract!.filters["RegisteredInterest(address)"](null);
     lobbyContract!.connect(wssProvider).on(filter, handleEvt);
     return () => {

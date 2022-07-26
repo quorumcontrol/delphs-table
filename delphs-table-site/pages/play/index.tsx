@@ -29,7 +29,6 @@ const Play: NextPage = () => {
   const isClient = useIsClientSide();
   const { data: waitingPlayers, isLoading } = useWaitingPlayers();
   const lobbyContract = useLobbyContract()
-  console.log("lobby: ", lobbyContract)
   const registerInterestMutation = useRegisterInterest({ lobbyContract });
   const router = useRouter();
 

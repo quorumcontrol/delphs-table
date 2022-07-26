@@ -192,7 +192,14 @@ class CellState extends ScriptTypeBase {
     gump.tween(start).to({x: start.x, y: start.y + 200, z: start.z}, 2.0).on('complete', () => {
       gump.destroy()
     }).start()
-    this.soundComponent.slots['Harvest'].play()
+
+    const gameConfig = getGameConfig(this.app.root);
+    if (!this.cell || !gameConfig.currentPlayer) {
+      return
+    }
+    if (this.cell.nonBattlingWarriors().includes(gameConfig.currentPlayer)) {
+      this.soundComponent.slots['Harvest'].play()
+    }
   }
 
   private updateGump() {
