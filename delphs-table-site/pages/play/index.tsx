@@ -63,7 +63,7 @@ const Play: NextPage = () => {
           <Heading>Play</Heading>
           <Text>Find the Wootgump, don't get rekt.</Text>
           <VStack p="4" spacing="2" borderWidth={1} borderColor="white">
-            <Text mb="4">Other waiting players</Text>
+            <Text mb="4">Players waiting for a table</Text>
             {isLoading && <Spinner />}
             {((isClient && !isLoading && waitingPlayers) || []).map((waiting) => {
               return <Text fontSize="md" key={`waiting-addr-${waiting.addr}`}>{waiting.name}</Text>;
