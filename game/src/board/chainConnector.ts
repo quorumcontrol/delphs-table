@@ -121,6 +121,7 @@ class ChainConnector extends ScriptTypeBase {
     if (!this.tableId) {
       throw new Error('updating without a table')
     }
+    console.log('updating warrior stats')
     return Promise.all(
       this.grid.warriors.map(async (warrior) => {
         const addr = warrior.id

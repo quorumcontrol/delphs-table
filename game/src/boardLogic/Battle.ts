@@ -20,6 +20,8 @@ export interface BattleTickReport {
   isOver: boolean
   winner?: Warrior
   loser?: Warrior
+  tick: number
+  startingTick: number
 }
 
 const WOOTGUMP_TAKE_PERCENTAGE = 0.5
@@ -72,6 +74,8 @@ class Battle extends EventEmitter {
       isOver: this.isOver(),
       winner: this.winner(),
       loser: this.loser(),
+      tick: this.tick,
+      startingTick: this.startingTick,
     }
     this.emit('tick', report)
     return report

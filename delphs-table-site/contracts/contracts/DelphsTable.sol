@@ -141,6 +141,9 @@ contract DelphsTable is AccessControl {
         Table storage table = tables[id];
         //use the roll from the start (which was unknown to the table starter)
         bytes32 rnd = rolls[table.startedAt];
+        if (rnd == bytes32(0)) {
+            revert("no stats yet");
+        }
 
         return
             Stats({

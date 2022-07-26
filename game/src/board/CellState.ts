@@ -1,4 +1,4 @@
-import { Entity, GraphNode } from "playcanvas";
+import { Entity, GraphNode, SoundComponent } from "playcanvas";
 import Battle from "../boardLogic/Battle";
 import Cell from "../boardLogic/Cell";
 import Warrior from "../boardLogic/Warrior";
@@ -20,6 +20,7 @@ class CellState extends ScriptTypeBase {
   wootGumpTemplate: GraphNode;
   battleTemplate: GraphNode;
   destinationTemplate: Entity;
+  soundComponent: SoundComponent
 
   destinationElement?: Entity; // keep track of it to delete if the destination changes
 
@@ -42,6 +43,7 @@ class CellState extends ScriptTypeBase {
     this.wootGumpTemplate = mustFindByName(templates, "Wootgump");
     this.battleTemplate = mustFindByName(templates, "Battle");
     this.destinationTemplate = mustFindByName(templates, "DestinationMarker");
+    this.soundComponent = mustFindByName(this.entity, 'Announcer').findComponent('sound')  as SoundComponent
 
     this.playerMarkers = {};
     this.gumps = {};
@@ -190,6 +192,7 @@ class CellState extends ScriptTypeBase {
     gump.tween(start).to({x: start.x, y: start.y + 200, z: start.z}, 2.0).on('complete', () => {
       gump.destroy()
     }).start()
+    this.soundComponent.slots['Harvest'].play()
   }
 
   private updateGump() {

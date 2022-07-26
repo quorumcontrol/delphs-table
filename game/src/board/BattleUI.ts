@@ -41,7 +41,8 @@ class BattleUI extends ScriptTypeBase {
     this.soundComponent = soundComponent
     Object.values(this.soundComponent.slots).forEach((slot) => {
       slot.play()
-    })
+    });
+    Object.values((mustFindByName(this.entity, 'Announcer').findComponent('sound') as SoundComponent).slots)[0].play()
   }
 
   destroy() {
