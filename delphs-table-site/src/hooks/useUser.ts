@@ -47,6 +47,7 @@ export const useDeviceSigner = () => {
   const login = useCallback(async () => {
     const deviceId = getDeviceId();
     if (!signer || !deviceId) {
+      console.error('missing dependencies: ', signer, deviceId)
       throw new Error("no signer");
     }
     const sig = await signer.signMessage(signatureMessage(getDeviceId()!));

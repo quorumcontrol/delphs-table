@@ -4,7 +4,7 @@ import { HardhatUserConfig, task } from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-deploy";
-import './tasks'
+// import './tasks'
 
 dotenv.config();
 

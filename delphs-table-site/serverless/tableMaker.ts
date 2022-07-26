@@ -66,7 +66,7 @@ export async function handle(_event:any, _context:any, callback:any) {
       }
     })
 
-  const tx = await delphs.createTable(id, playersWithNamesAndSeeds.map((p) => p.address!), playersWithNamesAndSeeds.map((p) => p.seed), rounds, wallet.address)
+  const tx = await delphs.createAndStart(id, playersWithNamesAndSeeds.map((p) => p.address!), playersWithNamesAndSeeds.map((p) => p.seed), rounds, wallet.address)
   console.log('table id: ', id, 'tx: ', tx.hash)
   await tx.wait()
   await (await lobby.takeAddresses(waiting, id)).wait()
