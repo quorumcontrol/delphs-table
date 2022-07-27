@@ -5344,10 +5344,10 @@ jwt-decode@^3.1.2:
   resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-3.1.2.tgz#3fb319f3675a2df0c2895c8f5e9fa4b67b04ed59"
   integrity sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==
 
-kasumah-multicall@^0.0.47:
-  version "0.0.47"
-  resolved "https://registry.npmjs.org/kasumah-multicall/-/kasumah-multicall-0.0.47.tgz"
-  integrity sha512-lN8/fB3ksep/nPkxBVhoGPJXLPBeLz228FZxxQ/tDC4Er3+2rA/vnEqj7wlWOCVqc0/k2k+jm8H28nMMqooy4w==
+kasumah-multicall@^0.0.48:
+  version "0.0.48"
+  resolved "https://registry.yarnpkg.com/kasumah-multicall/-/kasumah-multicall-0.0.48.tgz#b7e3d99e04c4177a25339dff6df68360ed26473f"
+  integrity sha512-DJ3iba1KDGjpXWknr9Hlmf6BtAOMy+Db/PTxgts+/ngmrGpt5pIVRy2nvQnBUuhd09jsCr5iORL7JVD1M8870A==
   dependencies:
     dataloader "^2.0.0"
     ethers ">=5.3.0"

@@ -51,7 +51,7 @@
     "crypto-browserify": "^3.12.0",
     "debug": "^4.3.4",
     "ethers": "^5.6.8",
-    "kasumah-multicall": "^0.0.47",
+    "kasumah-multicall": "^0.0.48",
     "stream-browserify": "^3.0.0",
     "ts-node": "^10.8.1",
     "uuid": "^8.3.2"
