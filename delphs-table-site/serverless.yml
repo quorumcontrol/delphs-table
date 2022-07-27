@@ -26,11 +26,20 @@ package:
   patterns:
     - '!.gitignore'
     - '!.git/**'
+    - '!.next'
 
 functions:
   table-maker:
     directory: src
     handler: serverless/tableMaker.handle
+    memoryLimit: 2048
+    maxScale: 1
+    # Local environment variables - used only in given function
+    env:
+      TESTNET: "true"
+  table-player:
+    directory: src
+    handler: serverless/tablePlayer.handle
     memoryLimit: 2048
     maxScale: 1
     # Local environment variables - used only in given function
