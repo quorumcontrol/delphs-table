@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prod-start": "pm2 start ts-node -- -P ./tsconfig.serverless.json server/handler.ts"
+    "prod-start": "PM2_HOME=~/.pm2-delph pm2 start ts-node -- -P ./tsconfig.serverless.json server/handler.ts"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.2.1",
