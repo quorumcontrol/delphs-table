@@ -3,16 +3,13 @@ import {
   Text,
   Heading,
   Button,
-  Box,
   Spinner,
-  Flex,
   HStack,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
 import { useAccount } from "wagmi";
-import Layout from "../../src/components/Layout";
 import LoggedInLayout from "../../src/components/LoggedInLayout";
 import {
   useLobbyContract,
@@ -21,6 +18,7 @@ import {
   useWaitingPlayers,
 } from "../../src/hooks/Lobby";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
+import { useTableMakerWaiter } from "../../src/hooks/useOrchestrator";
 import { useDeviceSigner } from "../../src/hooks/useUser";
 
 const Play: NextPage = () => {
@@ -31,6 +29,7 @@ const Play: NextPage = () => {
   const lobbyContract = useLobbyContract()
   const registerInterestMutation = useRegisterInterest({ lobbyContract });
   const router = useRouter();
+  useTableMakerWaiter()
 
   const handleTableRunning = useCallback(
     (tableId?: string) => {

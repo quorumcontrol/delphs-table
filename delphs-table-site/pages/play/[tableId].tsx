@@ -3,9 +3,9 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef } from "react";
 import { useAccount } from "wagmi";
-import { DelphsTable__factory } from "../../contracts/typechain";
 import LoggedInLayout from "../../src/components/LoggedInLayout";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
+import { useTablePlayer } from "../../src/hooks/useOrchestrator";
 import { useDeviceSigner } from "../../src/hooks/useUser";
 import { delphsContract } from "../../src/utils/contracts";
 import SingletonQueue from "../../src/utils/singletonQueue";
@@ -16,17 +16,13 @@ interface AppEvent {type:string, data: [number, number]}
 
 const Play: NextPage = () => {
   const router = useRouter()
-  console.log(router.query)
   const { tableId:untypedTableId } = router.query
   const tableId = untypedTableId as string
   const { address } = useAccount();
   const isClient = useIsClientSide();
   const iframe = useRef<HTMLIFrameElement>(null);
   const { data:signer } = useDeviceSigner()
-
-  useEffect(() => {
-    console.log('device signer: ', signer?.address)
-  }, [signer])
+  useTablePlayer(tableId)
 
   const handleMessage = useCallback(async (appEvent:AppEvent) => {
     if (!signer) {

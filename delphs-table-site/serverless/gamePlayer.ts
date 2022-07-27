@@ -187,7 +187,7 @@ class GamePlayer {
           }
           warrior.destination = [dest.x.toNumber(), dest.y.toNumber()]
         })
-        
+
         this.grid.handleTick(random)
         this.latest = index;
       } else {

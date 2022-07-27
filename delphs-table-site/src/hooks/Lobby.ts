@@ -16,7 +16,7 @@ export const useLobbyContract = () => {
       return undefined;
     }
     return lobbyContract(signer, provider);
-  }, [signer]);
+  }, [signer, provider]);
 };
 
 export const useWaitingPlayers = () => {
@@ -26,7 +26,6 @@ export const useWaitingPlayers = () => {
   const query = useQuery(
     ["waiting-players"],
     async () => {
-      console.log("waiting addresses: ", lobbyContract);
       const addrs = await lobbyContract!.waitingAddresses();
       return Promise.all(
         addrs.map(async (addr) => {
