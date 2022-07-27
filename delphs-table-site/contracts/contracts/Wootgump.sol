@@ -12,6 +12,11 @@ contract Wootgump is ERC20, ERC20Burnable, Pausable, AccessControl, ERC20Permit,
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
+    struct BulkMint {
+        address to;
+        uint256 amount;
+    }
+
     constructor(address initialOwner) ERC20("Wootgump", "GUMP") ERC20Permit("Wootgump") {
         _grantRole(DEFAULT_ADMIN_ROLE, initialOwner);
         _grantRole(PAUSER_ROLE, initialOwner);
@@ -24,6 +29,14 @@ contract Wootgump is ERC20, ERC20Burnable, Pausable, AccessControl, ERC20Permit,
 
     function unpause() public onlyRole(PAUSER_ROLE) {
         _unpause();
+    }
+
+    function bulkMint(BulkMint[] calldata mintInfo) external onlyRole(MINTER_ROLE) returns (bool) {
+        uint256 len = mintInfo.length;
+        for (uint256 i = 0; i < len; i++) {
+            _mint(mintInfo[i].to, mintInfo[i].amount);
+        }
+        return true;
     }
 
     function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
