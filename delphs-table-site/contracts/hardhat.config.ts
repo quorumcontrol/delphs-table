@@ -48,7 +48,7 @@ const config: HardhatUserConfig = {
       tags: ["mainnet"],
     },
     skaletest: {
-      url: "https://staging-v2.skalenodes.com/v1/whispering-turais",
+      url: "https://staging-v2.skalenodes.com/v1/rapping-zuben-elakrab",
       // gasPrice: 0,
       accounts: [
         process.env.SKALE_TEST_PRIVATE_KEY,
