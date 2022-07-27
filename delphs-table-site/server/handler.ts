@@ -158,7 +158,7 @@ class TablePlayer {
       this.log('rolling from ', currentTick.toNumber(), 'to', endings[0])
     
       for (let i = 0; i < endings[0].sub(currentTick).toNumber(); i++) {
-        const tx = await delphs.rollTheDice()
+        const tx = await delphs.rollTheDice({ gasLimit: 500000 })
         this.log('rolling: ', tx.hash)
         await tx.wait()
       }
