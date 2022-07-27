@@ -18,7 +18,6 @@ import {
   useWaitingPlayers,
 } from "../../src/hooks/Lobby";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
-import { useTableMakerWaiter } from "../../src/hooks/useOrchestrator";
 import { useDeviceSigner } from "../../src/hooks/useUser";
 
 const Play: NextPage = () => {

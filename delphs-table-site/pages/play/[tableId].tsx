@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef } from "react";
 import { useAccount } from "wagmi";
 import LoggedInLayout from "../../src/components/LoggedInLayout";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
-import { useTablePlayer } from "../../src/hooks/useOrchestrator";
 import { useDeviceSigner } from "../../src/hooks/useUser";
 import { delphsContract } from "../../src/utils/contracts";
 import SingletonQueue from "../../src/utils/singletonQueue";
