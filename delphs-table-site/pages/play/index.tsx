@@ -29,7 +29,7 @@ const Play: NextPage = () => {
   const lobbyContract = useLobbyContract()
   const registerInterestMutation = useRegisterInterest({ lobbyContract });
   const router = useRouter();
-  useTableMakerWaiter()
+  // useTableMakerWaiter()
 
   const handleTableRunning = useCallback(
     (tableId?: string) => {

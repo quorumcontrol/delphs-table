@@ -44,6 +44,7 @@ const orchestratorState = OrchestratorState__factory.connect(addresses().Orchest
 export async function handle(_event:any, _context:any, callback:any) {
   try {
     if (locked) {
+      log('locked')
       return callback(null, {
         statusCode: 200,
         body: JSON.stringify({

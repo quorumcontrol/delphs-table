@@ -97,6 +97,10 @@ class CellState extends ScriptTypeBase {
         const rndZ = randomBounded(this.zSize * 0.5);
         this.destinationElement.setLocalScale(1, 20, 1);
         this.destinationElement.setLocalPosition(rndX, 3, rndZ);
+        if (pendingDest) {
+          console.log('tweening pendingDest')
+          this.destinationElement.tween({ x: rndX, y: 3, z: rndZ }).to({ x: rndX, y: 6, z: rndZ }, 0.5, pc.SineInOut).yoyo(true).loop(true).start()
+        }
       }
 
       return;
