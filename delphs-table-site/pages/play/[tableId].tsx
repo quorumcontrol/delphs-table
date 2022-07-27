@@ -22,7 +22,6 @@ const Play: NextPage = () => {
   const isClient = useIsClientSide();
   const iframe = useRef<HTMLIFrameElement>(null);
   const { data:signer } = useDeviceSigner()
-  // useTablePlayer(tableId)
 
   const handleMessage = useCallback(async (appEvent:AppEvent) => {
     if (!signer) {
