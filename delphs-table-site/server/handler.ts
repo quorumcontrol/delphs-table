@@ -102,7 +102,7 @@ class TableMaker {
       await (await lobby.takeAddresses(waiting, id)).wait()
       this.log('done')
     } catch (err) {
-      console.error('error making talbe: ', err)
+      console.error('error making table: ', err)
       this.handleLobbyRegistration()
     }
   }
@@ -124,7 +124,7 @@ class TablePlayer {
     }
     this.pending = new Promise(async (outerResolve) => {
       await new Promise((timerResolve) => {
-        setTimeout(timerResolve, 15000)
+        setTimeout(timerResolve, 20000)
       })
       outerResolve(this.playTables())
     })
@@ -182,6 +182,8 @@ async function main() {
     
     provider.on(lobbyRegistrationFilter, () => tableMaker.handleLobbyRegistration())
     provider.on(tableStartedFilter, () => tablePlayer.handleTableStarted())
+    // at startup, just check for any running tables
+    tablePlayer.handleTableStarted()
   })
 }
 
