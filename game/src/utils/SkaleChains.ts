@@ -18,20 +18,21 @@ export const skaleTestnet = {
   testnet: true,
 };
 
-// export const skaleMainnet = {
-//   id: 1032942172,
-//   name: 'Crypto Rome Network',
-//   network: 'cryptorome',
-//   nativeCurrency: {
-//     decimals: 18,
-//     name: 'sFUEL',
-//     symbol: 'sFUEL',
-//   },
-//   rpcUrls: {
-//     default: 'https://mainnet.skalenodes.com/v1/haunting-devoted-deneb',
-//   },
-//   blockExplorers: {
-//     default: { name: 'BlockScout', url: 'https://haunting-devoted-deneb.explorer.mainnet.skalenodes.com/' },
-//   },
-//   testnet: false,
-// }
+export const skaleMainnet = {
+  id: 1032942172,
+  name: 'Crypto Rome Network',
+  network: 'cryptorome',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'sFUEL',
+    symbol: 'sFUEL',
+  },
+  rpcUrls: {
+    default: 'https://mainnet.skalenodes.com/v1/haunting-devoted-deneb',
+    wss: 'wss://mainnet.skalenodes.com/v1/ws/haunting-devoted-deneb',
+  },
+  blockExplorers: {
+    default: { name: 'BlockScout', url: 'https://haunting-devoted-deneb.explorer.mainnet.skalenodes.com/' },
+  },
+  testnet: false,
+}
