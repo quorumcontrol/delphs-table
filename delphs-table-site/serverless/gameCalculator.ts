@@ -32,6 +32,7 @@ export async function handle(event:any, _context:any, callback:any) {
   await gamePlayer.run()
 
   console.log('done!')
+  console.log("gumps: ", gamePlayer.grid.warriors.map((w) => [w.name, w.wootgumpBalance]))
 
   return callback(null, {
     statusCode: 200,

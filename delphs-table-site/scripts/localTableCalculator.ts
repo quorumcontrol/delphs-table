@@ -7,7 +7,7 @@ import { handle } from '../serverless/gameCalculator'
 
 export function main() {
   return new Promise((resolve) => {
-    handle({body: JSON.stringify({ tableId: '0xcedc9fd8af09c4d22ae9e3a4d6d54a94db28b7f20729d497068c3d76a5f8c1bf'})}, {}, (...resp:any) => {
+    handle({body: JSON.stringify({ tableId: '0x6d77ec8e6b511936939b2f47b4eecf6587b2a9abbaad7c1b55bb11f28a4e455c'})}, {}, (...resp:any) => {
       console.log('resp: ', resp)
       resolve(resp)
     })
