@@ -27,7 +27,7 @@ const Play: NextPage = () => {
     if (!signer) {
       throw new Error('no signer')
     }
-    const delphsTable = delphsContract(signer, signer.provider)
+    const delphsTable = delphsContract(signer, signer.provider, address)
     console.log('signer addr: ', await signer.getAddress(), 'params', tableId, appEvent.data[0], appEvent.data[1])
     txQueue.push(async () => {
       console.log('content window: ', iframe.current?.contentWindow)
@@ -45,9 +45,16 @@ const Play: NextPage = () => {
           type: 'destinationComplete',
           x: appEvent.data[0],
           y: appEvent.data[1],
+          success: true,
         }), '*')
       }).catch((err) => {
         console.error('error with destinationSetter', err)
+        iframe.current?.contentWindow?.postMessage(JSON.stringify({
+          type: 'destinationComplete',
+          x: appEvent.data[0],
+          y: appEvent.data[1],
+          success: false,
+        }), '*')
       })
       return receiptPromise
     })

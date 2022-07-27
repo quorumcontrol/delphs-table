@@ -15,7 +15,7 @@ export const useLobbyContract = () => {
     if (!signer) {
       return undefined;
     }
-    return lobbyContract(signer, provider);
+    return lobbyContract(signer, provider, signer.address);
   }, [signer, provider]);
 };
 

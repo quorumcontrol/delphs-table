@@ -10,7 +10,8 @@ const MAINNET_BOA = "0x2C6FD25071Fd516947682f710f6e9F5eD610207F";
 
 export const BOA_ADDRESS = isTestnet ? TESTNET_BOA : MAINNET_BOA
 
-export const delphsContract = memoize((signer: Signer, provider: providers.Provider) => {
+// the extra unused parameter of _address is here because memoize just does a .toString() on the args and both the signer and provider become [Object Object] so they get memoized even if the provider/signer change
+export const delphsContract = memoize((signer: Signer, provider: providers.Provider, _address?:string) => {
   const multiCall = multicallWrapper(provider);
   const unwrapped = DelphsTable__factory.connect(addresses().DelphsTable, signer);
   const wrapped = multiCall.syncWrap<DelphsTable>(unwrapped);
@@ -22,7 +23,8 @@ export const badgeOfAssemblyContract = memoize((provider:providers.Provider) => 
   return multiCall.syncWrap<BadgeOfAssembly>(BadgeOfAssembly__factory.connect(BOA_ADDRESS, provider))
 })
 
-export const lobbyContract = memoize((signer: Signer, provider: providers.Provider) => {
+// the extra unused parameter of _address is here because memoize just does a .toString() on the args and both the signer and provider become [Object Object] so they get memoized even if the provider/signer change
+export const lobbyContract = memoize((signer: Signer, provider: providers.Provider, _address?:string) => {
   const multiCall = multicallWrapper(provider);
   const unwrapped = Lobby__factory.connect(addresses().Lobby, signer);
   const wrapped = multiCall.syncWrap<Lobby>(unwrapped);

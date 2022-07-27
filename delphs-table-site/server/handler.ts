@@ -14,7 +14,6 @@ dotenv.config({
   path: '.env.local'
 })
 
-
 if (!process.env.env_delphsPrivateKey) {
   console.error('no private key')
   throw new Error("must have a DELPHS private key")

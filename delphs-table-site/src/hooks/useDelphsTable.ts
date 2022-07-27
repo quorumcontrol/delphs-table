@@ -12,7 +12,7 @@ export const useDelphsTableContract = () => {
     if (!signer) {
       return undefined;
     }
-    return delphsContract(signer, provider);
+    return delphsContract(signer, provider, signer.address);
   }, [signer, provider]);
 };
 
