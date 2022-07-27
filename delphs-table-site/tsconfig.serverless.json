@@ -4,6 +4,7 @@
     "resolveJsonModule": true,
     "preserveConstEnums": true,
     "strictNullChecks": true,
+    "preserveSymlinks": true,
     "sourceMap": true,
     "allowJs": true,
     "target": "es5",

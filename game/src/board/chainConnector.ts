@@ -48,11 +48,12 @@ class ChainConnector extends ScriptTypeBase {
     this.asyncHandleTick = this.asyncHandleTick.bind(this);
     this.handleStarted = this.handleStarted.bind(this);
     this.provider = new ethers.providers.WebSocketProvider(skaleTestnet.rpcUrls.wss);
+    
     const multicall = new MulticallWrapper(this.provider, skaleTestnet.id)
 
     this.delphs = multicall.syncWrap<DelphsTable>(DelphsTable__factory.connect(DELPHS_TESTNET_ADDRESS, this.provider));
     this.player = multicall.syncWrap<Player>(Player__factory.connect(PLAYER_TESTNET_ADDRESS, this.provider));
-    
+
     const boardGenerate = this.getScript<BoardGenerate>(this.entity, 'boardGenerate')
     if (!boardGenerate) {
       throw new Error('do not use chain connector without boardgenerate')

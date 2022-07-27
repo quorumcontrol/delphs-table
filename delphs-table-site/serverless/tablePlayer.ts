@@ -2,9 +2,6 @@
 import { providers, Wallet } from "ethers";
 import debug from 'debug'
 import { skaleTestnet } from '../src/utils/SkaleChains'
-import { keccak256 } from "ethers/lib/utils";
-import { faker } from '@faker-js/faker'
-import botSetup from '../contracts/bots'
 import { OrchestratorState__factory } from "../contracts/typechain";
 import { addresses } from "../src/utils/networks";
 import { delphsContract, lobbyContract, playerContract } from "../src/utils/contracts";
@@ -14,20 +11,6 @@ debug.enable('*')
 
 if (!process.env.env_delphsPrivateKey) {
   throw new Error("must have a DELPHS private key")
-}
-
-function hashString(msg:string) {
-  return keccak256(Buffer.from(msg))
-}
-
-async function getBots(num:number) {
-  const botNames = Object.keys(botSetup)
-  return botNames.slice(0, num).map((name) => {
-    return {
-      name,
-      ...botSetup[name]
-    }
-  })
 }
 
 const provider = new providers.StaticJsonRpcProvider(skaleTestnet.rpcUrls.default)

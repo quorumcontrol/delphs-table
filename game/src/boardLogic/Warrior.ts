@@ -11,7 +11,7 @@ interface WarriorStats {
 }
 
 export function generateFakeWarriors(count: number, seed: string) {
-  const warriors = [];
+  const warriors: Warrior[] = [];
   for (let i = 0; i < count; i++) {
     warriors[i] = new Warrior({
       id: `warrior-${i}-${seed}`,
@@ -37,7 +37,7 @@ class Warrior implements WarriorStats {
   destination?: [number, number];
   pendingDestination?: [number, number];
 
-  wootgumpBalance;
+  wootgumpBalance: number;
 
   constructor(opts: WarriorStats) {
     this.id = opts.id;
@@ -85,12 +85,12 @@ class Warrior implements WarriorStats {
     this.destination = [x, y];
   }
 
-  setDestination(x:number, y:number) {
+  setDestination(x: number, y: number) {
     console.log('setting destination: ', x, y, ' existing: ', this.destination)
-    this.destination = [x,y]
+    this.destination = [x, y]
   }
 
-  setPendingDestination(x:number, y:number) {
+  setPendingDestination(x: number, y: number) {
     this.pendingDestination = [x, y]
   }
 
