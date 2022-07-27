@@ -10,11 +10,19 @@ import Grid from "../boardLogic/Grid";
 import BoardGenerate from "./BoardGenerate";
 import { DiceRolledEvent, StartedEvent } from "../typechain/DelphsTable";
 import addresses from '../deployments/skaletest/addresses.json'
+import MulticallWrapper from "kasumah-multicall";
 
 const log = console.log; //debug('chainConnector')
 
 const DELPHS_TESTNET_ADDRESS = addresses.DelphsTable
 const PLAYER_TESTNET_ADDRESS = addresses.Player
+
+function bigNumMin(a:BigNumber, b:BigNumber) {
+  if (a.lte(b)) {
+    return a
+  }
+  return b
+}
 
 @createScript("chainConnector")
 class ChainConnector extends ScriptTypeBase {
@@ -40,8 +48,11 @@ class ChainConnector extends ScriptTypeBase {
     this.asyncHandleTick = this.asyncHandleTick.bind(this);
     this.handleStarted = this.handleStarted.bind(this);
     this.provider = new ethers.providers.WebSocketProvider(skaleTestnet.rpcUrls.wss);
-    this.delphs = DelphsTable__factory.connect(DELPHS_TESTNET_ADDRESS, this.provider);
-    this.player = Player__factory.connect(PLAYER_TESTNET_ADDRESS, this.provider);
+    const multicall = new MulticallWrapper(this.provider, skaleTestnet.id)
+
+    this.delphs = multicall.syncWrap<DelphsTable>(DelphsTable__factory.connect(DELPHS_TESTNET_ADDRESS, this.provider));
+    this.player = multicall.syncWrap<Player>(Player__factory.connect(PLAYER_TESTNET_ADDRESS, this.provider));
+    
     const boardGenerate = this.getScript<BoardGenerate>(this.entity, 'boardGenerate')
     if (!boardGenerate) {
       throw new Error('do not use chain connector without boardgenerate')
@@ -104,7 +115,8 @@ class ChainConnector extends ScriptTypeBase {
 
       if (table.startedAt.gt(0) && latest.gte(table.startedAt)) {
         log("table is already in progress, let's catch up");
-        await this.catchUp(table.startedAt, latest);
+        const end = table.startedAt.add(table.gameLength)
+        await this.catchUp(table.startedAt, bigNumMin(end, latest));
       }
 
       log("setting up event filters", this.delphs.filters.Started(tableId));

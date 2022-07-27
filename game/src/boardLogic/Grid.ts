@@ -24,8 +24,8 @@ interface GridOptions {
 class Grid {
   id:string
 
-  sizeX
-  sizeY
+  sizeX: number
+  sizeY: number
   chanceOfSpawningWootGumpIn1000 = 5
   currentSeed:string
 
