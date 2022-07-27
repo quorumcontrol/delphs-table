@@ -5,7 +5,7 @@ import { memoize } from "../utils/memoize";
 import multicallWrapper from "../utils/multicallWrapper";
 import { addresses, isTestnet } from "../utils/networks";
 
-const TESTNET_BOA = "0xd8929b56BaD3B72068B682F19Cdeff92b2f5164B";
+const TESTNET_BOA = "0x881256ada5dD7CcB2457226C4bC978B067daF70B";
 const MAINNET_BOA = "0x2C6FD25071Fd516947682f710f6e9F5eD610207F";
 
 export const BOA_ADDRESS = isTestnet ? TESTNET_BOA : MAINNET_BOA
