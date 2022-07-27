@@ -70,6 +70,10 @@ class TableMaker {
       this.log('make table')
 
       const waiting = await lobby.waitingAddresses()
+      if (waiting.length === 0) {
+        this.log('no one is waiting')
+        return
+      }
       const rounds = 100
     
       const botNumber = Math.max(10 - waiting.length, 0)
@@ -184,6 +188,8 @@ async function main() {
     provider.on(tableStartedFilter, () => tablePlayer.handleTableStarted())
     // at startup, just check for any running tables
     tablePlayer.handleTableStarted()
+    // and if any tables need to be created
+    tableMaker.handleLobbyRegistration()
   })
 }
 
