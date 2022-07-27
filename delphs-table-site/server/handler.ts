@@ -155,15 +155,17 @@ class TablePlayer {
       const endings = active.map((tourn) => tourn.end).sort((a, b) => b.sub(a).toNumber()) // sort to largest first
       const currentTick = await delphs.latestRoll()
     
-      this.log('rolling from ', currentTick.toNumber(), 'to', endings[0])
+      this.log('rolling from ', currentTick.toNumber(), 'to', endings[0].toNumber())
     
       for (let i = 0; i < endings[0].sub(currentTick).toNumber(); i++) {
-        const tx = await delphs.rollTheDice({ gasLimit: 500000 })
-        this.log('rolling: ', tx.hash)
+        this.log('roll')
+        const tx = await delphs.rollTheDice({ gasLimit: 250000 })
+        this.log('rolled: ', tx.hash)
+
         await tx.wait()
       }
-    
-      await (await orchestratorState.bulkRemove(active.map((table) => table.id))).wait()
+      this.log('bulk remove')
+      await (await orchestratorState.bulkRemove(active.map((table) => table.id), {gasLimit: 500000})).wait()
       this.log('rolling complete')
     } catch (err) {
       console.error('error rolling: ', err)
