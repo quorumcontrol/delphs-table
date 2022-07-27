@@ -103,13 +103,11 @@ class BattleUI extends ScriptTypeBase {
     playerMarker.setLocalScale(0.1, 10, 0.1);
 
     playerMarker.setLocalPosition(...standardPlaces[index]);
-    playerMarker.setLocalEulerAngles(0, 0, 0);
 
-    if (index === 1) {
-      // flip around one of the characters so they are facing the other one.
-      const humanoid = mustFindByName(playerMarker, 'Humanoid')
-      humanoid.setEulerAngles(0, 180, 0);
-    }
+    const yRotation = index === 1 ? 180 : 0
+
+    playerMarker.setLocalEulerAngles(0, yRotation, 0);
+
     return playerMarker;
   }
 }
