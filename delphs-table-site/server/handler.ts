@@ -67,42 +67,46 @@ class TableMaker {
   }
 
   private async makeTable() {
-    this.log('make table')
+    try {
+      this.log('make table')
 
-    const waiting = await lobby.waitingAddresses()
-    const rounds = 100
-  
-    const botNumber = Math.max(10 - waiting.length, 0)
-    const id = hashString(`${faker.company.companyName()}: ${faker.company.bs()}}`)
-  
-    const playersWithNamesAndSeeds = (await Promise.all(waiting.concat((await getBots(botNumber)).map((b) => b.address)).map(async (address) => {
-      const name = await player.name(address)
-      if (!name) {
-        this.log(`${address} has no name`)
-        return null
-      }
-      return {
-        name,
-        address
-      }
-    })))
-      .filter((p) => !!p)
-      .map((p) => {
-        return {
-          ...p,
-          seed: hashString(`${id}-${player!.name}-${player!.address}`)
+      const waiting = await lobby.waitingAddresses()
+      const rounds = 100
+    
+      const botNumber = Math.max(10 - waiting.length, 0)
+      const id = hashString(`${faker.company.companyName()}: ${faker.company.bs()}}`)
+    
+      const playersWithNamesAndSeeds = (await Promise.all(waiting.concat((await getBots(botNumber)).map((b) => b.address)).map(async (address) => {
+        const name = await player.name(address)
+        if (!name) {
+          this.log(`${address} has no name`)
+          return null
         }
-      })
-  
-    const tx = await delphs.createAndStart(id, playersWithNamesAndSeeds.map((p) => p.address!), playersWithNamesAndSeeds.map((p) => p.seed), rounds, wallet.address)
-    this.log('table id: ', id, 'tx: ', tx.hash)
-    await tx.wait()
-    // on staging we do not have mtm
-    await (await orchestratorState.add(id)).wait()
-    await (await lobby.takeAddresses(waiting, id)).wait()
-    this.log('done')
+        return {
+          name,
+          address
+        }
+      })))
+        .filter((p) => !!p)
+        .map((p) => {
+          return {
+            ...p,
+            seed: hashString(`${id}-${player!.name}-${player!.address}`)
+          }
+        })
+    
+      const tx = await delphs.createAndStart(id, playersWithNamesAndSeeds.map((p) => p.address!), playersWithNamesAndSeeds.map((p) => p.seed), rounds, wallet.address)
+      this.log('table id: ', id, 'tx: ', tx.hash)
+      await tx.wait()
+      // on staging we do not have mtm
+      await (await orchestratorState.add(id)).wait()
+      await (await lobby.takeAddresses(waiting, id)).wait()
+      this.log('done')
+    } catch (err) {
+      console.error('error making talbe: ', err)
+      this.handleLobbyRegistration()
+    }
   }
-
 }
 
 class TablePlayer {
@@ -128,35 +132,40 @@ class TablePlayer {
   }
 
   private async playTables() {
-    this.log('play tables')
-    const ids = await orchestratorState.all()
-    if (ids.length === 0) {
-      this.log('no tables')
-      return
-    }
-    const active = await Promise.all((ids).map(async (tableId) => {
-      this.log('active: ', tableId)
-      const metadata = await delphs.tables(tableId)
-      return {
-        id: tableId,
-        metadata,
-        start: metadata.startedAt,
-        end: metadata.startedAt.add(metadata.gameLength)
+    try {
+      this.log('play tables')
+      const ids = await orchestratorState.all()
+      if (ids.length === 0) {
+        this.log('no tables')
+        return
       }
-    }))
-    const endings = active.map((tourn) => tourn.end).sort((a, b) => b.sub(a).toNumber()) // sort to largest first
-    const currentTick = await delphs.latestRoll()
-  
-    this.log('rolling from ', currentTick.toNumber(), 'to', endings[0])
-  
-    for (let i = 0; i < endings[0].sub(currentTick).toNumber(); i++) {
-      const tx = await delphs.rollTheDice()
-      this.log('rolling: ', tx.hash)
-      await tx.wait()
+      const active = await Promise.all((ids).map(async (tableId) => {
+        this.log('active: ', tableId)
+        const metadata = await delphs.tables(tableId)
+        return {
+          id: tableId,
+          metadata,
+          start: metadata.startedAt,
+          end: metadata.startedAt.add(metadata.gameLength)
+        }
+      }))
+      const endings = active.map((tourn) => tourn.end).sort((a, b) => b.sub(a).toNumber()) // sort to largest first
+      const currentTick = await delphs.latestRoll()
+    
+      this.log('rolling from ', currentTick.toNumber(), 'to', endings[0])
+    
+      for (let i = 0; i < endings[0].sub(currentTick).toNumber(); i++) {
+        const tx = await delphs.rollTheDice()
+        this.log('rolling: ', tx.hash)
+        await tx.wait()
+      }
+    
+      await (await orchestratorState.bulkRemove(active.map((table) => table.id))).wait()
+      this.log('rolling complete')
+    } catch (err) {
+      console.error('error rolling: ', err)
+      this.handleTableStarted()
     }
-  
-    await (await orchestratorState.bulkRemove(active.map((table) => table.id))).wait()
-    this.log('rolling complete')
   }
 }
 
