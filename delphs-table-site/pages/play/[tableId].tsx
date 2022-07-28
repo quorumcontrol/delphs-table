@@ -31,16 +31,16 @@ const Play: NextPage = () => {
     console.log('signer addr: ', await signer.getAddress(), 'params', tableId, appEvent.data[0], appEvent.data[1])
     txQueue.push(async () => {
       await promiseWaiter(500) // try to fix a broken nonce issue
-      
+
       iframe.current?.contentWindow?.postMessage(JSON.stringify({
         type: 'destinationStarting',
         x: appEvent.data[0],
         y: appEvent.data[1],
       }), '*')
-      const tx = await delphsTable.setDestination(tableId, appEvent.data[0], appEvent.data[1])
-      console.log('destination tx: ', tx)
-      return tx.wait().then((receipt) => {
-        console.log('destination receipt: ', receipt)
+      const tx = await delphsTable.setDestination(tableId, appEvent.data[0], appEvent.data[1], { gasLimit: 250000 }) // normally around 80k
+      console.log('--------------- destination tx: ', tx)
+      return await tx.wait().then((receipt) => {
+        console.log('------------ destination receipt: ', receipt)
         iframe.current?.contentWindow?.postMessage(JSON.stringify({
           type: 'destinationComplete',
           x: appEvent.data[0],
@@ -48,7 +48,7 @@ const Play: NextPage = () => {
           success: true,
         }), '*')
       }).catch((err) => {
-        console.error('error with destinationSetter', err)
+        console.error('----------- error with destinationSetter', err)
         iframe.current?.contentWindow?.postMessage(JSON.stringify({
           type: 'destinationComplete',
           x: appEvent.data[0],
