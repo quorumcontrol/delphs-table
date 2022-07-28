@@ -40,17 +40,21 @@ class CellSelector extends ScriptTypeBase {
     if (config.grid?.isOver()) {
       return
     }
-    const msg = JSON.parse(evt.data)
-    switch (msg.type) {
-      case "destinationStarting":
-        config.currentPlayer?.setPendingDestination(msg.x, msg.y)
-        break;
-      case "destinationComplete":
-        console.log("destination complete, success?", msg.success)
-        config.currentPlayer?.clearPendingDestination()
-        break;
-      default:
-        console.error('unknown message type: ', msg)
+    try {
+      const msg = JSON.parse(evt.data)
+      switch (msg.type) {
+        case "destinationStarting":
+          config.currentPlayer?.setPendingDestination(msg.x, msg.y)
+          break;
+        case "destinationComplete":
+          console.log("destination complete, success?", msg.success)
+          config.currentPlayer?.clearPendingDestination()
+          break;
+        default:
+          console.error('unknown message type: ', msg)
+      }
+    } catch (err) {
+      console.error('msg error: ', err)
     }
   }
 
