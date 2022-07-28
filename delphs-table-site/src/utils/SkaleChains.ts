@@ -1,4 +1,5 @@
 import { Chain } from "@rainbow-me/rainbowkit";
+import { isTestnet } from "./networks";
 
 export const skaleTestnet: Chain = {
   id: 1305754875840118,
@@ -39,4 +40,8 @@ export const skaleMainnet: Chain = {
     default: { name: 'BlockScout', url: 'https://haunting-devoted-deneb.explorer.mainnet.skalenodes.com/' },
   },
   testnet: false,
+}
+
+export function defaultNetwork() {
+  return isTestnet ? skaleTestnet : skaleMainnet
 }

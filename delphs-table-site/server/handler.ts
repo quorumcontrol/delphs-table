@@ -4,6 +4,7 @@ import debug, { Debugger } from 'debug'
 import { skaleTestnet } from '../src/utils/SkaleChains'
 import { keccak256 } from "ethers/lib/utils";
 import { faker } from '@faker-js/faker'
+import { NonceManager } from '@ethersproject/experimental'
 import botSetup from '../contracts/bots'
 import { OrchestratorState__factory } from "../contracts/typechain";
 import { addresses } from "../src/utils/networks";
@@ -19,11 +20,11 @@ if (!process.env.env_delphsPrivateKey) {
   throw new Error("must have a DELPHS private key")
 }
 
-function hashString(msg:string) {
+function hashString(msg: string) {
   return keccak256(Buffer.from(msg))
 }
 
-async function getBots(num:number) {
+async function getBots(num: number) {
   const botNames = Object.keys(botSetup)
   return botNames.slice(0, num).map((name) => {
     return {
@@ -35,7 +36,7 @@ async function getBots(num:number) {
 
 const provider = new providers.StaticJsonRpcProvider(skaleTestnet.rpcUrls.default)
 
-const wallet = new Wallet(process.env.env_delphsPrivateKey!).connect(provider)
+const wallet = new NonceManager(new Wallet(process.env.env_delphsPrivateKey!).connect(provider))
 
 const lobby = lobbyContract(wallet, provider)
 const delphs = delphsContract(wallet, provider)
@@ -43,8 +44,8 @@ const player = playerContract(provider)
 const orchestratorState = OrchestratorState__factory.connect(addresses().OrchestratorState, wallet)
 
 class TableMaker {
-  timeoutHandle?:ReturnType<typeof setTimeout>
-  log:Debugger
+  timeoutHandle?: ReturnType<typeof setTimeout>
+  log: Debugger
 
   constructor() {
     this.log = debug('table-maker')
@@ -75,10 +76,10 @@ class TableMaker {
         return
       }
       const rounds = 100
-    
+
       const botNumber = Math.max(10 - waiting.length, 0)
       const id = hashString(`${faker.company.companyName()}: ${faker.company.bs()}}`)
-    
+
       const playersWithNamesAndSeeds = (await Promise.all(waiting.concat((await getBots(botNumber)).map((b) => b.address)).map(async (address) => {
         const name = await player.name(address)
         if (!name) {
@@ -97,13 +98,14 @@ class TableMaker {
             seed: hashString(`${id}-${player!.name}-${player!.address}`)
           }
         })
-    
-      const tx = await delphs.createAndStart(id, playersWithNamesAndSeeds.map((p) => p.address!), playersWithNamesAndSeeds.map((p) => p.seed), rounds, wallet.address)
+
+      const tx = await delphs.createAndStart(id, playersWithNamesAndSeeds.map((p) => p.address!), playersWithNamesAndSeeds.map((p) => p.seed), rounds, await wallet.getAddress())
       this.log('table id: ', id, 'tx: ', tx.hash)
-      await tx.wait()
       // on staging we do not have mtm
-      await (await orchestratorState.add(id)).wait()
-      await (await lobby.takeAddresses(waiting, id)).wait()
+      await orchestratorState.add(id)
+      await lobby.takeAddresses(waiting, id)
+      await tx.wait()
+
       this.log('done')
     } catch (err) {
       console.error('error making table: ', err)
@@ -113,9 +115,9 @@ class TableMaker {
 }
 
 class TablePlayer {
-  
-  log:Debugger
-  private pending?:Promise<any>
+
+  log: Debugger
+  private pending?: Promise<any>
 
   constructor() {
     this.log = debug('table-player')
@@ -123,15 +125,18 @@ class TablePlayer {
 
   handleTableStarted() {
     this.log('table started, waiting')
-    if (this.pending) {
-      return this.pending = this.pending.finally(() => this.playTables()).catch((err) => console.error('error playing table: ', err))
-    }
-    this.pending = new Promise(async (outerResolve) => {
-      await new Promise((timerResolve) => {
-        setTimeout(timerResolve, 20000)
+    const lookForTablesPromise = () => {
+      return new Promise(async (outerResolve) => {
+        await new Promise((timerResolve) => {
+          setTimeout(timerResolve, 15000)
+        })
+        outerResolve(this.playTables())
       })
-      outerResolve(this.playTables())
-    })
+    }
+    if (this.pending) {
+      return this.pending = this.pending.finally(lookForTablesPromise).catch((err) => console.error('error playing table: ', err))
+    }
+    this.pending = lookForTablesPromise()
   }
 
   private async playTables() {
@@ -154,9 +159,9 @@ class TablePlayer {
       }))
       const endings = active.map((tourn) => tourn.end).sort((a, b) => b.sub(a).toNumber()) // sort to largest first
       const currentTick = await delphs.latestRoll()
-    
+
       this.log('rolling from ', currentTick.toNumber(), 'to', endings[0].toNumber())
-    
+
       for (let i = 0; i < endings[0].sub(currentTick).toNumber(); i++) {
         this.log('roll')
         const tx = await delphs.rollTheDice({ gasLimit: 250000 })
@@ -165,7 +170,7 @@ class TablePlayer {
         await tx.wait()
       }
       this.log('bulk remove')
-      await (await orchestratorState.bulkRemove(active.map((table) => table.id), {gasLimit: 500000})).wait()
+      await orchestratorState.bulkRemove(active.map((table) => table.id), { gasLimit: 500000 })
       this.log('rolling complete')
     } catch (err) {
       console.error('error rolling: ', err)
@@ -180,14 +185,14 @@ async function main() {
 
     const tableMaker = new TableMaker()
     const tablePlayer = new TablePlayer()
-    
-    debug.enable('*')
-    
+
+    debug.enable('table-player,table-maker')
+
     const lobbyRegistrationFilter = lobby.filters.RegisteredInterest(null)
-    const tableStartedFilter = delphs.filters.Started(null, null)
-    
+    const orchestratorFilter = orchestratorState.filters.TableAdded(null)
+
     provider.on(lobbyRegistrationFilter, () => tableMaker.handleLobbyRegistration())
-    provider.on(tableStartedFilter, () => tablePlayer.handleTableStarted())
+    provider.on(orchestratorFilter, () => tablePlayer.handleTableStarted())
     // at startup, just check for any running tables
     tablePlayer.handleTableStarted()
     // and if any tables need to be created

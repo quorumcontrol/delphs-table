@@ -1,4 +1,4 @@
-import { utils, Wallet } from "ethers";
+import { providers, utils, Wallet } from "ethers";
 import { useMutation, useQuery, useQueryClient, UseQueryResult } from "react-query";
 import { useProvider, useSigner } from "wagmi";
 import { usePlayer } from "./Player";
@@ -6,6 +6,7 @@ import { backOff } from "exponential-backoff";
 import { useCallback, useMemo } from "react";
 import { pbkdf2, randomBytes } from "crypto";
 import useIsClientSide from "./useIsClientSide";
+import { defaultNetwork } from "../utils/SkaleChains";
 
 const FAUCET_URL =
   "https://larvamaiorumfaucet5sqygfv0-first.functions.fnc.fr-par.scw.cloud";
@@ -41,7 +42,6 @@ const deriveKey = (msg: Buffer, salt: Buffer) => {
 export const useDeviceSigner = () => {
   const { data: signer } = useSigner();
   const queryClient = useQueryClient();
-  const provider = useProvider();
   const player = usePlayer();
 
   const login = useCallback(async () => {
@@ -89,12 +89,10 @@ export const useDeviceSigner = () => {
     if (deviceSigner) {
       return deviceSigner;
     }
-    console.log("decrypting");
-    if (!signer?.provider) {
-      throw new Error("no signer yet");
-    }
 
-    deviceSigner = new Wallet(devicePrivateKey).connect(signer.provider);
+    const provider = new providers.StaticJsonRpcProvider(defaultNetwork().rpcUrls.default)
+
+    deviceSigner = new Wallet(devicePrivateKey).connect(provider);
     console.log("decrypted", "device address: ", await deviceSigner.getAddress());
 
     return deviceSigner;
@@ -104,7 +102,7 @@ export const useDeviceSigner = () => {
     "device-signer",
     fetchDeviceSigner,
     {
-      enabled: !!devicePrivateKey && !!provider,
+      enabled: !!devicePrivateKey && !!signer,
     }
   );
   return { ...query, login };

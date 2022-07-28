@@ -26,10 +26,9 @@ const Play: NextPage = () => {
     if (!signer) {
       throw new Error('no signer')
     }
-    const delphsTable = delphsContract(signer, signer.provider, address)
+    const delphsTable = delphsContract(signer, signer.provider, await signer.getAddress())
     console.log('signer addr: ', await signer.getAddress(), 'params', tableId, appEvent.data[0], appEvent.data[1])
     txQueue.push(async () => {
-      console.log('content window: ', iframe.current?.contentWindow)
       iframe.current?.contentWindow?.postMessage(JSON.stringify({
         type: 'destinationStarting',
         x: appEvent.data[0],
@@ -37,8 +36,7 @@ const Play: NextPage = () => {
       }), '*')
       const tx = await delphsTable.setDestination(tableId, appEvent.data[0], appEvent.data[1])
       console.log('destination tx: ', tx)
-      const receiptPromise = tx.wait()
-      receiptPromise.then((receipt) => {
+      return tx.wait().then((receipt) => {
         console.log('destination receipt: ', receipt)
         iframe.current?.contentWindow?.postMessage(JSON.stringify({
           type: 'destinationComplete',
@@ -55,7 +53,6 @@ const Play: NextPage = () => {
           success: false,
         }), '*')
       })
-      return receiptPromise
     })
   }, [signer])
 
