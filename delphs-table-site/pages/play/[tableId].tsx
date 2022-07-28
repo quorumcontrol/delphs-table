@@ -7,6 +7,7 @@ import LoggedInLayout from "../../src/components/LoggedInLayout";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
 import { useDeviceSigner } from "../../src/hooks/useUser";
 import { delphsContract } from "../../src/utils/contracts";
+import promiseWaiter from "../../src/utils/promiseWaiter";
 import SingletonQueue from "../../src/utils/singletonQueue";
 
 const txQueue = new SingletonQueue()
@@ -29,6 +30,8 @@ const Play: NextPage = () => {
     const delphsTable = delphsContract(signer, signer.provider, await signer.getAddress())
     console.log('signer addr: ', await signer.getAddress(), 'params', tableId, appEvent.data[0], appEvent.data[1])
     txQueue.push(async () => {
+      await promiseWaiter(500) // try to fix a broken nonce issue
+      
       iframe.current?.contentWindow?.postMessage(JSON.stringify({
         type: 'destinationStarting',
         x: appEvent.data[0],

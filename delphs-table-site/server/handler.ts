@@ -9,6 +9,7 @@ import botSetup from '../contracts/bots'
 import { OrchestratorState__factory } from "../contracts/typechain";
 import { addresses } from "../src/utils/networks";
 import { delphsContract, lobbyContract, playerContract } from "../src/utils/contracts";
+import promiseWaiter from '../src/utils/promiseWaiter'
 import * as dotenv from "dotenv";
 
 dotenv.config({
@@ -166,8 +167,8 @@ class TablePlayer {
         this.log('roll')
         const tx = await delphs.rollTheDice({ gasLimit: 250000 })
         this.log('rolled: ', tx.hash)
-
         await tx.wait()
+        await promiseWaiter(2000)
       }
       this.log('bulk remove')
       await orchestratorState.bulkRemove(active.map((table) => table.id), { gasLimit: 500000 })
