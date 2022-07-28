@@ -1,4 +1,4 @@
-import { Entity, GraphNode, SoundComponent } from "playcanvas";
+import { Entity, GraphNode, SoundComponent, Tween } from "playcanvas";
 import Battle from "../boardLogic/Battle";
 import Cell from "../boardLogic/Cell";
 import Warrior from "../boardLogic/Warrior";
@@ -23,6 +23,7 @@ class CellState extends ScriptTypeBase {
   soundComponent: SoundComponent
 
   destinationElement?: Entity; // keep track of it to delete if the destination changes
+  destinationTween?:Tween
 
   cell?: Cell;
   playerMarkers: { [key: string]: Entity };
@@ -96,11 +97,18 @@ class CellState extends ScriptTypeBase {
         const rndX = randomBounded(this.xSize * 0.5);
         const rndZ = randomBounded(this.zSize * 0.5);
         this.destinationElement.setLocalScale(1, 20, 1);
-        this.destinationElement.setLocalPosition(rndX, 3, rndZ);
+        this.destinationElement.setLocalPosition(rndX, 4, rndZ);
         if (pendingDest) {
           console.log('tweening pendingDest')
-          this.destinationElement.tween(this.destinationElement.getLocalPosition()).to({ x: rndX, y: 10, z: rndZ }, 1.0, pc.SineOut).yoyo(true).loop(true).start()
+          this.destinationTween = this.destinationElement.tween(this.destinationElement.getLocalPosition()).to({ x: rndX, y: 12, z: rndZ }, 1.0, pc.SineOut).yoyo(true).loop(true).start()
         }
+      }
+
+      if (!pendingDest && this.destinationTween) {
+        this.destinationTween.stop()
+        this.destinationTween = undefined
+        const currentPosition = this.destinationElement.getLocalPosition()
+        this.destinationElement.setLocalPosition(currentPosition.x, 4, currentPosition.z)
       }
 
       return;

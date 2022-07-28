@@ -196,10 +196,10 @@ class Cell {
   private chanceOfSpawningWootgump() {
     let multiplier = 1
     if (this.wootgump.length > 0) {
-      multiplier += 25
+      multiplier += 35
     }
     if (this.anyNearbyCellHasWootgump()) {
-     multiplier += 4
+     multiplier += 5
     }
     return this.grid.chanceOfSpawningWootGumpIn1000 * multiplier
   }

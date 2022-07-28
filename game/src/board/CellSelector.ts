@@ -48,7 +48,9 @@ class CellSelector extends ScriptTypeBase {
           break;
         case "destinationComplete":
           console.log("destination complete, success?", msg.success)
-          config.currentPlayer?.clearPendingDestination()
+          if (!msg.success) {
+            config.currentPlayer?.clearPendingDestination()
+          }
           break;
         default:
           console.error('unknown message type: ', msg)

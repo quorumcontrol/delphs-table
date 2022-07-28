@@ -88,6 +88,10 @@ class Warrior implements WarriorStats {
   setDestination(x: number, y: number) {
     console.log('setting destination: ', x, y, ' existing: ', this.destination)
     this.destination = [x, y]
+    if (this.pendingDestination && this.pendingDestination[0] === x && this.pendingDestination[1] === y) {
+      console.log('clearing pending destination')
+      this.clearPendingDestination()
+    }
   }
 
   setPendingDestination(x: number, y: number) {

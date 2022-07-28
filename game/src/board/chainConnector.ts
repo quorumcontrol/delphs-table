@@ -217,19 +217,8 @@ class ChainConnector extends ScriptTypeBase {
           if (!warrior) {
             throw new Error('bad warrior id')
           }
-          warrior.destination = [dest.x.toNumber(), dest.y.toNumber()]
+          warrior.setDestination(dest.x.toNumber(), dest.y.toNumber())
         })
-
-        const config = this.boardGenerate.getGameConfig()
-        if (
-          config.currentPlayer &&
-          config.currentPlayer.pendingDestination &&
-          config.currentPlayer.destination &&
-          config.currentPlayer.pendingDestination[0] === config.currentPlayer.destination[0] &&
-          config.currentPlayer.pendingDestination[1] === config.currentPlayer.destination[1]
-        ) {
-            config.currentPlayer.clearPendingDestination()
-        }
 
         this.entity.fire("tick", this.grid.handleTick(random));
         this.latest = index;
