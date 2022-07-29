@@ -11,6 +11,7 @@ import { addresses } from "../src/utils/networks";
 import { delphsContract, lobbyContract, playerContract } from "../src/utils/contracts";
 import promiseWaiter from '../src/utils/promiseWaiter'
 import * as dotenv from "dotenv";
+import SingletonQueue from '../src/utils/singletonQueue'
 
 dotenv.config({
   path: '.env.local'
@@ -35,6 +36,8 @@ async function getBots(num: number) {
   })
 }
 
+const singleton = new SingletonQueue()
+
 const provider = new providers.StaticJsonRpcProvider(skaleTestnet.rpcUrls.default)
 
 const wallet = new NonceManager(new Wallet(process.env.env_delphsPrivateKey!).connect(provider))
@@ -45,26 +48,28 @@ const player = playerContract(provider)
 const orchestratorState = OrchestratorState__factory.connect(addresses().OrchestratorState, wallet)
 
 class TableMaker {
-  timeoutHandle?: ReturnType<typeof setTimeout>
   log: Debugger
 
   constructor() {
     this.log = debug('table-maker')
   }
 
-  handleLobbyRegistration() {
+  instantLobbyRegistration() {
+    this.log('wait over, doing table maker')
+    singleton.push(async () => {
+      try {
+        return await this.makeTable()
+      } catch (err) {
+        console.error('error doing make tables', err)
+        process.exit(1)
+      }
+    })
+  }
+
+  async handleLobbyRegistration() {
     this.log('lobby registration, waiting')
-    if (!this.timeoutHandle) {
-      this.timeoutHandle = setTimeout(() => {
-        this.timeoutHandle = undefined
-        this.makeTable().then((resp) => {
-          console.log('table made')
-        }).catch((err) => {
-          console.error('error making table:', err)
-          this.handleLobbyRegistration()
-        })
-      }, 30000)
-    }
+    await promiseWaiter(15000)
+    this.instantLobbyRegistration()
   }
 
   private async makeTable() {
@@ -118,26 +123,27 @@ class TableMaker {
 class TablePlayer {
 
   log: Debugger
-  private pending?: Promise<any>
 
   constructor() {
     this.log = debug('table-player')
   }
 
-  handleTableStarted() {
+  instantTableStarted() {
+    this.log('table started, rolling the dice')
+    singleton.push(async () => {
+      try {
+        return await this.playTables()
+      } catch (err) {
+        console.error('error playing table: ', err)
+        process.exit(1)
+      }
+    })
+  }
+
+  async handleTableStarted() {
     this.log('table started, waiting')
-    const lookForTablesPromise = () => {
-      return new Promise(async (outerResolve) => {
-        await new Promise((timerResolve) => {
-          setTimeout(timerResolve, 15000)
-        })
-        outerResolve(this.playTables())
-      })
-    }
-    if (this.pending) {
-      return this.pending = this.pending.finally(lookForTablesPromise).catch((err) => console.error('error playing table: ', err))
-    }
-    this.pending = lookForTablesPromise()
+    await promiseWaiter(15000)
+    this.instantTableStarted()
   }
 
   private async playTables() {
@@ -195,9 +201,9 @@ async function main() {
     provider.on(lobbyRegistrationFilter, () => tableMaker.handleLobbyRegistration())
     provider.on(orchestratorFilter, () => tablePlayer.handleTableStarted())
     // at startup, just check for any running tables
-    tablePlayer.handleTableStarted()
+    tablePlayer.instantTableStarted()
     // and if any tables need to be created
-    tableMaker.handleLobbyRegistration()
+    tableMaker.instantLobbyRegistration()
   })
 }
 
