@@ -26,7 +26,7 @@ function bigNumMin(a:BigNumber, b:BigNumber) {
 
 @createScript("chainConnector")
 class ChainConnector extends ScriptTypeBase {
-  provider: ethers.providers.WebSocketProvider;
+  provider: ethers.providers.StaticJsonRpcProvider;
   delphs: DelphsTable;
   player: Player;
   grid: Grid;
@@ -47,7 +47,7 @@ class ChainConnector extends ScriptTypeBase {
     this.handleTick = this.handleTick.bind(this);
     this.asyncHandleTick = this.asyncHandleTick.bind(this);
     this.handleStarted = this.handleStarted.bind(this);
-    this.provider = new ethers.providers.WebSocketProvider(skaleTestnet.rpcUrls.wss);
+    this.provider = new ethers.providers.StaticJsonRpcProvider(skaleTestnet.rpcUrls.default);
     
     const multicall = new MulticallWrapper(this.provider, skaleTestnet.id)
 
@@ -70,6 +70,7 @@ class ChainConnector extends ScriptTypeBase {
         log("no table id");
         return;
       }
+      console.log('tableId: ', tableId)
       this.tableId = tableId
       const [table, players, latest] = await Promise.all([
         this.delphs.tables(tableId),
