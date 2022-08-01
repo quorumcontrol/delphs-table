@@ -199,7 +199,7 @@ class Cell {
       multiplier += 35
     }
     if (this.anyNearbyCellHasWootgump()) {
-     multiplier += 5
+     multiplier += 10
     }
     return this.grid.chanceOfSpawningWootGumpIn1000 * multiplier
   }

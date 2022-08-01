@@ -17,6 +17,9 @@ dotenv.config({
   path: '.env.local'
 })
 
+const NUMBER_OF_ROUNDS = 50
+const SECONDS_BETWEEN_ROUNDS = 10
+
 if (!process.env.env_delphsPrivateKey) {
   console.error('no private key')
   throw new Error("must have a DELPHS private key")
@@ -81,7 +84,7 @@ class TableMaker {
         this.log('no one is waiting')
         return
       }
-      const rounds = 100
+      const rounds = NUMBER_OF_ROUNDS
 
       const botNumber = Math.max(10 - waiting.length, 0)
       const id = hashString(`${faker.company.companyName()}: ${faker.company.bs()}}`)
@@ -173,8 +176,8 @@ class TablePlayer {
         this.log('roll')
         const tx = await delphs.rollTheDice({ gasLimit: 250000 })
         this.log('rolled: ', tx.hash)
+        await promiseWaiter(SECONDS_BETWEEN_ROUNDS * 1000)
         await tx.wait()
-        await promiseWaiter(2000)
       }
       this.log('bulk remove')
       await orchestratorState.bulkRemove(active.map((table) => table.id), { gasLimit: 500000 })

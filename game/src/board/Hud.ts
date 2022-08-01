@@ -1,4 +1,5 @@
 import { Entity } from "playcanvas";
+import HelpText from "../appWide/HelpText";
 import { CellOutComeDescriptor } from "../boardLogic/Cell";
 import { TickOutput } from "../boardLogic/Grid";
 import { ScriptTypeBase } from "../types/ScriptTypeBase";
@@ -20,6 +21,10 @@ class Hud extends ScriptTypeBase {
     this.eventTemplate = mustFindByName(this.entity, "Event");
     this.eventTemplate.enabled = false;
     getGameConfig(this.app.root).controller.on("tick", this.handleTick, this);
+    const helpScreenScript = this.getScript<HelpText>(mustFindByName(this.app.root, 'HelpScreen'), 'helpText')
+    mustFindByName(this.entity, 'HelpButton').button?.on('click', () => {
+      helpScreenScript?.show()
+    })
   }
 
   rank(config:GameConfig, tickOutput:TickOutput) {
@@ -29,7 +34,7 @@ class Hud extends ScriptTypeBase {
     const sorted = config.grid.warriors.sort((a,b) => {
       return b.wootgumpBalance - a.wootgumpBalance
     })
-    return sorted?.indexOf(config.currentPlayer)
+    return sorted?.indexOf(config.currentPlayer) + 1
   }
 
   handleTick(tickOutput:TickOutput) {
@@ -41,7 +46,7 @@ class Hud extends ScriptTypeBase {
     }
     let text = `Round ${grid.tick}/${grid.gameLength}`
     if (config.currentPlayer) {
-      text += ` - Rank: ${this.rank(config, tickOutput)}`
+      text += ` - Rank: ${this.rank(config, tickOutput)} - ${config.currentPlayer.wootgumpBalance} Wootgump`
     }
     this.uiText.element!.text = text;
       
