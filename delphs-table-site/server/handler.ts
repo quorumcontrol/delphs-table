@@ -18,7 +18,7 @@ dotenv.config({
 })
 
 const NUMBER_OF_ROUNDS = 50
-const SECONDS_BETWEEN_ROUNDS = 10
+const SECONDS_BETWEEN_ROUNDS = 5
 
 if (!process.env.env_delphsPrivateKey) {
   console.error('no private key')

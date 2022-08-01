@@ -90,7 +90,7 @@ export const useRegisterInterest = ({ lobbyContract }: { lobbyContract?: Lobby }
         throw err;
       })
       .then(() => {
-        queryClient.invalidateQueries("waiting-players", {
+        queryClient.invalidateQueries(["waiting-players"], {
           refetchInactive: true,
         });
       });
