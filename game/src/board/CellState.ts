@@ -251,7 +251,7 @@ class CellState extends ScriptTypeBase {
 
     const rndX = randomBounded(this.xSize);
     const rndZ = randomBounded(this.zSize);
-    gumpElement.setLocalScale(0.1, 5, 0.1);
+    gumpElement.setLocalScale(0.1, 10, 0.1);
 
     gumpElement.setLocalPosition(rndX, 0, rndZ);
     gumpElement.setRotation(0, randomBounded(0.2), 0, 1);

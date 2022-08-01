@@ -2,7 +2,7 @@ import { Entity } from "playcanvas";
 import { CellOutComeDescriptor } from "../boardLogic/Cell";
 import { TickOutput } from "../boardLogic/Grid";
 import { ScriptTypeBase } from "../types/ScriptTypeBase";
-import { getGameConfig } from "../utils/config";
+import { GameConfig, getGameConfig } from "../utils/config";
 
 import { createScript } from "../utils/createScriptDecorator";
 
@@ -22,6 +22,16 @@ class Hud extends ScriptTypeBase {
     getGameConfig(this.app.root).controller.on("tick", this.handleTick, this);
   }
 
+  rank(config:GameConfig, tickOutput:TickOutput) {
+    if (!config.currentPlayer || !config.grid) {
+      return -1
+    }
+    const sorted = config.grid.warriors.sort((a,b) => {
+      return b.wootgumpBalance - a.wootgumpBalance
+    })
+    return sorted?.indexOf(config.currentPlayer)
+  }
+
   handleTick(tickOutput:TickOutput) {
     const config = getGameConfig(this.app.root);
     const grid = config.grid;
@@ -29,18 +39,10 @@ class Hud extends ScriptTypeBase {
     if (!grid) {
       return;
     }
-    const text = [`Round ${grid.tick}/${grid.gameLength}\n`]
-      .concat(
-        grid.warriors?.sort((a,b) => {
-          return b.wootgumpBalance - a.wootgumpBalance
-        }).map((w) => {
-          const prefix = config.currentPlayer?.id === w.id ? "-> " : "";
-          return `${prefix}${w.name} (A: ${w.attack}, D: ${w.defense}): ${Math.ceil(
-            w.currentHealth
-          )} HP / ${w.wootgumpBalance} WG`;
-        })
-      )
-      .join("\n");
+    let text = `Round ${grid.tick}/${grid.gameLength}`
+    if (config.currentPlayer) {
+      text += ` - Rank: ${this.rank(config, tickOutput)}`
+    }
     this.uiText.element!.text = text;
       
 
@@ -74,7 +76,7 @@ class Hud extends ScriptTypeBase {
           console.log(eventElement)
 
           let total = 0
-          const duration = 5.0
+          const duration = 3.0
 
           eventElement.tween(curPosition).to({x: curPosition.x, y: curPosition.y + 200, z: curPosition.z}, duration, pc.SineIn).start().on('complete', () => {
             eventElement.destroy()

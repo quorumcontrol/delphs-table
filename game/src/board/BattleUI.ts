@@ -97,16 +97,11 @@ class BattleUI extends ScriptTypeBase {
     }
     playerMarkerScript.setWarrior(warrior)
     setTimeout(() => {
-      playerMarkerScript.setBattling(true)
+      playerMarkerScript.setBattling(true, index === 1)
     }, randomBounded(1000)) // don't set it immediately here, so that the animations don't sync up
 
     playerMarker.setLocalScale(0.1, 10, 0.1);
-
     playerMarker.setLocalPosition(...standardPlaces[index]);
-
-    const yRotation = index === 1 ? 180 : 0
-
-    playerMarker.setLocalEulerAngles(0, yRotation, 0);
 
     return playerMarker;
   }

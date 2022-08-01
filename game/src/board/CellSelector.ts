@@ -56,7 +56,7 @@ class CellSelector extends ScriptTypeBase {
           console.error('unknown message type: ', msg)
       }
     } catch (err) {
-      console.error('msg error: ', err)
+      console.log('msg error: ', err)
     }
   }
 

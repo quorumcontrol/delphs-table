@@ -21,15 +21,18 @@ class RandomTrees extends ScriptTypeBase {
     if (!templates) {
       throw new Error("no templates");
     }
-    const tree = templates.findByName("SingleTree");
-    if (!tree) {
-      throw new Error("no tree");
+    if (Math.random() > 0.5) {
+      const tree = templates.findByName("SingleTree");
+      if (!tree) {
+        throw new Error("no tree");
+      }
+      const e = tree.clone();
+      this.entity.addChild(e);
+      e.setLocalScale(0.5, 0.5, 50);
+  
+      e.setLocalPosition(randomBounded(xSize), 0, randomBounded(zSize));
     }
-    const e = tree.clone();
-    this.entity.addChild(e);
-    e.setLocalScale(0.5, 0.5, 50);
 
-    e.setLocalPosition(randomBounded(xSize), 0, randomBounded(zSize));
   }
 }
 
