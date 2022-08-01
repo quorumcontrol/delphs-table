@@ -87,8 +87,7 @@ const Play: NextPage = () => {
         {isClient && <Box
           id="game"
           as='iframe'
-          src={`https://playcanv.as/e/b/As6aw2Cy/?tableId=${tableId}&player=${address}`}
-          // src={`https://playcanv.as/e/p/wQEQB1Cp/?tableId=${tableId}&player=${address}`}
+          src={`https://playcanv.as/e/p/wQEQB1Cp/?tableId=${tableId}&player=${address}`}
           ref={iframe}
           minW="1200px"
           minH="800px"
