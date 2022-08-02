@@ -1,7 +1,7 @@
 import "hardhat-deploy";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
-import { TrustedForwarder__factory } from 'skale-relayer-contracts/lib/typechain-types'
+import { TrustedForwarder__factory, Noncer__factory } from 'skale-relayer-contracts/lib/typechain-types'
 
 const SERVICE = "delphstable.xyz";
 const STATEMENT = "Your browser will send transactions to Delph's Table without requiring signatures.";
@@ -17,15 +17,28 @@ const func: DeployFunction = async function ({
 
   const roller = await get('DiceRoller')
 
+  console.log("bytecode: ", TrustedForwarder__factory.bytecode.length)
+
+  const noncer = await deploy("Noncer", {
+    from: deployer,
+    log: true,
+    contract: {
+      bytecode: Noncer__factory.bytecode,
+      abi: Noncer__factory.abi,
+    },
+    args: [roller.address]
+  })
+
   await deploy("TrustedForwarder", {
     from: deployer,
     log: true,
+    gasLimit: 2_700_000,
     contract: {
       bytecode: TrustedForwarder__factory.bytecode,
       abi: TrustedForwarder__factory.abi,
     },
     args: [
-      roller.address,
+      noncer.address,
       SERVICE,
       STATEMENT,
       URI,
