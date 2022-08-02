@@ -6,13 +6,15 @@ const func: DeployFunction = async function ({
   deployments,
   getNamedAccounts,
 }: HardhatRuntimeEnvironment) {
-  const { deploy } = deployments;
+  const { deploy, get } = deployments;
   const { deployer } = await getNamedAccounts();
+
+  const forwarder = await get('TrustedForwarder')
 
   await deploy("OrchestratorState", {
     from: deployer,
     log: true,
-    args: [deployer],
+    args: [forwarder.address, deployer],
   });
 };
 export default func;

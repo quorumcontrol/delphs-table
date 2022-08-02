@@ -9,12 +9,12 @@ const func: DeployFunction = async function ({
   const { deploy, get } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const player = await get('Player')
+  const forwarder = await get('TrustedForwarder')
 
   await deploy("Lobby", {
     from: deployer,
     log: true,
-    args: [player.address, deployer],
+    args: [forwarder.address, deployer],
   });
 };
 export default func;

@@ -9,14 +9,14 @@ const func: DeployFunction = async function ({
   const { deploy, get } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const player = await get('Player')
+  const forwarder = await get('TrustedForwarder')
   const roller = await get('DiceRoller')
 
   await deploy("DelphsTable", {
     from: deployer,
     log: true,
     // deterministicDeployment: true,
-    args: [roller.address, player.address, deployer],
+    args: [forwarder.address, roller.address, deployer],
   });
 };
 export default func;

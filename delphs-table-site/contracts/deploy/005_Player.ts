@@ -6,14 +6,18 @@ const func: DeployFunction = async function ({
   deployments,
   getNamedAccounts,
 }: HardhatRuntimeEnvironment) {
-  const { deploy, execute } = deployments;
+  const { deploy, execute, get } = deployments;
   const { deployer } = await getNamedAccounts();
+
+  const forwarder = await get('TrustedForwarder')
 
   const player = await deploy("Player", {
     from: deployer,
     log: true,
     // deterministicDeployment: true,
-    args: [],
+    args: [
+      forwarder.address,
+    ],
   });
 
   if (player.newlyDeployed) {
@@ -23,9 +27,8 @@ const func: DeployFunction = async function ({
         log: true,
         from: deployer,
       },
-      "initializePlayer",
+      "setUsername",
       "deployer",
-      deployer
     );
   }
 };
