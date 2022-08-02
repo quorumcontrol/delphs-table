@@ -7,8 +7,9 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 
-contract Wootgump is ERC20, ERC20Burnable, Pausable, AccessControl, ERC20Permit, ERC20Votes {
+contract Wootgump is ERC20, ERC20Burnable, Pausable, AccessControl, ERC20Permit, ERC20Votes, ERC2771Context {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
@@ -17,7 +18,7 @@ contract Wootgump is ERC20, ERC20Burnable, Pausable, AccessControl, ERC20Permit,
         uint256 amount;
     }
 
-    constructor(address initialOwner) ERC20("Wootgump", "GUMP") ERC20Permit("Wootgump") {
+    constructor(address trustedForwarder, address initialOwner) ERC20("Wootgump", "GUMP") ERC20Permit("Wootgump") ERC2771Context(trustedForwarder) {
         _grantRole(DEFAULT_ADMIN_ROLE, initialOwner);
         _grantRole(PAUSER_ROLE, initialOwner);
         _grantRole(MINTER_ROLE, initialOwner);
@@ -72,5 +73,24 @@ contract Wootgump is ERC20, ERC20Burnable, Pausable, AccessControl, ERC20Permit,
         override(ERC20, ERC20Votes)
     {
         super._burn(account, amount);
+    }
+
+    function _msgSender()
+        internal
+        view
+        override(Context, ERC2771Context)
+        returns (address sender)
+    {
+        return ERC2771Context._msgSender();
+    }
+
+    function _msgData()
+        internal
+        view
+        virtual
+        override(Context, ERC2771Context)
+        returns (bytes calldata)
+    {
+        return ERC2771Context._msgData();
     }
 }

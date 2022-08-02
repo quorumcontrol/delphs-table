@@ -11,7 +11,6 @@ import {
   PopulatedTransaction,
   BaseContract,
   ContractTransaction,
-  Overrides,
   CallOverrides,
 } from "ethers";
 import { BytesLike } from "@ethersproject/bytes";
@@ -19,22 +18,13 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface PlayerInterface extends ethers.utils.Interface {
+interface ERC2771ContextInterface extends ethers.utils.Interface {
   functions: {
     "isTrustedForwarder(address)": FunctionFragment;
-    "name(address)": FunctionFragment;
-    "setUsername(string)": FunctionFragment;
-    "usernameToAddress(string)": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "isTrustedForwarder",
-    values: [string]
-  ): string;
-  encodeFunctionData(functionFragment: "name", values: [string]): string;
-  encodeFunctionData(functionFragment: "setUsername", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "usernameToAddress",
     values: [string]
   ): string;
 
@@ -42,28 +32,11 @@ interface PlayerInterface extends ethers.utils.Interface {
     functionFragment: "isTrustedForwarder",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "setUsername",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "usernameToAddress",
-    data: BytesLike
-  ): Result;
 
-  events: {
-    "UserNameSet(address,string)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "UserNameSet"): EventFragment;
+  events: {};
 }
 
-export type UserNameSetEvent = TypedEvent<
-  [string, string] & { player: string; username: string }
->;
-
-export class Player extends BaseContract {
+export class ERC2771Context extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -104,25 +77,13 @@ export class Player extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: PlayerInterface;
+  interface: ERC2771ContextInterface;
 
   functions: {
     isTrustedForwarder(
       forwarder: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    name(arg0: string, overrides?: CallOverrides): Promise<[string]>;
-
-    setUsername(
-      _name: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    usernameToAddress(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
   };
 
   isTrustedForwarder(
@@ -130,55 +91,18 @@ export class Player extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  name(arg0: string, overrides?: CallOverrides): Promise<string>;
-
-  setUsername(
-    _name: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  usernameToAddress(arg0: string, overrides?: CallOverrides): Promise<string>;
-
   callStatic: {
     isTrustedForwarder(
       forwarder: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    name(arg0: string, overrides?: CallOverrides): Promise<string>;
-
-    setUsername(_name: string, overrides?: CallOverrides): Promise<boolean>;
-
-    usernameToAddress(arg0: string, overrides?: CallOverrides): Promise<string>;
   };
 
-  filters: {
-    "UserNameSet(address,string)"(
-      player?: string | null,
-      username?: null
-    ): TypedEventFilter<[string, string], { player: string; username: string }>;
-
-    UserNameSet(
-      player?: string | null,
-      username?: null
-    ): TypedEventFilter<[string, string], { player: string; username: string }>;
-  };
+  filters: {};
 
   estimateGas: {
     isTrustedForwarder(
       forwarder: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    name(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    setUsername(
-      _name: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    usernameToAddress(
-      arg0: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -186,21 +110,6 @@ export class Player extends BaseContract {
   populateTransaction: {
     isTrustedForwarder(
       forwarder: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    name(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    setUsername(
-      _name: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    usernameToAddress(
-      arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

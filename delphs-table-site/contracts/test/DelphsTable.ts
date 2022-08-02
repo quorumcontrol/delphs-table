@@ -1,7 +1,9 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
+import { loadFixture } from "ethereum-waffle";
 import { ethers } from "hardhat";
 import { DelphsTable, DiceRoller } from "../typechain";
+import { deployForwarderAndRoller } from "./fixtures";
 
 function hashString(msg:string) {
  return ethers.utils.keccak256(ethers.utils.solidityPack(['string'], [msg]))
@@ -14,16 +16,16 @@ describe("DelphsTable", function () {
   beforeEach(async () => {
     const signers = await ethers.getSigners()
     deployer = signers[0]
-    const PlayerFactory = await ethers.getContractFactory('Player');
-    const player = await PlayerFactory.deploy()
-    await player.deployed()
-    await player.initializePlayer('deployer', deployer.address);
 
-    const DiceRollerFactory = await ethers.getContractFactory("TestDiceRoller");
-    const diceRoller = await DiceRollerFactory.deploy();
-    await diceRoller.deployed();
+    const { diceRoller, forwarder } = await loadFixture(deployForwarderAndRoller)
+
+    const PlayerFactory = await ethers.getContractFactory('Player');
+    const player = await PlayerFactory.deploy(forwarder.address)
+    await player.deployed()
+    await player.setUsername('deployer');
+
     const DelphsTableFactory = await ethers.getContractFactory("DelphsTable");
-    delphsTable = await DelphsTableFactory.deploy(diceRoller.address, player.address, deployer.address)
+    delphsTable = await DelphsTableFactory.deploy(forwarder.address, diceRoller.address, deployer.address)
     await delphsTable.deployed()
   })
 

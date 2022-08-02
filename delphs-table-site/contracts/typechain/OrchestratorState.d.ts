@@ -29,6 +29,7 @@ interface OrchestratorStateInterface extends ethers.utils.Interface {
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
+    "isTrustedForwarder(address)": FunctionFragment;
     "remove(bytes32)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
@@ -61,6 +62,10 @@ interface OrchestratorStateInterface extends ethers.utils.Interface {
     functionFragment: "hasRole",
     values: [BytesLike, string]
   ): string;
+  encodeFunctionData(
+    functionFragment: "isTrustedForwarder",
+    values: [string]
+  ): string;
   encodeFunctionData(functionFragment: "remove", values: [BytesLike]): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
@@ -89,6 +94,10 @@ interface OrchestratorStateInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isTrustedForwarder",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "remove", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
@@ -209,6 +218,11 @@ export class OrchestratorState extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    isTrustedForwarder(
+      forwarder: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     remove(
       tableId: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -262,6 +276,11 @@ export class OrchestratorState extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  isTrustedForwarder(
+    forwarder: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   remove(
     tableId: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -309,6 +328,11 @@ export class OrchestratorState extends BaseContract {
     hasRole(
       role: BytesLike,
       account: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    isTrustedForwarder(
+      forwarder: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -438,6 +462,11 @@ export class OrchestratorState extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    isTrustedForwarder(
+      forwarder: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     remove(
       tableId: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -494,6 +523,11 @@ export class OrchestratorState extends BaseContract {
     hasRole(
       role: BytesLike,
       account: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    isTrustedForwarder(
+      forwarder: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

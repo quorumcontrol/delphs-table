@@ -49,7 +49,7 @@ task('setup-bots', 'setup a number of bots')
           to: addr,
           value: utils.parseEther('0.2')
         })
-        await player.connect(wallet.wallet.connect(hre.ethers.provider)).initializePlayer(wallet.name, addr)
+        await player.connect(wallet.wallet.connect(hre.ethers.provider)).setUsername(wallet.name)
       }
     
       console.log(wallets.reduce((memo, wallet) => {
@@ -116,7 +116,7 @@ task('board')
     const player = await getPlayerContract(hre)
 
     const isOk = await Promise.all(addresses.split(',').map((addr:string) => {
-      return player.isInitialized(addr)
+      return player.name(addr)
     }))
 
     isOk.forEach((is, i) => {

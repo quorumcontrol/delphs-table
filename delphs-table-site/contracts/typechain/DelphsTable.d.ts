@@ -31,8 +31,8 @@ interface DelphsTableInterface extends ethers.utils.Interface {
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
+    "isTrustedForwarder(address)": FunctionFragment;
     "latestRoll()": FunctionFragment;
-    "player()": FunctionFragment;
     "players(bytes32)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
@@ -88,10 +88,13 @@ interface DelphsTableInterface extends ethers.utils.Interface {
     values: [BytesLike, string]
   ): string;
   encodeFunctionData(
+    functionFragment: "isTrustedForwarder",
+    values: [string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "latestRoll",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "player", values?: undefined): string;
   encodeFunctionData(functionFragment: "players", values: [BytesLike]): string;
   encodeFunctionData(
     functionFragment: "renounceRole",
@@ -154,8 +157,11 @@ interface DelphsTableInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isTrustedForwarder",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "latestRoll", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "player", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "players", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
@@ -343,9 +349,12 @@ export class DelphsTable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    latestRoll(overrides?: CallOverrides): Promise<[BigNumber]>;
+    isTrustedForwarder(
+      forwarder: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-    player(overrides?: CallOverrides): Promise<[string]>;
+    latestRoll(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     players(id: BytesLike, overrides?: CallOverrides): Promise<[string[]]>;
 
@@ -481,9 +490,12 @@ export class DelphsTable extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  latestRoll(overrides?: CallOverrides): Promise<BigNumber>;
+  isTrustedForwarder(
+    forwarder: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
-  player(overrides?: CallOverrides): Promise<string>;
+  latestRoll(overrides?: CallOverrides): Promise<BigNumber>;
 
   players(id: BytesLike, overrides?: CallOverrides): Promise<string[]>;
 
@@ -617,9 +629,12 @@ export class DelphsTable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    latestRoll(overrides?: CallOverrides): Promise<BigNumber>;
+    isTrustedForwarder(
+      forwarder: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
-    player(overrides?: CallOverrides): Promise<string>;
+    latestRoll(overrides?: CallOverrides): Promise<BigNumber>;
 
     players(id: BytesLike, overrides?: CallOverrides): Promise<string[]>;
 
@@ -832,9 +847,12 @@ export class DelphsTable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    latestRoll(overrides?: CallOverrides): Promise<BigNumber>;
+    isTrustedForwarder(
+      forwarder: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    player(overrides?: CallOverrides): Promise<BigNumber>;
+    latestRoll(overrides?: CallOverrides): Promise<BigNumber>;
 
     players(id: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -946,9 +964,12 @@ export class DelphsTable extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    latestRoll(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    isTrustedForwarder(
+      forwarder: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    player(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    latestRoll(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     players(
       id: BytesLike,

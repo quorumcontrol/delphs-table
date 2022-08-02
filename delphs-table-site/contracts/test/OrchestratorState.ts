@@ -1,7 +1,9 @@
 import { expect } from "chai";
+import { loadFixture } from "ethereum-waffle";
 import { keccak256 } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 import { OrchestratorState } from "../typechain";
+import { deployForwarderAndRoller } from "./fixtures";
 
 describe("OrchestratorState", function () {
   let orchestrator:OrchestratorState
@@ -10,8 +12,11 @@ describe("OrchestratorState", function () {
 
   beforeEach(async () => {
     const deployer = (await ethers.getSigners())[0]
+    
+    const { forwarder } = await loadFixture(deployForwarderAndRoller)
+
     const OrchestratorFactory = await ethers.getContractFactory("OrchestratorState");
-    orchestrator = await OrchestratorFactory.deploy(deployer.address);
+    orchestrator = await OrchestratorFactory.deploy(forwarder.address, deployer.address);
     await orchestrator.deployed();
   })
 

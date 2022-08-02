@@ -2,15 +2,15 @@
 pragma solidity ^0.8.0;
 
 import "./interfaces/IDiceRoller.sol";
-import "./interfaces/IPlayer.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 
 error NoTwoRollsPerBlock();
 error Unauthorized();
 error AlreadyExists();
 error AlreadyStarted();
 
-contract DelphsTable is AccessControl {
+contract DelphsTable is AccessControl, ERC2771Context {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
     event DiceRolled(
@@ -22,7 +22,6 @@ contract DelphsTable is AccessControl {
     event TableCreated(bytes32 indexed id);
 
     IDiceRoller public immutable roller;
-    IPlayer public immutable player;
 
     uint256 public latestRoll;
     mapping(uint256 => bytes32) public rolls;
@@ -54,13 +53,13 @@ contract DelphsTable is AccessControl {
     }
 
     constructor(
+        address trustedForwarder,
         address diceRollerAddress,
-        address playerAddress,
         address initialOwner
-    ) {
+    ) ERC2771Context(trustedForwarder) {
         roller = IDiceRoller(diceRollerAddress);
-        player = IPlayer(playerAddress);
         _setupRole(ADMIN_ROLE, initialOwner);
+        _setupRole(DEFAULT_ADMIN_ROLE, initialOwner);
     }
 
     function rollTheDice() public returns (uint256) {
@@ -82,7 +81,7 @@ contract DelphsTable is AccessControl {
         uint256 length,
         address owner
     ) public {
-        if (!hasRole(ADMIN_ROLE, msgSender())) {
+        if (!hasRole(ADMIN_ROLE, _msgSender())) {
             revert Unauthorized();
         }
         Table storage table = tables[id];
@@ -113,7 +112,7 @@ contract DelphsTable is AccessControl {
 
     function start(bytes32 id) public returns (uint256) {
         Table storage table = tables[id];
-        if (msgSender() != table.owner) {
+        if (_msgSender() != table.owner) {
             revert Unauthorized();
         }
         if (table.startedAt > 0) {
@@ -195,7 +194,7 @@ contract DelphsTable is AccessControl {
         int64 x,
         int64 y
     ) public returns (bool) {
-        address sender = msgSender();
+        address sender = _msgSender();
         Table storage table = tables[id];
         if (!includes(table.players, sender)) {
             revert Unauthorized();
@@ -229,11 +228,22 @@ contract DelphsTable is AccessControl {
         return b;
     }
 
-    function msgSender() private view returns (address) {
-        address sender = player.deviceToPlayer(msg.sender);
-        if (sender == address(0)) {
-            return msg.sender;
-        }
-        return sender;
+    function _msgSender()
+        internal
+        view
+        override(Context, ERC2771Context)
+        returns (address sender)
+    {
+        return ERC2771Context._msgSender();
+    }
+
+    function _msgData()
+        internal
+        view
+        virtual
+        override(Context, ERC2771Context)
+        returns (bytes calldata)
+    {
+        return ERC2771Context._msgData();
     }
 }
