@@ -7146,7 +7146,7 @@ simple-swizzle@^0.2.2:
 
 skale-relayer-contracts@^0.0.5:
   version "0.0.5"
-  resolved "https://registry.npmjs.org/skale-relayer-contracts/-/skale-relayer-contracts-0.0.5.tgz"
+  resolved "https://registry.yarnpkg.com/skale-relayer-contracts/-/skale-relayer-contracts-0.0.5.tgz#6da92180fbb214343a02bd0a8da15b02a7887d2d"
   integrity sha512-FJpcC2xV+wNQkh7mN2bF3isRCBNUPpKgGeHUwzdVT6oHAqa0xKP4rrHH3ysGkDIyZRExsf/bqRdoJ/xoY0c3+Q==
 
 slash@^3.0.0:

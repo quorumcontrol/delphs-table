@@ -1,4 +1,3 @@
-import { providers, Signer } from "ethers";
 import { TrustedForwarder, TrustedForwarder__factory } from 'skale-relayer-contracts/lib/typechain-types'
 import { BadgeOfAssembly, BadgeOfAssembly__factory } from "../../badge-of-assembly-types/typechain";
 import { DelphsTable, DelphsTable__factory, Lobby, Lobby__factory, Player, Player__factory } from "../../contracts/typechain";
