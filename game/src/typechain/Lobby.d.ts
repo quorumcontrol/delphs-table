@@ -27,7 +27,7 @@ interface LobbyInterface extends ethers.utils.Interface {
     "getRoleAdmin(bytes32)": FunctionFragment;
     "grantRole(bytes32,address)": FunctionFragment;
     "hasRole(bytes32,address)": FunctionFragment;
-    "player()": FunctionFragment;
+    "isTrustedForwarder(address)": FunctionFragment;
     "registerInterest()": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
@@ -60,7 +60,10 @@ interface LobbyInterface extends ethers.utils.Interface {
     functionFragment: "hasRole",
     values: [BytesLike, string]
   ): string;
-  encodeFunctionData(functionFragment: "player", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "isTrustedForwarder",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "registerInterest",
     values?: undefined
@@ -101,7 +104,10 @@ interface LobbyInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "player", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isTrustedForwarder",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "registerInterest",
     data: BytesLike
@@ -228,7 +234,10 @@ export class Lobby extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    player(overrides?: CallOverrides): Promise<[string]>;
+    isTrustedForwarder(
+      forwarder: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     registerInterest(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -283,7 +292,10 @@ export class Lobby extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  player(overrides?: CallOverrides): Promise<string>;
+  isTrustedForwarder(
+    forwarder: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   registerInterest(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -338,7 +350,10 @@ export class Lobby extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    player(overrides?: CallOverrides): Promise<string>;
+    isTrustedForwarder(
+      forwarder: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     registerInterest(overrides?: CallOverrides): Promise<void>;
 
@@ -469,7 +484,10 @@ export class Lobby extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    player(overrides?: CallOverrides): Promise<BigNumber>;
+    isTrustedForwarder(
+      forwarder: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     registerInterest(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -530,7 +548,10 @@ export class Lobby extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    player(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    isTrustedForwarder(
+      forwarder: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     registerInterest(
       overrides?: Overrides & { from?: string | Promise<string> }

@@ -25,6 +25,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IVotes__factory>;
     getContractFactory(
+      name: "ERC2771Context",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC2771Context__factory>;
+    getContractFactory(
       name: "Pausable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Pausable__factory>;
@@ -116,6 +120,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IVotes>;
+    getContractAt(
+      name: "ERC2771Context",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC2771Context>;
     getContractAt(
       name: "Pausable",
       address: string,
