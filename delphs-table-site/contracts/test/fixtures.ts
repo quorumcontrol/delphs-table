@@ -1,6 +1,6 @@
 import { loadFixture } from 'ethereum-waffle';
 import { ethers } from 'hardhat'
-import { TrustedForwarder__factory } from 'skale-relayer-contracts/lib/typechain-types'
+import { Noncer__factory, TrustedForwarder__factory } from 'skale-relayer-contracts/lib/typechain-types'
 
 const SERVICE = "delphstable.tester";
 const STATEMENT = "I am but a test user";
@@ -16,7 +16,10 @@ export async function deployDiceRoller() {
 export async function deployForwarderAndRoller() {
   const diceRoller = await loadFixture(deployDiceRoller)
   const signers = await ethers.getSigners()
-  const forwarder = await new TrustedForwarder__factory(signers[0]).deploy(diceRoller.address, SERVICE, STATEMENT, URI, VERSION)
+
+  const noncer = await new Noncer__factory(signers[0]).deploy(diceRoller.address)
+
+  const forwarder = await new TrustedForwarder__factory(signers[0]).deploy(noncer.address, SERVICE, STATEMENT, URI, VERSION)
   
   return { forwarder, diceRoller }
 }
