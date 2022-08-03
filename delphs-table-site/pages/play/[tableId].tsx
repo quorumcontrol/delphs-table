@@ -5,9 +5,10 @@ import { useCallback, useEffect, useRef } from "react";
 import { useAccount } from "wagmi";
 import LoggedInLayout from "../../src/components/LoggedInLayout";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
-import { useDeviceSigner } from "../../src/hooks/useUser";
+import { useRelayer } from "../../src/hooks/useUser";
 import { delphsContract } from "../../src/utils/contracts";
 import promiseWaiter from "../../src/utils/promiseWaiter";
+import relayer from "../../src/utils/relayer";
 import SingletonQueue from "../../src/utils/singletonQueue";
 
 const txQueue = new SingletonQueue()
@@ -21,16 +22,16 @@ const Play: NextPage = () => {
   const { address } = useAccount();
   const isClient = useIsClientSide();
   const iframe = useRef<HTMLIFrameElement>(null);
-  const { data:signer } = useDeviceSigner()
 
   const handleMessage = useCallback(async (appEvent:AppEvent) => {
-    if (!signer) {
+    if (!relayer.ready()) {
       throw new Error('no signer')
     }
-    const delphsTable = delphsContract(signer, signer.provider, await signer.getAddress())
-    console.log('signer addr: ', await signer.getAddress(), 'params', tableId, appEvent.data[0], appEvent.data[1])
+
+    console.log('params', tableId, appEvent.data[0], appEvent.data[1])
     txQueue.push(async () => {
       await promiseWaiter(500) // try to fix a broken nonce issue
+      const delphsTable = relayer.wrapped.delphsTable()
 
       iframe.current?.contentWindow?.postMessage(JSON.stringify({
         type: 'destinationStarting',
@@ -57,7 +58,7 @@ const Play: NextPage = () => {
         }), '*')
       })
     })
-  }, [signer])
+  }, [relayer])
 
   useEffect(() => {
     const handler = async (evt:MessageEvent) => {
@@ -77,7 +78,7 @@ const Play: NextPage = () => {
       console.log('removing destination listener')
       window.removeEventListener('message', handler)
     }
-  }, [signer])
+  }, [handleMessage])
 
   return (
     <LoggedInLayout>

@@ -1,21 +1,11 @@
 import { BigNumber } from "ethers"
-import { useMemo } from "react"
 import { useInfiniteQuery, useQuery } from "react-query"
-import { useProvider } from "wagmi"
 import { BadgeOfAssembly } from "../../badge-of-assembly-types/typechain"
 import ThenArg from "../utils/ThenArg"
 import { badgeOfAssemblyContract } from "../utils/contracts"
 
-const useBadgeOfAssembly = () => {
-  const provider = useProvider()
-
-  return useMemo(() => {
-    return badgeOfAssemblyContract(provider)
-  }, [provider])
-}
-
 export const useUserBadges = (address?:string) => {
-  const badgeOfAssembly = useBadgeOfAssembly()
+  const badgeOfAssembly = badgeOfAssemblyContract()
   const fetchUserTokens = async () => {
     const userTokenIds = await badgeOfAssembly.userTokens(address!)
     console.log('user tokens: ', userTokenIds, address)
@@ -36,7 +26,8 @@ export type MetadataWithId = ThenArg<ReturnType<BadgeOfAssembly['metadata']>> & 
 
 const PAGE_SIZE = 50
 export const useAllTokens = () => {
-  const badgeOfAssembly = useBadgeOfAssembly()
+  const badgeOfAssembly = badgeOfAssemblyContract()
+
   async function fetchTokenMetadata({ pageParam = 1 }) {
     const metadata = await Promise.all(Array(PAGE_SIZE).fill(true).map((_, i) => {
       return badgeOfAssembly.metadata(pageParam + i)

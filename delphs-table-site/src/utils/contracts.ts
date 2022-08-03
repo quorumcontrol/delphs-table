@@ -5,6 +5,7 @@ import { DelphsTable, DelphsTable__factory, Lobby, Lobby__factory, Player, Playe
 import { memoize } from "../utils/memoize";
 import multicallWrapper from "../utils/multicallWrapper";
 import { addresses, isTestnet } from "../utils/networks";
+import { skaleProvider } from "./skaleProvider";
 
 const TESTNET_BOA = "0x881256ada5dD7CcB2457226C4bC978B067daF70B";
 const MAINNET_BOA = "0x2C6FD25071Fd516947682f710f6e9F5eD610207F";
@@ -12,30 +13,30 @@ const MAINNET_BOA = "0x2C6FD25071Fd516947682f710f6e9F5eD610207F";
 export const BOA_ADDRESS = isTestnet ? TESTNET_BOA : MAINNET_BOA
 
 // the extra unused parameter of _address is here because memoize just does a .toString() on the args and both the signer and provider become [Object Object] so they get memoized even if the provider/signer change
-export const delphsContract = memoize((signer: Signer, provider: providers.Provider, _address?: string) => {
-  const multiCall = multicallWrapper(provider);
-  const unwrapped = DelphsTable__factory.connect(addresses().DelphsTable, signer);
+export const delphsContract = memoize(() => {
+  const multiCall = multicallWrapper(skaleProvider);
+  const unwrapped = DelphsTable__factory.connect(addresses().DelphsTable, skaleProvider);
   return multiCall.syncWrap<DelphsTable>(unwrapped);;
 });
 
-export const badgeOfAssemblyContract = memoize((provider: providers.Provider) => {
-  const multiCall = multicallWrapper(provider)
-  return multiCall.syncWrap<BadgeOfAssembly>(BadgeOfAssembly__factory.connect(BOA_ADDRESS, provider))
+export const badgeOfAssemblyContract = memoize(() => {
+  const multiCall = multicallWrapper(skaleProvider)
+  return multiCall.syncWrap<BadgeOfAssembly>(BadgeOfAssembly__factory.connect(BOA_ADDRESS, skaleProvider))
 })
 
 // the extra unused parameter of _address is here because memoize just does a .toString() on the args and both the signer and provider become [Object Object] so they get memoized even if the provider/signer change
-export const lobbyContract = memoize((signer: Signer, provider: providers.Provider, _address?: string) => {
-  const multiCall = multicallWrapper(provider);
-  const unwrapped = Lobby__factory.connect(addresses().Lobby, signer);
+export const lobbyContract = memoize(() => {
+  const multiCall = multicallWrapper(skaleProvider);
+  const unwrapped = Lobby__factory.connect(addresses().Lobby, skaleProvider);
   return multiCall.syncWrap<Lobby>(unwrapped);
 });
 
-export const playerContract = memoize((provider: providers.Provider) => {
-  const multiCall = multicallWrapper(provider)
-  return multiCall.syncWrap<Player>(Player__factory.connect(addresses().Player, provider))
+export const playerContract = memoize(() => {
+  const multiCall = multicallWrapper(skaleProvider)
+  return multiCall.syncWrap<Player>(Player__factory.connect(addresses().Player, skaleProvider))
 })
 
-export const trustedForwarderContract = memoize((provider: providers.Provider) => {
-  const multiCall = multicallWrapper(provider)
-  return multiCall.syncWrap<TrustedForwarder>(TrustedForwarder__factory.connect(addresses().TrustedForwarder, provider))
+export const trustedForwarderContract = memoize(() => {
+  const multiCall = multicallWrapper(skaleProvider)
+  return multiCall.syncWrap<TrustedForwarder>(TrustedForwarder__factory.connect(addresses().TrustedForwarder, skaleProvider))
 })

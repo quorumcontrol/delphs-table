@@ -5,6 +5,7 @@ import debug from 'debug'
 import { badgeOfAssemblyContract, trustedForwarderContract } from "../src/utils/contracts";
 import SingletonQueue from '../src/utils/singletonQueue'
 import { NonceManager } from "@ethersproject/experimental";
+import { skaleProvider } from "../src/utils/skaleProvider";
 
 const isTestnet = !!process.env.TESTNET
 
@@ -24,11 +25,10 @@ if (!process.env.env_delphsPrivateKey) {
 
 const network = defaultNetwork()
 
-const schainProvider = new ethers.providers.StaticJsonRpcProvider(network.rpcUrls.default)
-const schainSigner = new NonceManager(new Wallet(process.env.env_delphsPrivateKey).connect(schainProvider))
+const schainSigner = new NonceManager(new Wallet(process.env.env_delphsPrivateKey).connect(skaleProvider))
 
-const badgeOfAssembly = badgeOfAssemblyContract(schainProvider)
-const trustedForwarder = trustedForwarderContract(schainProvider)
+const badgeOfAssembly = badgeOfAssemblyContract()
+const trustedForwarder = trustedForwarderContract()
 
 const highWaterForSFuel = utils.parseEther('1')
 
@@ -37,7 +37,7 @@ export async function handle(event: any, context: any, callback: any) {
 
   // first get the balances
   const [relayerBalance, badgeTokens, isVerified] = await Promise.all([
-    schainProvider.getBalance(relayerAddress),
+    skaleProvider.getBalance(relayerAddress),
     badgeOfAssembly.userTokens(userAddress),
     trustedForwarder.verify(userAddress, relayerAddress, issuedAt, token)
   ])
@@ -90,7 +90,7 @@ export async function handle(event: any, context: any, callback: any) {
         return callback(null, {
           statusCode: 500,
           body: JSON.stringify({
-            message: err.toString(),
+            message: (err as any).toString(),
             input: event,
           }),
         })

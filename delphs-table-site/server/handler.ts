@@ -1,7 +1,6 @@
 
-import { providers, Wallet } from "ethers";
+import { Wallet } from "ethers";
 import debug, { Debugger } from 'debug'
-import { skaleTestnet } from '../src/utils/SkaleChains'
 import { keccak256 } from "ethers/lib/utils";
 import { faker } from '@faker-js/faker'
 import { NonceManager } from '@ethersproject/experimental'
@@ -12,6 +11,7 @@ import { delphsContract, lobbyContract, playerContract } from "../src/utils/cont
 import promiseWaiter from '../src/utils/promiseWaiter'
 import * as dotenv from "dotenv";
 import SingletonQueue from '../src/utils/singletonQueue'
+import { skaleProvider } from "../src/utils/skaleProvider";
 
 dotenv.config({
   path: '.env.local'
@@ -41,13 +41,13 @@ async function getBots(num: number) {
 
 const singleton = new SingletonQueue()
 
-const provider = new providers.StaticJsonRpcProvider(skaleTestnet.rpcUrls.default)
+const provider = skaleProvider
 
 const wallet = new NonceManager(new Wallet(process.env.env_delphsPrivateKey!).connect(provider))
 
-const lobby = lobbyContract(wallet, provider)
-const delphs = delphsContract(wallet, provider)
-const player = playerContract(provider)
+const lobby = lobbyContract()
+const delphs = delphsContract()
+const player = playerContract()
 const orchestratorState = OrchestratorState__factory.connect(addresses().OrchestratorState, wallet)
 
 class TableMaker {

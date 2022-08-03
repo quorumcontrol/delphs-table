@@ -21,6 +21,7 @@ import { useRouter } from "next/router";
 import { useUserBadges } from "../src/hooks/BadgeOfAssembly";
 import NextLink from "next/link";
 import { useAccount } from "wagmi";
+import useIsClientSide from "../src/hooks/useIsClientSide";
 
 const log = debug("NewUserPage");
 
@@ -32,6 +33,7 @@ const NewUser: NextPage = () => {
     register,
     formState: { errors },
   } = useForm<FormData>();
+  const isClient = useIsClientSide()
   const [loading, setLoading] = useState(false);
   const createUser = useNewUser();
   const router = useRouter();
@@ -45,12 +47,20 @@ const NewUser: NextPage = () => {
     try {
       setLoading(true);
       log("creating new user");
-      await createUser.mutateAsync({ ...data, trustDevice: true });
-      router.push("/play");
+      await createUser.mutateAsync({ ...data });
+      await router.push("/play");
     } finally {
       setLoading(false);
     }
   };
+
+  if (!isClient) {
+    return (
+      <Layout>
+        <Spinner />
+      </Layout>
+    )
+  }
 
   return (
     <>
@@ -96,20 +106,6 @@ const NewUser: NextPage = () => {
                       about game updates.
                     </FormHelperText>
                     <FormErrorMessage>Invalid email</FormErrorMessage>
-                  </FormControl> */}
-
-                  {/* <FormControl isInvalid={!!errors.trustDevice}>
-                    <Checkbox
-                      defaultChecked
-                      id="trustDevice"
-                      {...register("trustDevice")}
-                    >
-                      Trust this device?
-                    </Checkbox>
-                    <FormHelperText>
-                      Allow this device to send game transactions on your behalf without
-                      signing. It will have no access to your funds.
-                    </FormHelperText>
                   </FormControl> */}
 
                   {!isLoading && (

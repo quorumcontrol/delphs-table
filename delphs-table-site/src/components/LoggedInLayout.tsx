@@ -2,21 +2,21 @@ import { Button, Spinner, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react'
 import useIsClientSide from '../hooks/useIsClientSide';
-import { useDeviceSigner } from '../hooks/useUser';
+import { useRelayer } from '../hooks/useUser';
 import Layout from './Layout'
 
 const LoggedInLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter()
   const isClient = useIsClientSide();
-  const { data:signer, isFetched, isLoading, login } = useDeviceSigner()
+  const { ready, login, isLoading } = useRelayer()
   
   useEffect(() => {
-    if (isClient && isFetched && !signer) {
+    if (isClient && !ready) {
       router.push('/')
     }
-  }, [isClient, isFetched])
+  }, [isClient, ready])
 
-  if (!isClient || (!signer && isLoading)) {
+  if (!isClient || (!ready && isLoading)) {
     return (
       <Layout>
         <Spinner />
@@ -24,7 +24,7 @@ const LoggedInLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
     )
   }
 
-  if (!signer && !isLoading) {
+  if (!ready && !isLoading) {
     return (
       <Layout>
         <Text>You must sign in</Text>

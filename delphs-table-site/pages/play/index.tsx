@@ -12,21 +12,18 @@ import { useCallback, useEffect } from "react";
 import { useAccount } from "wagmi";
 import LoggedInLayout from "../../src/components/LoggedInLayout";
 import {
-  useLobbyContract,
   useRegisterInterest,
   useWaitForTable,
   useWaitingPlayers,
 } from "../../src/hooks/Lobby";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
-import { useDeviceSigner } from "../../src/hooks/useUser";
+import { useRelayer } from "../../src/hooks/useUser";
 
 const Play: NextPage = () => {
   const { address } = useAccount();
-  const { data: signer } = useDeviceSigner();
   const isClient = useIsClientSide();
   const { data: waitingPlayers, isLoading } = useWaitingPlayers();
-  const lobbyContract = useLobbyContract()
-  const registerInterestMutation = useRegisterInterest({ lobbyContract });
+  const registerInterestMutation = useRegisterInterest();
   const router = useRouter();
 
   const handleTableRunning = useCallback(
@@ -48,10 +45,6 @@ const Play: NextPage = () => {
       console.log("tx complete");
     }
   };
-
-  useEffect(() => {
-    console.log("device signer: ", signer?.address);
-  }, [signer]);
 
   return (
     <>

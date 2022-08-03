@@ -1,22 +1,20 @@
 import { VStack, Text, Heading, Box, Spinner, Link, Button } from "@chakra-ui/react";
 import type { NextPage } from "next";
-import Head from "next/head";
 import NextLink from "next/link";
 import { useAccount } from "wagmi";
 import Layout from "../src/components/Layout";
-import { useIsInitialized, useUsername } from "../src/hooks/Player";
+import { useUsername } from "../src/hooks/Player";
 import useIsClientSide from "../src/hooks/useIsClientSide";
-import { useDeviceSigner } from "../src/hooks/useUser";
+import { useRelayer } from "../src/hooks/useUser";
 
 const Home: NextPage = () => {
   const { address } = useAccount();
-  const { isInitialized, isLoading } = useIsInitialized(address);
-  const { data: username } = useUsername(address);
+  const { data: username, isLoading } = useUsername(address);
   const {
-    data: deviceSigner,
-    isLoading: deviceSignerIsLoading,
+    ready,
     login,
-  } = useDeviceSigner();
+    isLoading:relayerLoading
+  } = useRelayer();
   const isClient = useIsClientSide();
 
   return (
@@ -27,7 +25,7 @@ const Home: NextPage = () => {
           <Text>Find the Wootgump, don't get rekt.</Text>
           <Box pt="16">
             {isClient && isLoading && <Spinner />}
-            {isClient && !isLoading && address && !isInitialized && (
+            {isClient && !isLoading && address && !username && (
               <VStack>
                 <Text>
                   Looks like this is your first time here. Let's get you setup. You'll
@@ -44,14 +42,16 @@ const Home: NextPage = () => {
                 </NextLink>
               </VStack>
             )}
-            {isClient && !isLoading && address && isInitialized && (
+            {isClient && !isLoading && address && username && (
               <VStack spacing="5">
                 <Text>Welcome back {username}.</Text>
-                {deviceSignerIsLoading && <Spinner />}
-                {!deviceSigner && !deviceSignerIsLoading && (
+                {!ready && relayerLoading && (
+                  <Spinner />
+                )}
+                {!ready && !relayerLoading && (
                   <Button onClick={login}>Login</Button>
                 )}
-                {deviceSigner && (
+                {ready && (
                   <NextLink passHref href="/play">
                     <Link>
                       <Button>Play</Button>
