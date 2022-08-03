@@ -7838,10 +7838,10 @@
   dependencies:
     "is-arrayish" "^0.3.1"
 
-"skale-relayer-contracts@^0.0.4":
-  "integrity" "sha512-45zvV88j6Lmx2443JITy/LLq5xmxMgaK6t0M52XIp7cWjhvS1UAyzg/a9cBOAW7N1bYVRZUrZ2oq3/L3bHMwxQ=="
-  "resolved" "https://registry.npmjs.org/skale-relayer-contracts/-/skale-relayer-contracts-0.0.4.tgz"
-  "version" "0.0.4"
+"skale-relayer-contracts@^0.0.5":
+  "integrity" "sha512-FJpcC2xV+wNQkh7mN2bF3isRCBNUPpKgGeHUwzdVT6oHAqa0xKP4rrHH3ysGkDIyZRExsf/bqRdoJ/xoY0c3+Q=="
+  "resolved" "https://registry.npmjs.org/skale-relayer-contracts/-/skale-relayer-contracts-0.0.5.tgz"
+  "version" "0.0.5"
 
 "slash@^3.0.0":
   "integrity" "sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q=="

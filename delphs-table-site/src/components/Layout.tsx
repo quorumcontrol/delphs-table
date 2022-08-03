@@ -44,7 +44,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </NextLink>
         )}
         <Box ml="5">
-          <ConnectButton showBalance={false} />
+          <ConnectButton showBalance={false} chainStatus={"none"} />
         </Box>
       </Stack>
 

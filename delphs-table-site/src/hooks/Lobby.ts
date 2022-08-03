@@ -59,16 +59,9 @@ export const useRegisterInterest = () => {
       throw new Error("the relayer must be ready to register interest");
     }
     const tx = await relayer.wrapped.lobby().registerInterest();
-    return tx
-      .wait()
-      .catch((err) => {
-        console.error("error doing register: ", err);
-        throw err;
-      })
-      .then(() => {
-        queryClient.invalidateQueries(["waiting-players"], {
-          refetchInactive: true,
-        });
-      });
+    await tx.wait()
+    queryClient.invalidateQueries(["waiting-players"], {
+      refetchInactive: true,
+    });
   });
 };

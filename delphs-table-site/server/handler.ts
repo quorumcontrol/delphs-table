@@ -45,9 +45,9 @@ const provider = skaleProvider
 
 const wallet = new NonceManager(new Wallet(process.env.env_delphsPrivateKey!).connect(provider))
 
-const lobby = lobbyContract()
-const delphs = delphsContract()
-const player = playerContract()
+const lobby = lobbyContract().connect(wallet)
+const delphs = delphsContract().connect(wallet)
+const player = playerContract().connect(wallet)
 const orchestratorState = OrchestratorState__factory.connect(addresses().OrchestratorState, wallet)
 
 class TableMaker {

@@ -135,8 +135,10 @@ const useNewUser = () => {
         await tx.wait();
       }
     }
-    return relayer.wrapped.player().setUsername(username)
-
+    console.log("setting username")
+    const tx = await relayer.wrapped.player().setUsername(username, { gasLimit: 500_000 })
+    console.log('tx: ', tx.hash)
+    return tx.wait()
     //TODO: save email
   });
 };

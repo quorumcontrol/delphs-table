@@ -4,21 +4,32 @@ import { extendTheme, ChakraProvider } from "@chakra-ui/react";
 import "@fontsource/dm-sans";
 import "@fontsource/zen-dots";
 import "@rainbow-me/rainbowkit/styles.css";
-import {
-  getDefaultWallets,
-  RainbowKitProvider,
-  darkTheme,
-} from "@rainbow-me/rainbowkit";
-import { configureChains, createClient, WagmiConfig } from "wagmi";
+import { getDefaultWallets, RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
+import { configureChains, createClient, WagmiConfig, chain } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Script from "next/script";
 import { skaleTestnet, skaleMainnet } from "../src/utils/SkaleChains";
-import { isTestnet } from "../src/utils/networks";
 import "../styles/video-background.css";
 
 const { chains, provider } = configureChains(
-  isTestnet ? [skaleTestnet] : [skaleMainnet],
+  [
+    chain.mainnet,
+    chain.ropsten,
+    chain.rinkeby,
+    chain.goerli,
+    chain.kovan,
+    chain.optimism,
+    chain.optimismKovan,
+    chain.polygon,
+    chain.polygonMumbai,
+    chain.arbitrum,
+    chain.arbitrumRinkeby,
+    chain.localhost,
+    chain.hardhat,
+    skaleTestnet,
+    skaleMainnet,
+  ],
   [
     jsonRpcProvider({
       rpc: (chain) => {
@@ -28,7 +39,9 @@ const { chains, provider } = configureChains(
           case skaleMainnet.id:
             return { http: chain.rpcUrls.default };
           default:
-            return null;
+            return {
+              http: chain.rpcUrls.default,
+            };
         }
       },
     }),
@@ -85,10 +98,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ChakraProvider theme={theme}>
             <Head>
               <title>Crypto Colosseum: Delph's Table</title>
-              <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1"
-              />
+              <meta name="viewport" content="width=device-width, initial-scale=1" />
               <meta charSet="utf-8" />
               <meta
                 property="og:site_name"
@@ -96,10 +106,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                 key="ogsitename"
               />
               <link rel="icon" href="/favicon.ico" />
-              <meta
-                name="description"
-                content="A game of harvest and battle."
-              />
+              <meta name="description" content="A game of harvest and battle." />
               <link rel="icon" href="/favicon.ico" />
               <meta
                 property="og:title"
@@ -113,11 +120,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               />
 
               <meta name="twitter:card" content="summary" key="twcard" />
-              <meta
-                name="twitter:creator"
-                content="@larva_maiorum"
-                key="twhandle"
-              />
+              <meta name="twitter:creator" content="@larva_maiorum" key="twhandle" />
 
               <meta
                 property="og:url"
