@@ -111,8 +111,8 @@ class TableMaker {
       const tx = await delphs.createAndStart(id, playersWithNamesAndSeeds.map((p) => p.address!), playersWithNamesAndSeeds.map((p) => p.seed), rounds, await wallet.getAddress(), { gasLimit: 1500000})
       this.log('table id: ', id, 'tx: ', tx.hash)
       // on staging we do not have mtm
-      await orchestratorState.add(id)
-      await lobby.takeAddresses(waiting, id)
+      await orchestratorState.add(id, { gasLimit: 1000000 })
+      await lobby.takeAddresses(waiting, id, { gasLimit: 1000000 })
       await tx.wait()
 
       this.log('done')
