@@ -118,6 +118,7 @@ class TableMaker {
       this.log('done')
     } catch (err) {
       console.error('error making table: ', err)
+      process.exit(1)
       this.handleLobbyRegistration()
     }
   }
