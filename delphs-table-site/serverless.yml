@@ -28,9 +28,8 @@ package:
     - '!.git/**'
 
 functions:
-  table-maker:
-    directory: serverless
-    handler: faucet.handle
+  faucet:
+    handler: serverless/faucet.handle
     memoryLimit: 2048
     maxScale: 1
     # Local environment variables - used only in given function

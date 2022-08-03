@@ -7,36 +7,7 @@ import { skaleProvider } from "../utils/skaleProvider";
 import relayer from "../utils/relayer";
 
 const FAUCET_URL =
-  "/api/local/faucet"; //TODO: fix me for the real thing
-
-
-// const DEVICE_ID_KEY = "delphs:deviceId";
-// const signatureMessage = (deviceId: string) =>
-//   `I trust this device on Delphs Table. id: ${deviceId}`;
-// // const encryptedDeviceKey = localStorage.getItem(ENCRYPTED_KEY)
-// const getDeviceId = () => {
-//   let deviceId = localStorage.getItem(DEVICE_ID_KEY);
-//   if (!deviceId) {
-//     deviceId = randomBytes(8).toString("hex")
-//     localStorage.setItem(DEVICE_ID_KEY, deviceId);
-//   }
-//   return deviceId;
-// }
-
-
-// let devicePrivateKey: Buffer | undefined = undefined;
-// let deviceSigner: Wallet | undefined = undefined;
-
-// const deriveKey = (msg: Buffer, salt: Buffer) => {
-//   return new Promise<Buffer>((resolve, reject) => {
-//     pbkdf2(msg, salt, 1000, 32, "sha256", (err, derived) => {
-//       if (err) {
-//         return reject(err);
-//       }
-//       resolve(derived);
-//     });
-//   });
-// };
+  "https://delphsfaucetd3cqn3r9-faucet.functions.fnc.fr-par.scw.cloud";
 
 export const useRelayer = () => {
   const [ready, setReady] = useState(relayer.ready())
