@@ -2,21 +2,21 @@ import { Button, Spinner, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react'
 import useIsClientSide from '../hooks/useIsClientSide';
-import { useRelayer } from '../hooks/useUser';
+import { useLogin } from '../hooks/useUser';
 import Layout from './Layout'
 
 const LoggedInLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter()
   const isClient = useIsClientSide();
-  const { ready, login, isLoading } = useRelayer()
+  const { isLoggedIn, login, isLoggingIn } = useLogin()
   
   useEffect(() => {
-    if (isClient && !ready) {
+    if (isClient && !isLoggedIn) {
       router.push('/')
     }
-  }, [isClient, ready])
+  }, [isClient, isLoggedIn])
 
-  if (!isClient || (!ready && isLoading)) {
+  if (!isClient || (!isLoggedIn && isLoggingIn)) {
     return (
       <Layout>
         <Spinner />
@@ -24,11 +24,11 @@ const LoggedInLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
     )
   }
 
-  if (!ready && !isLoading) {
+  if (!isLoggedIn && !isLoggedIn) {
     return (
       <Layout>
         <Text>You must sign in</Text>
-        <Button onClick={login}>Login</Button>
+        <Button onClick={() => login()}>Login</Button>
       </Layout>
     )
   }

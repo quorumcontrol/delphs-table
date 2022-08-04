@@ -5,7 +5,7 @@ import { delphsContract, lobbyContract, playerContract, trustedForwarderContract
 import { memoize } from './memoize'
 import { skaleProvider } from './skaleProvider'
 import { wrapContract } from 'kasumah-relay-wrapper'
-import { createToken } from 'skale-relayer-contracts'
+import { bytesToSignForToken, createToken, PreTokenData, Token } from 'skale-relayer-contracts'
 import EventEmitter from 'events'
 import { backOff } from 'exponential-backoff'
 
@@ -13,10 +13,6 @@ const FAUCET_URL =
   "https://delphsfaucetd3cqn3r9-faucet.functions.fnc.fr-par.scw.cloud";
 
 const thresholdForFaucet = utils.parseEther("0.25");
-
-interface DeviceToken {
-  signature: string, issuedAt: number
-}
 
 const DEVICE_PK_KEY = "delphs:relayerKey"
 
@@ -31,10 +27,12 @@ const deviceWallet = memoize(() => {
 })
 
 class RelayManager extends EventEmitter {
-  deviceToken?: DeviceToken
+  deviceToken?: Token
   relayer?: KasumahRelayer
   forwarder?: TrustedForwarder
   user?:Signer
+
+  private preTokenData?:PreTokenData
 
   get deviceWallet() {
     if (typeof window !== 'undefined' && window.localStorage) {
@@ -55,19 +53,42 @@ class RelayManager extends EventEmitter {
     })
   }
 
-  async createToken(user: Signer) {
-    const token = await createToken(trustedForwarderContract(), user, this.deviceWallet!)
-    return this.setToken(token, user)
+  async setupForTokenCreation(user: Signer) {
+    if (this.user && this.user === user) {
+      console.log('setup for token creation called twice')
+      return // we are already doing this with a user
+    }
+    this.user = user
+    this.forwarder = trustedForwarderContract().connect(this.deviceWallet!)
+
+    if (!this.deviceWallet) {
+      throw new Error('missing device wallet')
+    }
+    this.preTokenData = await bytesToSignForToken(this.forwarder, user, this.deviceWallet)
+    this.emit('readyForTokenCreation')
+    return this.preTokenData
   }
 
-  private async setToken(token: DeviceToken, user: Signer) {
+  async createToken() {
+    if (!this.preTokenData || !this.user) {
+      throw new Error('you must have setup the pret token data to call createToken')
+    }
+    const token = await createToken(this.preTokenData, this.user)
+    return this.setToken(token, this.user)
+  }
+
+  private async setToken(token: Token, user: Signer) {
+    if (!this.forwarder) {
+      throw new Error('missing forwarder')
+    }
     this.deviceToken = token
-    this.forwarder = trustedForwarderContract().connect(this.deviceWallet!)
-    this.relayer = new KasumahRelayer(this.forwarder, this.deviceWallet!, user)
-    this.relayer.token = Promise.resolve(token)
-    this.user = user
+    this.relayer = new KasumahRelayer(this.forwarder, this.deviceWallet!, user, token)
     await this.maybeGetFaucet()
     this.emit('ready')
+  }
+
+  canCreateToken() {
+    return !!this.preTokenData
   }
 
   ready() {

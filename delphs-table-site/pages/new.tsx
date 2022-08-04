@@ -15,7 +15,7 @@ import type { NextPage } from "next";
 import Layout from "../src/components/Layout";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import useNewUser, { UserData } from "../src/hooks/useUser";
+import { useLogin, UserData } from "../src/hooks/useUser";
 import debug from "debug";
 import { useRouter } from "next/router";
 import { useUserBadges } from "../src/hooks/BadgeOfAssembly";
@@ -35,7 +35,7 @@ const NewUser: NextPage = () => {
   } = useForm<FormData>();
   const isClient = useIsClientSide()
   const [loading, setLoading] = useState(false);
-  const createUser = useNewUser();
+  const { login } = useLogin()
   const router = useRouter();
   const { address } = useAccount()
   const { data: userBadges, isLoading } = useUserBadges(address);
@@ -43,11 +43,11 @@ const NewUser: NextPage = () => {
 
   const hasBadges = userBadges && userBadges.length > 0;
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async ({ username }: FormData) => {
     try {
       setLoading(true);
       log("creating new user");
-      await createUser.mutateAsync({ ...data });
+      await login(username)
       await router.push("/play");
     } finally {
       setLoading(false);

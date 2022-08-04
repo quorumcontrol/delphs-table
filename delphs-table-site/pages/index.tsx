@@ -1,20 +1,26 @@
 import { VStack, Text, Heading, Box, Spinner, Link, Button } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import NextLink from "next/link";
-import { useAccount } from "wagmi";
+import { useAccount, useSignMessage } from "wagmi";
 import Layout from "../src/components/Layout";
 import { useUsername } from "../src/hooks/Player";
 import useIsClientSide from "../src/hooks/useIsClientSide";
-import { useRelayer } from "../src/hooks/useUser";
+import { useLogin } from "../src/hooks/useUser";
 
 const Home: NextPage = () => {
   const { address } = useAccount();
+  // const { data, error, signMessage } = useSignMessage({
+  //   onSuccess(data, variables) {
+  //     console.log('message signed', data)
+  //   },
+  // })
   const { data: username, isLoading } = useUsername(address);
   const {
-    ready,
+    isLoggedIn,
     login,
-    isLoading:relayerLoading
-  } = useRelayer();
+    readyToLogin,
+    isLoggingIn:relayerLoading
+  } = useLogin();
   const isClient = useIsClientSide();
 
   return (
@@ -45,13 +51,13 @@ const Home: NextPage = () => {
             {isClient && !isLoading && address && username && (
               <VStack spacing="5">
                 <Text>Welcome back {username}.</Text>
-                {!ready && relayerLoading && (
+                {!isLoggedIn && (relayerLoading || !readyToLogin) && (
                   <Spinner />
                 )}
-                {!ready && !relayerLoading && (
-                  <Button onClick={login}>Login</Button>
+                {!isLoggedIn && !(relayerLoading || !readyToLogin) && (
+                  <Button onClick={() => login()}>Login</Button>
                 )}
-                {ready && (
+                {isLoggedIn && (
                   <NextLink passHref href="/play">
                     <Link>
                       <Button>Play</Button>

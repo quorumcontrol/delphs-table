@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useAccount } from "wagmi";
 import LoggedInLayout from "../../src/components/LoggedInLayout";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
-import { useRelayer } from "../../src/hooks/useUser";
+import { useLogin } from "../../src/hooks/useUser";
 import { delphsContract } from "../../src/utils/contracts";
 import promiseWaiter from "../../src/utils/promiseWaiter";
 import relayer from "../../src/utils/relayer";

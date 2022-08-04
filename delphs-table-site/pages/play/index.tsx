@@ -17,7 +17,7 @@ import {
   useWaitingPlayers,
 } from "../../src/hooks/Lobby";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
-import { useRelayer } from "../../src/hooks/useUser";
+import { useLogin } from "../../src/hooks/useUser";
 
 const Play: NextPage = () => {
   const { address } = useAccount();
