@@ -1,13 +1,12 @@
 
-import { ethers, providers, utils, Wallet } from "ethers";
+import { providers, utils, Wallet } from "ethers";
 import { defaultNetwork } from '../src/utils/SkaleChains'
 import debug from 'debug'
 import { badgeOfAssemblyContract, trustedForwarderContract } from "../src/utils/contracts";
 import SingletonQueue from '../src/utils/singletonQueue'
 import { NonceManager } from "@ethersproject/experimental";
 import { skaleProvider } from "../src/utils/skaleProvider";
-
-const isTestnet = !!process.env.TESTNET
+import { isTestnet } from '../src/utils/networks'
 
 const TESTNET_BOA = "0x881256ada5dD7CcB2457226C4bC978B067daF70B";
 const MAINNET_BOA = "0x2C6FD25071Fd516947682f710f6e9F5eD610207F";
@@ -22,8 +21,6 @@ debug.enable('*')
 if (!process.env.env_delphsPrivateKey) {
   throw new Error("must have a DELPHS private key")
 }
-
-const network = defaultNetwork()
 
 const schainSigner = new NonceManager(new Wallet(process.env.env_delphsPrivateKey).connect(skaleProvider))
 

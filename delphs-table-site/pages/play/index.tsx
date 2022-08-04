@@ -8,7 +8,7 @@ import {
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useAccount } from "wagmi";
 import LoggedInLayout from "../../src/components/LoggedInLayout";
 import {
@@ -17,7 +17,6 @@ import {
   useWaitingPlayers,
 } from "../../src/hooks/Lobby";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
-import { useRelayer } from "../../src/hooks/useUser";
 
 const Play: NextPage = () => {
   const { address } = useAccount();

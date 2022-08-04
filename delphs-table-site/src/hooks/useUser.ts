@@ -57,7 +57,6 @@ const useNewUser = () => {
     if (!signer) {
       throw new Error("no signer or player");
     }
-    const address = await signer.getAddress()
 
     if (!relayer.ready()) {
       await relayer.createToken(signer)
