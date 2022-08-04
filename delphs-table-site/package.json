@@ -28,7 +28,7 @@
     "react-dom": "18.1.0",
     "react-hook-form": "^7.32.1",
     "react-query": "^3.39.1",
-    "skale-relayer-contracts": "^0.0.5",
+    "skale-relayer-contracts": "^0.0.6",
     "wagmi": "^0.5.3"
   },
   "devDependencies": {

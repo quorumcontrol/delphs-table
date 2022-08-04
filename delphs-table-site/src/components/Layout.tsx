@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   VStack,
@@ -10,6 +10,7 @@ import {
   Link,
   LinkBox,
   LinkOverlay,
+  Spinner,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import NextLink from "next/link";
@@ -18,11 +19,29 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import useIsClientSide from "../hooks/useIsClientSide";
 import { useUsername } from "../hooks/Player";
 import { useAccount } from "wagmi";
+import { useRouter } from "next/router";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isClient = useIsClientSide();
   const { address } = useAccount();
   const { data: username } = useUsername(address);
+  const router = useRouter();
+  const [navigating, setNavigating] = useState(false);
+
+  useEffect(() => {
+    const handleStart = (url: string) => url !== router.asPath && setNavigating(true);
+    const handleComplete = (url: string) => url === router.asPath && setNavigating(false);
+
+    router.events.on("routeChangeStart", handleStart);
+    router.events.on("routeChangeComplete", handleComplete);
+    router.events.on("routeChangeError", handleComplete);
+
+    return () => {
+      router.events.off("routeChangeStart", handleStart);
+      router.events.off("routeChangeComplete", handleComplete);
+      router.events.off("routeChangeError", handleComplete);
+    };
+  }, [router]);
 
   return (
     <Container p={10} maxW="1200">
@@ -49,7 +68,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       </Stack>
 
       <VStack mt="10" spacing={5}>
-        {children}
+        {navigating && <Spinner />}
+        {!navigating && children}
       </VStack>
       <Box as="footer" mt="200" textAlign="center">
         <Text fontSize="sm">
