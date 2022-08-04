@@ -1,12 +1,9 @@
-import { Entity, GraphNode, SoundComponent } from "playcanvas";
+import { Entity, SoundComponent, Vec3 } from "playcanvas";
 import Battle, { BattleTickReport } from "../boardLogic/Battle";
-import Warrior from "../boardLogic/Warrior";
 import { ScriptTypeBase } from "../types/ScriptTypeBase";
 
 import { createScript } from "../utils/createScriptDecorator";
 import mustFindByName from "../utils/mustFindByName";
-import { randomBounded } from "../utils/randoms";
-import PlayerMarker from "./PlayerMarker";
 
 const standardPlaces:[number,number,number][] = [[0.3,43,0.5],[-0.1,43.5,-0.4]]
 
@@ -52,6 +49,7 @@ class BattleUI extends ScriptTypeBase {
     Object.values(this.soundComponent.slots).forEach((slot) => {
       slot.stop()
     })
+
     this.entity.destroy()
   }
 
@@ -81,30 +79,14 @@ class BattleUI extends ScriptTypeBase {
     if (!this.battle) {
       throw new Error('no battle')
     }
-    this.battle.warriors.forEach((warrior, i) => {
-      this.placeWarrior(warrior, i)
-    })
+    this.battle.warriors.forEach((w) => w.emit('battleUI', this))
   }
 
-  private placeWarrior(warrior: Warrior, index:number) {
-    const playerMarker:Entity = this.playerMarkerTemplate.clone() as Entity;
-    playerMarker.name = `${this.battle?.battleId()}-marker-${warrior.id}`;
-
-    this.entity.addChild(playerMarker);
-    const playerMarkerScript = this.getScript<PlayerMarker>(playerMarker, 'playerMarker')
-    if (!playerMarkerScript) {
-      throw new Error('missing script')
-    }
-    playerMarkerScript.setWarrior(warrior)
-    setTimeout(() => {
-      playerMarkerScript.setBattling(true, index === 1)
-    }, randomBounded(1000)) // don't set it immediately here, so that the animations don't sync up
-
-    playerMarker.setLocalScale(0.1, 10, 0.1);
-    playerMarker.setLocalPosition(...standardPlaces[index]);
-
-    return playerMarker;
+  gridPositions() {
+    const entityWorldLocation = this.entity.getPosition().clone()
+    return [new Vec3(entityWorldLocation.x - 0.15, entityWorldLocation.y, entityWorldLocation.z - 0.2), new Vec3(entityWorldLocation.x + 0.15, entityWorldLocation.y, entityWorldLocation.z + 0.2)]
   }
+
 }
 
 export default BattleUI;

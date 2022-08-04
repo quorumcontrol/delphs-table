@@ -49,9 +49,13 @@ class Cell {
     this.wootgump = []
   }
 
+  get id() {
+    return `cell-${this.x}-${this.y}`
+  }
+
   addWarrior(warrior:Warrior) {
     this.warriors.push(warrior)
-    warrior.location = this
+    warrior.setLocation(this)
   }
 
   handleOutcomes(tick:number, seed:string):CellOutComeDescriptor {
@@ -81,6 +85,11 @@ class Cell {
     if (this.battles.length > 0) {
      this.battles.forEach((b) => {
        descriptor.battleTicks.push(b.doBattleTick(tick, seed))
+     })
+     this.battles.filter((b) => b.isOver()).forEach((battle) => {
+      battle.warriors.forEach((w) => {
+        w.emit('battleOver', battle)
+      })
      })
      this.battles = this.battles.filter((b) => !b.isOver())
     } else {
@@ -155,7 +164,10 @@ class Cell {
   private maybeSetupBattle(tick: number, seed: string) {
     const nonBattling = this.nonBattlingWarriors()
     if (nonBattling.length >= 2) {
-      this.battles.push(new Battle({warriors: nonBattling.slice(0,2), startingTick: tick, seed: seed}))
+      const warriors = nonBattling.slice(0,2)
+      const battle = new Battle({warriors, startingTick: tick, seed: seed})
+      this.battles.push(battle)
+      warriors.forEach((w) => w.emit('battle', battle))
     }
   }
 

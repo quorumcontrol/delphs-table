@@ -1,3 +1,4 @@
+import EventEmitter from "events";
 import Cell from "./Cell";
 import Grid from "./Grid";
 import { deterministicRandom } from "./random";
@@ -24,7 +25,7 @@ export function generateFakeWarriors(count: number, seed: string) {
   return warriors;
 }
 
-class Warrior implements WarriorStats {
+class Warrior extends EventEmitter implements WarriorStats {
   id: string;
   name: string = "DefaultName";
   attack: number = 200;
@@ -40,6 +41,7 @@ class Warrior implements WarriorStats {
   wootgumpBalance: number;
 
   constructor(opts: WarriorStats) {
+    super()
     this.id = opts.id;
     this.name = opts.name;
     this.attack = opts.attack;
@@ -51,6 +53,11 @@ class Warrior implements WarriorStats {
 
   isAlive() {
     return this.currentHealth > 0;
+  }
+
+  setLocation(cell:Cell) {
+    this.location = cell
+    this.emit('location', cell)
   }
 
   // amount to add to halth as a decimal percentage (ie 0.10 is 10%) of initialHealth

@@ -7,12 +7,17 @@ import { Entity, GraphNode } from "playcanvas";
 import CellState from "./CellState";
 import { GameConfig } from "../utils/config";
 import { UI_FOCUS_REQUEST } from "../appWide/Focuser";
+import Warrior from "../boardLogic/Warrior";
+import mustFindByName from "../utils/mustFindByName";
+import PlayerMarker from "./PlayerMarker";
+import { randomBounded } from "../utils/randoms";
 
 @createScript("boardGenerate")
 class BoardGenerate extends ScriptTypeBase {
   currentPlayer = "";
 
-  ground: GraphNode;
+  ground: Entity;
+  playerMarkerTemplate: Entity
   grid?: Grid;
 
   timer = 0;
@@ -24,6 +29,10 @@ class BoardGenerate extends ScriptTypeBase {
   initialize() {
     this.initialCellSetup = this.initialCellSetup.bind(this);
     this.onStart = this.onStart.bind(this);
+    const templates = mustFindByName(this.app.root, "Templates");
+    this.playerMarkerTemplate = mustFindByName(templates, "PlayerMarker");
+    this.ground = mustFindByName(templates, "Tile")
+
     this.entity.on("start", this.onStart);
     const urlParams = new URLSearchParams(window.location.search);
     this.currentPlayer = urlParams.get("player") || "";
@@ -45,20 +54,6 @@ class BoardGenerate extends ScriptTypeBase {
 
   setGrid(grid: Grid) {
     this.grid = grid;
-
-    // We've created a couple of templates that are our world tiles
-    // In the Editor hierarchy, we have disabled the templates because
-    // we don't want them to be visible. We just want our generated
-    // world to be visible
-    const templates = this.app.root.findByName("Templates");
-    if (!templates) {
-      throw new Error("no templates");
-    }
-    const ground = templates.findByName("Tile");
-    if (!ground) {
-      throw new Error("no ground");
-    }
-    this.ground = ground;
     console.log("set grid: ", this.grid);
   }
 
@@ -68,6 +63,9 @@ class BoardGenerate extends ScriptTypeBase {
     }
 
     this.grid.everyCell(this.initialCellSetup);
+    this.grid.warriors.forEach((warrior) => {
+      this.initialWarriorSetup(warrior)
+    })
     this.focusOnPlayerCell()
   }
 
@@ -77,7 +75,7 @@ class BoardGenerate extends ScriptTypeBase {
     if (location) {
       console.log('focusing camera on player')
       
-      const cellEntity = this.entity.findByName(this.cellNameFromCell(location))
+      const cellEntity = this.entity.findByName(location.id)
       this.next.push(() => {
         this.app.fire(UI_FOCUS_REQUEST, cellEntity)
       })
@@ -97,8 +95,26 @@ class BoardGenerate extends ScriptTypeBase {
     };
   }
 
-  private cellNameFromCell(cell:Cell) {
-    return `cell-${cell.x}-${cell.y}`
+  private initialWarriorSetup(warrior: Warrior) {
+    if (!this.grid) {
+      throw new Error("no grid");
+    }
+    try {
+      const marker = this.playerMarkerTemplate.clone() as Entity;
+      const markerScript = this.getScript<PlayerMarker>(marker, "playerMarker");
+      if (!markerScript) {
+        throw new Error("no script");
+      }
+
+      marker.name = `warrior-${warrior.id}`
+
+      this.entity.addChild(marker)
+      markerScript?.setWarrior(warrior);
+    } catch (err) {
+      console.error("error initial warrior: ", err);
+
+      throw err;
+    }
   }
 
   private initialCellSetup(cell: Cell) {
@@ -119,7 +135,7 @@ class BoardGenerate extends ScriptTypeBase {
         0.6,
         (cell.y - this.grid.sizeY / 2) * 1.01
       );
-      e.name = this.cellNameFromCell(cell)
+      e.name = cell.id
       this.entity.addChild(e);
       cellStateScript?.setCell(cell);
     } catch (err) {

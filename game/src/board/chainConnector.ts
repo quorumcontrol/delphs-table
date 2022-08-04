@@ -62,6 +62,18 @@ class ChainConnector extends ScriptTypeBase {
     this.asyncSetup();
   }
 
+  update() {
+    if (this.app.keyboard.wasPressed(pc.KEY_SPACE)) {
+      this.manualTick()
+    }
+  }
+
+  private async manualTick() {
+    console.log('manual tick')
+    const roll = await this.delphs.rolls(this.latest.add(1))
+    this.handleTick(this.latest.add(1) , constants.Zero, roll);
+  }
+
   async asyncSetup() {
     try {
       const urlParams = new URLSearchParams(window.location.search);
@@ -118,13 +130,15 @@ class ChainConnector extends ScriptTypeBase {
       if (table.startedAt.gt(0) && latest.gte(table.startedAt)) {
         log("table is already in progress, let's catch up");
         const end = table.startedAt.add(table.gameLength)
-        await this.catchUp(table.startedAt, bigNumMin(end, latest));
+        // await this.catchUp(table.startedAt, bigNumMin(end, latest));
+        await this.catchUp(table.startedAt, table.startedAt.add(0));
       }
+
 
       log("setting up event filters", this.delphs.filters.Started(tableId));
 
-      this.delphs.on(this.delphs.filters.Started(tableId, null), this.handleStarted);
-      this.delphs.on(this.delphs.filters.DiceRolled(null, null, null), this.handleTick);
+      // this.delphs.on(this.delphs.filters.Started(tableId, null), this.handleStarted);
+      // this.delphs.on(this.delphs.filters.DiceRolled(null, null, null), this.handleTick);
     } catch (err) {
       console.error("error", err);
       throw err;

@@ -186,16 +186,16 @@ class CellState extends ScriptTypeBase {
         }
       });
 
-    warriorsToShow.forEach((warrior) => {
-      try {
-        if (!this.playerMarkers[warrior.id]) {
-          this.placeWarrior(warrior);
-        }
-      } catch (err) {
-        console.error("err: ", err);
-        throw err;
-      }
-    });
+    // warriorsToShow.forEach((warrior) => {
+    //   try {
+    //     if (!this.playerMarkers[warrior.id]) {
+    //       this.placeWarrior(warrior);
+    //     }
+    //   } catch (err) {
+    //     console.error("err: ", err);
+    //     throw err;
+    //   }
+    // });
   }
 
   private destroyGump(id:string) {
@@ -258,24 +258,24 @@ class CellState extends ScriptTypeBase {
     this.gumps[wootGump.id] = gumpElement as Entity;
   }
 
-  private placeWarrior(warrior: Warrior) {
-    const playerMarker = this.playerMarkerTemplate.clone();
-    playerMarker.name = `${this.cell?.x}-${this.cell?.y}-marker-${warrior.id}`;
+  // private placeWarrior(warrior: Warrior) {
+  //   const playerMarker = this.playerMarkerTemplate.clone();
+  //   playerMarker.name = `${this.cell?.x}-${this.cell?.y}-marker-${warrior.id}`;
 
-    this.entity.addChild(playerMarker);
-    this.getScript<PlayerMarker>(playerMarker as Entity, "playerMarker")?.setWarrior(
-      warrior
-    );
+  //   this.entity.addChild(playerMarker);
+  //   this.getScript<PlayerMarker>(playerMarker as Entity, "playerMarker")?.setWarrior(
+  //     warrior
+  //   );
 
-    playerMarker.setLocalScale(0.05, 5, 0.05);
-    const rndX = randomBounded(this.xSize);
-    const rndZ = randomBounded(this.zSize);
+  //   playerMarker.setLocalScale(0.05, 5, 0.05);
+  //   const rndX = randomBounded(this.xSize);
+  //   const rndZ = randomBounded(this.zSize);
 
-    playerMarker.setLocalPosition(rndX, 22.5, rndZ);
-    playerMarker.setRotation(0, randomBounded(0.2), 0, 1);
-    this.playerMarkers[warrior.id] = playerMarker as Entity;
-    return playerMarker;
-  }
+  //   playerMarker.setLocalPosition(rndX, 22.5, rndZ);
+  //   playerMarker.setRotation(0, randomBounded(0.2), 0, 1);
+  //   this.playerMarkers[warrior.id] = playerMarker as Entity;
+  //   return playerMarker;
+  // }
 }
 
 export default CellState;
