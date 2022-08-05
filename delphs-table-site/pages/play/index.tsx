@@ -16,10 +16,12 @@ import {
   useWaitForTable,
   useWaitingPlayers,
 } from "../../src/hooks/Lobby";
+import { useUsername } from "../../src/hooks/Player";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
 
 const Play: NextPage = () => {
   const { address } = useAccount();
+  const { data:username } = useUsername()
   const isClient = useIsClientSide();
   const { data: waitingPlayers, isLoading } = useWaitingPlayers();
   const registerInterestMutation = useRegisterInterest();
@@ -38,11 +40,7 @@ const Play: NextPage = () => {
 
   const onJoinClick = async () => {
     console.log("join click");
-    try {
-      return registerInterestMutation.mutate();
-    } finally {
-      console.log("tx complete");
-    }
+    return registerInterestMutation.mutate({ name: username!, addr: address! });
   };
 
   return (
