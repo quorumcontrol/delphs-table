@@ -36,10 +36,7 @@ class BattleUI extends ScriptTypeBase {
       throw new Error('missing sound component for battle')
     }
     this.soundComponent = soundComponent
-    Object.values(this.soundComponent.slots).forEach((slot) => {
-      slot.play()
-    });
-    Object.values((mustFindByName(this.entity, 'Announcer').findComponent('sound') as SoundComponent).slots)[0].play()
+    // Object.values((mustFindByName(this.entity, 'Announcer').findComponent('sound') as SoundComponent).slots)[0].play()
   }
 
   destroy() {
@@ -79,6 +76,9 @@ class BattleUI extends ScriptTypeBase {
     if (!this.battle) {
       throw new Error('no battle')
     }
+    Object.values(this.soundComponent.slots).forEach((slot) => {
+      slot.play()
+    });
     this.battle.warriors.forEach((w) => w.emit('battleUI', this))
   }
 

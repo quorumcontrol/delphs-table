@@ -100,24 +100,16 @@ class PlayerMarker extends ScriptTypeBase {
     console.log('battling')
     this.setBattling(true)
     this.battle = battle
-
   }
 
-  handleBattleOver(battle: Battle) {
+  handleBattleOver(_battle: Battle) {
     console.log('battleOver')
     this.setBattling(false)
-    this.battle = undefined
-    // this.entity.reparent(this.gridParent)
-    this.unrotateForBattle()
-  }
-
-  maybeLookAtBattler() {
-    if (!this.battle) {
-      return
+    const index = this.battle!.warriors.indexOf(this.warrior!)
+    if (index === 0) {
+      this.unrotateForBattle()
     }
-    const otherWarrior = this.battle.warriors.filter((w) => w !== this.warrior)[0]
-    this.entity.lookAt(mustFindByName(this.entity.parent as Entity, `warrior-${otherWarrior.id}`).getLocalPosition())
-    this.entity.rotateLocal(90, 0, 0)
+    this.battle = undefined
   }
 
   handleNewLocation(cell: Cell) {
@@ -155,22 +147,11 @@ class PlayerMarker extends ScriptTypeBase {
     const gridPositions = battleUI.gridPositions()
     const index = this.battle!.warriors.indexOf(this.warrior!)
     console.log("position: ", gridPositions[index])
-    // this.entity.reparent(battleUI.entity)
-    // this.entity.setLocalScale(0.1, 10, 0.1);
     this.entity.setPosition(gridPositions[index].x, gridPositions[index].y, gridPositions[index].z);
     this.entity.translateLocal(0, 0.25, 0)
-    // console.log("grid positions: ", gridPositions)
-    // if (this.currentTween) {
-    //   this.currentTween.stop()
-    // }
-    // const index = this.battle!.warriors.indexOf(this.warrior!)
-    // const position = gridPositions[index]
-    // console.log("position: ", position)
-    // this.entity.setPosition(position)
     if (index === 0) {
       this.rotateForBattle()
     }
-    // this.maybeLookAtBattler()
   }
 
   setWarrior(warrior: Warrior) {

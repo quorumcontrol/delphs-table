@@ -63,16 +63,16 @@ class ChainConnector extends ScriptTypeBase {
   }
 
   update() {
-    if (this.app.keyboard.wasPressed(pc.KEY_SPACE)) {
-      this.manualTick()
-    }
+    // if (this.app.keyboard.wasPressed(pc.KEY_SPACE)) {
+    //   this.manualTick()
+    // }
   }
 
-  private async manualTick() {
-    console.log('manual tick')
-    const roll = await this.delphs.rolls(this.latest.add(1))
-    this.handleTick(this.latest.add(1) , constants.Zero, roll);
-  }
+  // private async manualTick() {
+  //   console.log('manual tick')
+  //   const roll = await this.delphs.rolls(this.latest.add(1))
+  //   this.handleTick(this.latest.add(1) , constants.Zero, roll);
+  // }
 
   async asyncSetup() {
     try {
@@ -130,8 +130,8 @@ class ChainConnector extends ScriptTypeBase {
       if (table.startedAt.gt(0) && latest.gte(table.startedAt)) {
         log("table is already in progress, let's catch up");
         const end = table.startedAt.add(table.gameLength)
-        // await this.catchUp(table.startedAt, bigNumMin(end, latest));
-        await this.catchUp(table.startedAt, table.startedAt.add(0));
+        await this.catchUp(table.startedAt, bigNumMin(end, latest));
+        // await this.catchUp(table.startedAt, table.startedAt.add(0));
       }
 
 
