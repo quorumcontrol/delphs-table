@@ -25,6 +25,12 @@ class Hud extends ScriptTypeBase {
     mustFindByName(this.entity, 'HelpButton').button?.on('click', () => {
       helpScreenScript?.show()
     })
+    mustFindByName(this.entity, "FullScreenButton").button?.on('click', () => {
+      parent.postMessage(JSON.stringify({
+        type: 'fullScreenClick',
+        data: [],
+      }), '*')
+    })
   }
 
   rank(config:GameConfig, tickOutput:TickOutput) {

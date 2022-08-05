@@ -62,11 +62,11 @@ class ChainConnector extends ScriptTypeBase {
     this.asyncSetup();
   }
 
-  update() {
-    // if (this.app.keyboard.wasPressed(pc.KEY_SPACE)) {
-    //   this.manualTick()
-    // }
-  }
+  // update() {
+  //   // if (this.app.keyboard.wasPressed(pc.KEY_SPACE)) {
+  //   //   this.manualTick()
+  //   // }
+  // }
 
   // private async manualTick() {
   //   console.log('manual tick')
@@ -137,8 +137,8 @@ class ChainConnector extends ScriptTypeBase {
 
       log("setting up event filters", this.delphs.filters.Started(tableId));
 
-      // this.delphs.on(this.delphs.filters.Started(tableId, null), this.handleStarted);
-      // this.delphs.on(this.delphs.filters.DiceRolled(null, null, null), this.handleTick);
+      this.delphs.on(this.delphs.filters.Started(tableId, null), this.handleStarted);
+      this.delphs.on(this.delphs.filters.DiceRolled(null, null, null), this.handleTick);
     } catch (err) {
       console.error("error", err);
       throw err;
