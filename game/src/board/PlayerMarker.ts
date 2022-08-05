@@ -22,8 +22,8 @@ class PlayerMarker extends ScriptTypeBase {
   threeDNameScript: any // textMesh script
   stats: Entity
   previousPoint?: Vec3
-  battle?: Battle
   currentTween?: Tween
+  rotatedForBattle = false
 
 
   initialize() {
@@ -45,16 +45,11 @@ class PlayerMarker extends ScriptTypeBase {
     }
   }
 
-  setBattling(isBattling: boolean, rotate = false) {
+  private setBattlingAnimation(isBattling: boolean) {
     try {
       console.log('set battling: ', isBattling)
       const model = mustFindByName(this.entity, 'HumanoidModel')
       model.anim?.setBoolean('isBattling', isBattling)
-
-      if (rotate) {
-        this.entity.setLocalEulerAngles(0, 180, 0);
-        this.threeDNameEntity.setLocalEulerAngles(-20, 0, 0)
-      }
     } catch (err) {
       // sometimes during replay this item is destroyed before there is a chance foor the isBattling
       // to be set by the battleUI. This just ignores that error
@@ -76,7 +71,7 @@ class PlayerMarker extends ScriptTypeBase {
     )
   }
 
-  setInitialLocation() {
+  private setInitialLocation() {
     try {
       if (!this.warrior) {
         throw new Error('can only set location after warrior')
@@ -96,25 +91,21 @@ class PlayerMarker extends ScriptTypeBase {
     }
   }
 
-  handleBattling(battle: Battle) {
+  handleBattling(_battle: Battle) {
     console.log('battling')
-    this.setBattling(true)
-    this.battle = battle
+    this.setBattlingAnimation(true)
   }
 
   handleBattleOver(_battle: Battle) {
     console.log('battleOver')
-    this.setBattling(false)
-    const index = this.battle!.warriors.indexOf(this.warrior!)
-    if (index === 0) {
-      this.unrotateForBattle()
+    this.setBattlingAnimation(false)
+    if (this.rotatedForBattle) {
+      this.unrotateAfterBattle()
     }
-    this.battle = undefined
   }
 
   handleNewLocation(cell: Cell) {
     const newLocation = this.localPositionFromCell(cell)
-    console.log('new location', newLocation)
 
     if (this.currentTween) {
       this.currentTween.stop()
@@ -129,13 +120,16 @@ class PlayerMarker extends ScriptTypeBase {
     this.stats.setLocalEulerAngles(-15,0,0)
     this.threeDNameEntity.translateLocal(0,7,0)
     this.stats.translateLocal(0,7,0)
+    this.rotatedForBattle = true
   }
 
-  unrotateForBattle() {
-    this.threeDNameEntity.setLocalEulerAngles(-15,180,0)
-    this.stats.setLocalEulerAngles(-15,180,0)
+  unrotateAfterBattle() {
+    console.log(`${this.warrior?.id} unrotate after battle`)
+    this.rotatedForBattle = false
     this.threeDNameEntity.translateLocal(0,-7,0)
     this.stats.translateLocal(0,-7,0)
+    this.threeDNameEntity.setLocalEulerAngles(-15,180,0)
+    this.stats.setLocalEulerAngles(-15,180,0)
     this.entity.setLocalEulerAngles(0,0,0)
   }
 
@@ -145,11 +139,11 @@ class PlayerMarker extends ScriptTypeBase {
       this.currentTween.stop()
     }
     const gridPositions = battleUI.gridPositions()
-    const index = this.battle!.warriors.indexOf(this.warrior!)
+    const index = battleUI.battle!.warriors.indexOf(this.warrior!)
     console.log("position: ", gridPositions[index])
     this.entity.setPosition(gridPositions[index].x, gridPositions[index].y, gridPositions[index].z);
     this.entity.translateLocal(0, 0.25, 0)
-    if (index === 0) {
+    if (index === 1) {
       this.rotateForBattle()
     }
   }

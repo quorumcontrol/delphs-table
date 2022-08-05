@@ -84,7 +84,7 @@ class BattleUI extends ScriptTypeBase {
 
   gridPositions() {
     const entityWorldLocation = this.entity.getPosition().clone()
-    return [new Vec3(entityWorldLocation.x - 0.15, entityWorldLocation.y, entityWorldLocation.z - 0.2), new Vec3(entityWorldLocation.x + 0.15, entityWorldLocation.y, entityWorldLocation.z + 0.2)]
+    return [new Vec3(entityWorldLocation.x + 0.15, entityWorldLocation.y, entityWorldLocation.z + 0.2), new Vec3(entityWorldLocation.x - 0.15, entityWorldLocation.y, entityWorldLocation.z - 0.2)]
   }
 
 }

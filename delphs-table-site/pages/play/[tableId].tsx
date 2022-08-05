@@ -1,7 +1,7 @@
-import { VStack, Text, Heading, Box } from "@chakra-ui/react";
+import { VStack, Text, Heading, Box, Button } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAccount } from "wagmi";
 import LoggedInLayout from "../../src/components/LoggedInLayout";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
@@ -22,6 +22,11 @@ const Play: NextPage = () => {
   const { address } = useAccount();
   const isClient = useIsClientSide();
   const iframe = useRef<HTMLIFrameElement>(null);
+  const [fullScreen, setFullScreen] = useState(false)
+
+  const handleFullScreenMessage = useCallback(() => {
+    setFullScreen((old) => !old)
+  }, [setFullScreen])
 
   const handleMessage = useCallback(async (appEvent:AppEvent) => {
     if (!relayer.ready()) {
@@ -64,10 +69,15 @@ const Play: NextPage = () => {
     const handler = async (evt:MessageEvent) => {
       if (evt.origin === "https://playcanv.as") {
         const appEvent:AppEvent = JSON.parse(evt.data)
-        if (appEvent.type === 'destinationSetter') {
-          console.log('set destination received')
-          await handleMessage(appEvent)
-          // iframe.current?.contentWindow?.postMessage()
+        switch(appEvent.type) {
+          case 'destinationSetter':
+            console.log('set destination received')
+            await handleMessage(appEvent)
+            break;
+          case 'fullScreenClick':
+            return handleFullScreenMessage()
+          default:
+            console.log("unhandled message type: ", appEvent)
         }
       }
 
@@ -82,7 +92,7 @@ const Play: NextPage = () => {
 
   return (
     <LoggedInLayout>
-      <VStack spacing={10}>
+      <VStack spacing={fullScreen ? '0' : '10'}>
         <Heading>Find the Wootgump, don't get rekt.</Heading>
         <Text>Left Mouse (single finger) to orbit, right mouse (2 fingers) to pan, click-and-hold to set your player's destination.</Text>
         {isClient && <Box
@@ -90,8 +100,11 @@ const Play: NextPage = () => {
           as='iframe'
           src={`https://playcanv.as/e/p/wQEQB1Cp/?tableId=${tableId}&player=${address}`}
           ref={iframe}
-          w="100%"
-          minH="80vh"
+          top='0'
+          left='0'
+          w={fullScreen ? '100vw' : '100%'}
+          minH={fullScreen ? '100vh' : '70vh'}
+          position={fullScreen ? 'fixed' : undefined}
         />}
       </VStack>
     </LoggedInLayout>
