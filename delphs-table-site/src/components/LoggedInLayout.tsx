@@ -1,6 +1,8 @@
 import { Button, Spinner, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react'
+import { useAccount } from 'wagmi';
+import { useUsername } from '../hooks/Player';
 import useIsClientSide from '../hooks/useIsClientSide';
 import { useLogin } from '../hooks/useUser';
 import Layout from './Layout'
@@ -8,15 +10,19 @@ import Layout from './Layout'
 const LoggedInLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter()
   const isClient = useIsClientSide();
-  const { isLoggedIn, login, isLoggingIn } = useLogin()
+  const { address } = useAccount()
+  const { data:username, isLoading } = useUsername(address)
+  const { isLoggedIn, login, isLoggingIn, readyToLogin } = useLogin()
   
+  const loading = isLoading || isLoggingIn || !readyToLogin
+
   useEffect(() => {
-    if (isClient && !isLoggedIn) {
+    if (isClient && !loading && !username) {
       router.push('/')
     }
-  }, [isClient, isLoggedIn])
+  }, [isClient, loading, username])
 
-  if (!isClient || (!isLoggedIn && isLoggingIn)) {
+  if (!isClient || loading) {
     return (
       <Layout>
         <Spinner />
@@ -24,7 +30,7 @@ const LoggedInLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
     )
   }
 
-  if (!isLoggedIn && !isLoggedIn) {
+  if (!isLoggedIn && readyToLogin) {
     return (
       <Layout>
         <Text>You must sign in</Text>

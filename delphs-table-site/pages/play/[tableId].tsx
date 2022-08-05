@@ -90,8 +90,8 @@ const Play: NextPage = () => {
           as='iframe'
           src={`https://playcanv.as/e/p/wQEQB1Cp/?tableId=${tableId}&player=${address}`}
           ref={iframe}
-          minW="1200px"
-          minH="800px"
+          w="100%"
+          minH="80vh"
         />}
       </VStack>
     </LoggedInLayout>
