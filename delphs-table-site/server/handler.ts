@@ -17,7 +17,7 @@ dotenv.config({
   path: '.env.local'
 })
 
-const NUMBER_OF_ROUNDS = 50
+const NUMBER_OF_ROUNDS = 30
 const SECONDS_BETWEEN_ROUNDS = 15
 
 if (!process.env.env_delphsPrivateKey) {
