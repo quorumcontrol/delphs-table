@@ -46,6 +46,12 @@ class Grid {
     this.sizeX = opts.sizeX || 20
     this.sizeY = opts.sizeY || 20
     this.warriors = opts.warriors
+    for (let y = 0; y < this.sizeY; y++) {
+      for (let x = 0; x < this.sizeX; x++) {
+        this.grid[x] = this.grid[x] || []
+        this.grid[x][y] = new Cell({x, y, grid: this})
+      }
+    }
   }
 
   doDevTick() {
@@ -113,12 +119,6 @@ class Grid {
 
   private initialCellPopulation(warriors:Warrior[]) {
     console.log('initial cellpopulation: ', this.sizeX, this.sizeY)
-    for (let y = 0; y < this.sizeY; y++) {
-      for (let x = 0; x < this.sizeX; x++) {
-        this.grid[x] = this.grid[x] || []
-        this.grid[x][y] = new Cell({x, y, grid: this})
-      }
-    }
     this.warriors = warriors
     warriors.forEach((warrior) => {
       this.grid[deterministicRandom(this.sizeX, `grid-${warrior.id}-x`, this.currentSeed)][deterministicRandom(this.sizeY, `grid-${warrior.id}-y`, this.currentSeed)].addWarrior(warrior)

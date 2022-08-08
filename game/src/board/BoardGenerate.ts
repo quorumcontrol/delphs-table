@@ -3,14 +3,13 @@ import { ScriptTypeBase } from "../types/ScriptTypeBase";
 import { createScript } from "../utils/createScriptDecorator";
 import Grid from "../boardLogic/Grid";
 import Cell from "../boardLogic/Cell";
-import { Entity, GraphNode } from "playcanvas";
+import { Entity } from "playcanvas";
 import CellState from "./CellState";
 import { GameConfig } from "../utils/config";
 import { UI_FOCUS_REQUEST } from "../appWide/Focuser";
 import Warrior from "../boardLogic/Warrior";
 import mustFindByName from "../utils/mustFindByName";
 import PlayerMarker from "./PlayerMarker";
-import { randomBounded } from "../utils/randoms";
 
 @createScript("boardGenerate")
 class BoardGenerate extends ScriptTypeBase {
@@ -55,6 +54,8 @@ class BoardGenerate extends ScriptTypeBase {
   setGrid(grid: Grid) {
     this.grid = grid;
     console.log("set grid: ", this.grid);
+    this.grid.everyCell(this.initialCellSetup);
+    this.focusOnPlayerCell()
   }
 
   onStart() {
@@ -62,7 +63,6 @@ class BoardGenerate extends ScriptTypeBase {
       throw new Error("no grid");
     }
 
-    this.grid.everyCell(this.initialCellSetup);
     this.grid.warriors.forEach((warrior) => {
       this.initialWarriorSetup(warrior)
     })

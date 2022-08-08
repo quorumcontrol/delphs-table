@@ -63,9 +63,9 @@ class ChainConnector extends ScriptTypeBase {
   }
 
   // update() {
-  //   // if (this.app.keyboard.wasPressed(pc.KEY_SPACE)) {
-  //   //   this.manualTick()
-  //   // }
+  //   if (this.app.keyboard.wasPressed(pc.KEY_SPACE)) {
+  //     this.manualTick()
+  //   }
   // }
 
   // private async manualTick() {
