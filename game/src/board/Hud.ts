@@ -1,4 +1,4 @@
-import { Entity } from "playcanvas";
+import { Entity, SineOut, Tween } from "playcanvas";
 import HelpText from "../appWide/HelpText";
 import { CellOutComeDescriptor } from "../boardLogic/Cell";
 import { TickOutput } from "../boardLogic/Grid";
@@ -9,16 +9,26 @@ import { createScript } from "../utils/createScriptDecorator";
 
 import mustFindByName from "../utils/mustFindByName";
 
+const TIME_BETWEEN_ROUNDS = 15.0
+
 @createScript("hud")
 class Hud extends ScriptTypeBase {
   uiText: Entity;
   eventTemplate: Entity;
 
+  roundText: Entity
+  roundTimer: Entity
+  roundFadeTween?: Tween
+
   inProgress?:Promise<any>
+
+  timeToNextRound = -1;
 
   initialize() {
     this.uiText = mustFindByName(this.entity, "Status");
     this.eventTemplate = mustFindByName(this.entity, "Event");
+    this.roundTimer = mustFindByName(this.entity, "RoundTimer")
+    this.roundText = mustFindByName(this.entity, "RoundText")
     this.eventTemplate.enabled = false;
     getGameConfig(this.app.root).controller.on("tick", this.handleTick, this);
     const helpScreenScript = this.getScript<HelpText>(mustFindByName(this.app.root, 'HelpScreen'), 'helpText')
@@ -33,6 +43,36 @@ class Hud extends ScriptTypeBase {
     })
   }
 
+  update(dt:number) {
+    if (this.timeToNextRound > 0) {
+      this.timeToNextRound -= dt
+      this.updateRoundTimerText()
+    }
+  }
+
+  private updateRoundTimerText() {
+    if (this.timeToNextRound < 0) {
+      return
+    }
+    if (this.timeToNextRound < 2) {
+      this.roundText.element!.text = `No more moves`
+      return
+    }
+    this.roundText.element!.text = `Next Round in: 0:${Math.ceil(this.timeToNextRound)}`
+  }
+
+  private updateRoundText(round:number) {
+    this.roundText.element!.text = `Round ${round}`
+    this.roundText.element!.opacity = 1.0
+    let opacity = {value: 1.0}
+    if (this.roundFadeTween) {
+      this.roundFadeTween.stop()
+    }
+    this.roundFadeTween = this.entity.tween(opacity).to({value: 0.0}, 1.0, SineOut).on('update', () => {
+      this.roundText.element!.opacity = opacity.value
+    }).start()
+  }
+
   rank(config:GameConfig, tickOutput:TickOutput) {
     if (!config.currentPlayer || !config.grid) {
       return -1
@@ -44,6 +84,8 @@ class Hud extends ScriptTypeBase {
   }
 
   handleTick(tickOutput:TickOutput) {
+    this.timeToNextRound = TIME_BETWEEN_ROUNDS
+    this.updateRoundText(tickOutput.tick)
     const config = getGameConfig(this.app.root);
     const grid = config.grid;
     const player = config.currentPlayer

@@ -18,7 +18,7 @@ dotenv.config({
 })
 
 const NUMBER_OF_ROUNDS = 50
-const SECONDS_BETWEEN_ROUNDS = 5
+const SECONDS_BETWEEN_ROUNDS = 15
 
 if (!process.env.env_delphsPrivateKey) {
   console.error('no private key')
@@ -119,7 +119,6 @@ class TableMaker {
     } catch (err) {
       console.error('error making table: ', err)
       process.exit(1)
-      this.handleLobbyRegistration()
     }
   }
 }
