@@ -94,7 +94,7 @@ const Play: NextPage = () => {
     <LoggedInLayout>
       <VStack spacing={fullScreen ? '0' : '10'}>
         <Heading>Find the Wootgump, don't get rekt.</Heading>
-        <Text>Left Mouse (single finger) to orbit, right mouse (2 fingers) to pan, click-and-hold to set your player's destination.</Text>
+        <Text>Left Mouse (single finger) to orbit, right mouse (2 fingers) to pan, click-and-hold to set your player's destination (the blue star will move).</Text>
         {isClient && <Box
           id="game"
           as='iframe'

@@ -18,7 +18,7 @@
     "@faker-js/faker": "^7.3.0",
     "@fontsource/dm-sans": "^4.5.7",
     "@fontsource/zen-dots": "^4.5.7",
-    "@rainbow-me/rainbowkit": "^0.4.1",
+    "@rainbow-me/rainbowkit": "0.4.5",
     "ethers": "^5.6.8",
     "exponential-backoff": "^3.1.0",
     "framer-motion": "^6.3.11",

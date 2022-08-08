@@ -3,7 +3,7 @@ import Head from "next/head";
 import { extendTheme, ChakraProvider } from "@chakra-ui/react";
 import "@fontsource/dm-sans";
 import "@fontsource/zen-dots";
-import "@rainbow-me/rainbowkit/styles.css";
+import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets, RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { configureChains, createClient, WagmiConfig, chain } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
