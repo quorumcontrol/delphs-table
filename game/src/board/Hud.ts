@@ -55,25 +55,27 @@ class Hud extends ScriptTypeBase {
       return
     }
     if (this.timeToNextRound < 2) {
-      this.roundText.element!.text = `No more moves`
+      this.roundTimer.element!.text = `No more moves`
       return
     }
-    this.roundText.element!.text = `Next Round in: 0:${Math.ceil(this.timeToNextRound)}`
+    this.roundTimer.element!.text = `Next Round in ${Math.ceil(this.timeToNextRound)}s`
   }
 
   private updateRoundText(round:number) {
-    this.roundText.element!.text = `Round ${round}`
-    this.roundText.element!.opacity = 1.0
-    let opacity = {value: 1.0}
+    console.log('update round text')
     if (this.roundFadeTween) {
       this.roundFadeTween.stop()
     }
-    this.roundFadeTween = this.entity.tween(opacity).to({value: 0.0}, 1.0, SineOut).on('update', () => {
+    this.roundText.element!.text = `Round ${round}`
+    this.roundText.element!.opacity = 1.0
+    let opacity = {value: 1.0}
+
+    this.roundFadeTween = this.entity.tween(opacity).to({value: 0.0}, 3.0, SineOut).on('update', () => {
       this.roundText.element!.opacity = opacity.value
     }).start()
   }
 
-  rank(config:GameConfig, tickOutput:TickOutput) {
+  rank(config:GameConfig, _tickOutput:TickOutput) {
     if (!config.currentPlayer || !config.grid) {
       return -1
     }
