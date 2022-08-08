@@ -2,6 +2,7 @@ import { ScriptTypeBase } from "../types/ScriptTypeBase";
 import { getGameConfig } from "../utils/config";
 
 import { createScript } from "../utils/createScriptDecorator";
+import { GAME_OVER_EVT, NO_MORE_MOVES_EVT, TICK_EVT } from "../utils/rounds";
 import CellState from "./CellState";
 
 const TRACE_AT = 0.8 // number of seconds to start tracing
@@ -12,11 +13,18 @@ class CellSelector extends ScriptTypeBase {
   timer = 0
   startedEvent?: { x: number, y: number }
 
+  canSelect = false
+
   initialize() {
     if (!this.entity.camera) {
       console.error("This script must be applied to an entity with a camera component.");
       return;
     }
+
+    const controller = getGameConfig(this.app.root).controller
+    controller.on(TICK_EVT, this.handleTick, this)
+    controller.on(NO_MORE_MOVES_EVT, this.handleNoMoreMoves, this)
+    controller.on(GAME_OVER_EVT, this.handleGameOver, this)
 
     this.handleExternalEvent = this.handleExternalEvent.bind(this)
 
@@ -32,6 +40,18 @@ class CellSelector extends ScriptTypeBase {
     }
 
     window.addEventListener('message', this.handleExternalEvent)
+  }
+
+  private handleTick() {
+    this.canSelect = true
+  }
+
+  private handleNoMoreMoves() {
+    this.canSelect = false
+  }
+
+  private handleGameOver() {
+    this.canSelect = false
   }
 
   handleExternalEvent(evt: any) {
@@ -89,6 +109,10 @@ class CellSelector extends ScriptTypeBase {
   }
 
   doRaycast(screenX: number, screenY: number) {
+    if (!this.canSelect) {
+      return
+    }
+
     const config = getGameConfig(this.app.root)
     if (config.grid?.isOver()) {
       return

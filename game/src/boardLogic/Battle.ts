@@ -2,6 +2,7 @@ import { deterministicRandom } from "./random"
 import Warrior from "./Warrior"
 import debug from 'debug'
 import EventEmitter from "events"
+import { TICK_EVT } from "../utils/rounds"
 
 const log = debug('Battle')
 
@@ -77,7 +78,7 @@ class Battle extends EventEmitter {
       tick: this.tick,
       startingTick: this.startingTick,
     }
-    this.emit('tick', report)
+    this.emit(TICK_EVT, report)
     return report
   }
 

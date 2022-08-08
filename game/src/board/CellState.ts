@@ -9,6 +9,7 @@ import { getGameConfig } from "../utils/config";
 import { createScript } from "../utils/createScriptDecorator";
 import mustFindByName from "../utils/mustFindByName";
 import { randomBounded } from "../utils/randoms";
+import { TICK_EVT } from "../utils/rounds";
 import BattleUI from "./BattleUI";
 import PlayerMarker from "./PlayerMarker";
 
@@ -49,7 +50,7 @@ class CellState extends ScriptTypeBase {
     this.playerMarkers = {};
     this.gumps = {};
     this.battles = {};
-    this.entity.parent.on("tick", this.handleTick);
+    this.entity.parent.on(TICK_EVT, this.handleTick);
   }
 
   handleTick() {
@@ -76,14 +77,14 @@ class CellState extends ScriptTypeBase {
 
   private handleMaybeDestinationTile() {
     const gameConfig = getGameConfig(this.app.root);
-    if (!gameConfig.currentPlayer || !gameConfig.currentPlayer.destination || !this.cell) {
+    if (!gameConfig.currentPlayer || !this.cell || !(gameConfig.currentPlayer.destination || gameConfig.currentPlayer.pendingDestination)) {
       return;
     }
 
     const pendingDest = gameConfig.currentPlayer.pendingDestination
     const dest = gameConfig.currentPlayer.destination
 
-    const currentPlayerDest = pendingDest || dest
+    const currentPlayerDest = (pendingDest || dest)!
 
     if (
       currentPlayerDest[0] == this.cell.x &&

@@ -4,6 +4,7 @@ import { ScriptTypeBase } from "../types/ScriptTypeBase";
 
 import { createScript } from "../utils/createScriptDecorator";
 import mustFindByName from "../utils/mustFindByName";
+import { TICK_EVT } from "../utils/rounds";
 
 const standardPlaces:[number,number,number][] = [[0.3,43,0.5],[-0.1,43.5,-0.4]]
 
@@ -41,7 +42,7 @@ class BattleUI extends ScriptTypeBase {
 
   destroy() {
     if (this.battle) {
-      this.battle.off('tick', this.handleTick)
+      this.battle.off(TICK_EVT, this.handleTick)
     }
     Object.values(this.soundComponent.slots).forEach((slot) => {
       slot.stop()
@@ -68,7 +69,7 @@ class BattleUI extends ScriptTypeBase {
 
   setBattle(battle: Battle) {
     this.battle = battle;
-    this.battle.on('tick', this.handleTick)
+    this.battle.on(TICK_EVT, this.handleTick)
     this.initialUISetup();
   }
 

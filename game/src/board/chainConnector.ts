@@ -11,13 +11,14 @@ import BoardGenerate from "./BoardGenerate";
 import { DiceRolledEvent, StartedEvent } from "../typechain/DelphsTable";
 import addresses from '../deployments/skaletest/addresses.json'
 import MulticallWrapper from "kasumah-multicall";
+import { GAME_OVER_EVT, NO_MORE_MOVES_EVT, TICK_EVT, TIME_BETWEEN_ROUNDS } from "../utils/rounds";
 
 const log = console.log; //debug('chainConnector')
 
 const DELPHS_TESTNET_ADDRESS = addresses.DelphsTable
 const PLAYER_TESTNET_ADDRESS = addresses.Player
 
-function bigNumMin(a:BigNumber, b:BigNumber) {
+function bigNumMin(a: BigNumber, b: BigNumber) {
   if (a.lte(b)) {
     return a
   }
@@ -31,16 +32,18 @@ class ChainConnector extends ScriptTypeBase {
   player: Player;
   grid: Grid;
 
-  inProgress?:Promise<any>
+  inProgress?: Promise<any>
 
   started = false;
   startedAt?: BigNumber;
 
-  private tableId?:string
+  private tableId?: string
 
   latest: BigNumber;
 
-  boardGenerate:BoardGenerate
+  boardGenerate: BoardGenerate
+
+  timeToNextRound = -1;
 
   initialize() {
     log("chain connector initialized");
@@ -48,7 +51,7 @@ class ChainConnector extends ScriptTypeBase {
     this.asyncHandleTick = this.asyncHandleTick.bind(this);
     this.handleStarted = this.handleStarted.bind(this);
     this.provider = new ethers.providers.StaticJsonRpcProvider(skaleTestnet.rpcUrls.default);
-    
+
     const multicall = new MulticallWrapper(this.provider, skaleTestnet.id)
 
     this.delphs = multicall.syncWrap<DelphsTable>(DelphsTable__factory.connect(DELPHS_TESTNET_ADDRESS, this.provider));
@@ -62,11 +65,18 @@ class ChainConnector extends ScriptTypeBase {
     this.asyncSetup();
   }
 
-  // update() { 
-  //   if (this.app.keyboard.wasPressed(pc.KEY_SPACE)) {
-  //     this.manualTick()
-  //   }
-  // }
+  update(dt: number) {
+    if (this.timeToNextRound > 0) {
+      this.timeToNextRound -= dt
+      if (this.timeToNextRound < 1) {
+        this.timeToNextRound = -1
+        this.entity.fire(NO_MORE_MOVES_EVT)
+      }
+    }
+    // if (this.app.keyboard.wasPressed(pc.KEY_SPACE)) {
+    //     this.manualTick()
+    //   }
+  }
 
   // private async manualTick() {
   //   console.log('manual tick')
@@ -215,7 +225,7 @@ class ChainConnector extends ScriptTypeBase {
           log('latest: ', this.latest)
           await this.catchUp(this.latest.add(1), index)
         }
-  
+
         if (!this.started) {
           log("starting the game");
           this.started = true;
@@ -234,9 +244,12 @@ class ChainConnector extends ScriptTypeBase {
           }
           warrior.setDestination(dest.x.toNumber(), dest.y.toNumber())
         })
-
-        this.entity.fire("tick", this.grid.handleTick(random));
+        this.timeToNextRound = TIME_BETWEEN_ROUNDS
+        this.entity.fire(TICK_EVT, this.grid.handleTick(random));
         this.latest = index;
+        if (this.grid.isOver()) {
+          this.entity.fire(GAME_OVER_EVT)
+        }
       }
     } catch (err) {
       console.error('error handling async tick: ', err)

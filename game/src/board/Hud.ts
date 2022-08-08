@@ -8,8 +8,7 @@ import { GameConfig, getGameConfig } from "../utils/config";
 import { createScript } from "../utils/createScriptDecorator";
 
 import mustFindByName from "../utils/mustFindByName";
-
-const TIME_BETWEEN_ROUNDS = 12.0
+import { GAME_OVER_EVT, NO_MORE_MOVES_EVT, TICK_EVT, TIME_BETWEEN_ROUNDS } from "../utils/rounds";
 
 @createScript("hud")
 class Hud extends ScriptTypeBase {
@@ -30,7 +29,12 @@ class Hud extends ScriptTypeBase {
     this.roundTimer = mustFindByName(this.entity, "RoundTimer")
     this.roundText = mustFindByName(this.entity, "RoundText")
     this.eventTemplate.enabled = false;
-    getGameConfig(this.app.root).controller.on("tick", this.handleTick, this);
+    
+    const controller = getGameConfig(this.app.root).controller
+    controller.on(TICK_EVT, this.handleTick, this);
+    controller.on(NO_MORE_MOVES_EVT, this.handleNoMoreMoves, this);
+    controller.on(GAME_OVER_EVT, this.handleGameOver, this);
+
     const helpScreenScript = this.getScript<HelpText>(mustFindByName(this.app.root, 'HelpScreen'), 'helpText')
     mustFindByName(this.entity, 'HelpButton').button?.on('click', () => {
       helpScreenScript?.show()
@@ -50,19 +54,25 @@ class Hud extends ScriptTypeBase {
     }
   }
 
+  private handleNoMoreMoves() {
+    this.timeToNextRound = -1
+    this.roundTimer.element!.text = `No more moves`
+  }
+
   private updateRoundTimerText() {
     if (this.timeToNextRound < 0) {
       return
     }
-    if (this.timeToNextRound < 1) {
-      this.roundTimer.element!.text = `No more moves`
-      return
-    }
+
     this.roundTimer.element!.text = `Next Round in ${Math.ceil(this.timeToNextRound)}s`
   }
 
+  private handleGameOver() {
+    this.timeToNextRound = -1
+    this.roundTimer.element!.text = ''
+  }
+
   private updateRoundText(round:number) {
-    console.log('update round text')
     if (this.roundFadeTween) {
       this.roundFadeTween.stop()
     }
@@ -133,11 +143,17 @@ class Hud extends ScriptTypeBase {
           let total = 0
           const duration = 3.0
 
+          const opacity = { value: 1.0 }
+          eventElement.tween(opacity).to({value: 0.5}, duration - 0.1, pc.SineOut).on('update', () => {
+            eventElement.element!.opacity = opacity.value
+          }).start()
+
           eventElement.tween(curPosition).to({x: curPosition.x, y: curPosition.y + 200, z: curPosition.z}, duration, pc.SineIn).start().on('complete', () => {
             eventElement.destroy()
           }).on('update', (dt:any) => {
             total = total + dt
             if (total >= duration / 2) {
+              // half way through this, let the next event pop up
               resolve()
             }
           })
