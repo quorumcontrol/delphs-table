@@ -9,7 +9,7 @@ import { createScript } from "../utils/createScriptDecorator";
 
 import mustFindByName from "../utils/mustFindByName";
 
-const TIME_BETWEEN_ROUNDS = 15.0
+const TIME_BETWEEN_ROUNDS = 12.0
 
 @createScript("hud")
 class Hud extends ScriptTypeBase {
@@ -54,7 +54,7 @@ class Hud extends ScriptTypeBase {
     if (this.timeToNextRound < 0) {
       return
     }
-    if (this.timeToNextRound < 2) {
+    if (this.timeToNextRound < 1) {
       this.roundTimer.element!.text = `No more moves`
       return
     }
