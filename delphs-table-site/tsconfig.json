@@ -14,7 +14,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "preserveSymlinks": false,
+    "preserveSymlinks": true,
   },
   "include": ["next-env.d.ts", "pages", "src", "contracts/typechain"],
   "exclude": ["node_modules"]

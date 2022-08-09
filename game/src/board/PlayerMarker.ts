@@ -7,6 +7,7 @@ import { getGameConfig } from "../utils/config";
 
 import { createScript } from "../utils/createScriptDecorator";
 import mustFindByName from "../utils/mustFindByName";
+import randomColor from "../utils/randomColor";
 import { randomBounded } from "../utils/randoms";
 import BattleUI from "./BattleUI";
 
@@ -19,11 +20,13 @@ class PlayerMarker extends ScriptTypeBase {
   healthText: Entity
   gumpText: Entity
   threeDNameEntity: Entity
+  humanoid: Entity
   threeDNameScript: any // textMesh script
   stats: Entity
   previousPoint?: Vec3
   currentTween?: Tween
   rotatedForBattle = false
+
 
 
   initialize() {
@@ -34,6 +37,7 @@ class PlayerMarker extends ScriptTypeBase {
     this.threeDNameEntity = mustFindByName(this.entity, "3DName")
     this.threeDNameScript = this.getScript(this.threeDNameEntity, "textMesh")!
     this.stats = mustFindByName(this.entity, "Stats")
+    this.humanoid = mustFindByName(this.entity, 'HumanoidModel')
   }
 
   update() {
@@ -48,8 +52,7 @@ class PlayerMarker extends ScriptTypeBase {
   private setBattlingAnimation(isBattling: boolean) {
     try {
       console.log('set battling: ', isBattling)
-      const model = mustFindByName(this.entity, 'HumanoidModel')
-      model.anim?.setBoolean('isBattling', isBattling)
+      this.humanoid.anim?.setBoolean('isBattling', isBattling)
     } catch (err) {
       // sometimes during replay this item is destroyed before there is a chance foor the isBattling
       // to be set by the battleUI. This just ignores that error
@@ -161,6 +164,11 @@ class PlayerMarker extends ScriptTypeBase {
     this.warrior.on('battle', (battle) => this.handleBattling(battle))
     this.warrior.on('battleOver', (battle) => this.handleBattleOver(battle))
     this.warrior.on('battleUI', (ui) => { this.handleBattleUI(ui) })
+    const newMaterial = this.humanoid.render!.meshInstances[0].material.clone();
+    const color:[number,number,number] = randomColor({ format: 'rgbArray', seed: `${warrior.id}${config.grid?.id}` }).map((c:number) => c/255);
+    (newMaterial as any).diffuse.set(color[0], color[1], color[2])
+    newMaterial.update()
+    this.humanoid.render!.meshInstances[0].material = newMaterial
   }
 }
 

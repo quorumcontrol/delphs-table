@@ -182,7 +182,7 @@ class ChainConnector extends ScriptTypeBase {
           return this.delphs.rolls(start.add(i));
         })
     );
-    log("missing: ", missing);
+    // log("missing: ", missing);
     missing.forEach((roll, i) => {
       this.handleTick(start.add(i), constants.Zero, roll);
     });
