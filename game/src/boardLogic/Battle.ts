@@ -2,7 +2,8 @@ import { deterministicRandom } from "./random"
 import Warrior from "./Warrior"
 import debug from 'debug'
 import EventEmitter from "events"
-import { TICK_EVT } from "../utils/rounds"
+
+const TICK_EVT = 'tick'
 
 const log = debug('Battle')
 
