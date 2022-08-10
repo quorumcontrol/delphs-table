@@ -99,8 +99,8 @@ export const PING_CHANNEL = `/delphs-table-${defaultNetwork().id}/ping`
 
 const asyncClient = memoize(() => {
   log('mqtt connecting, ', isBrowser)
-  const key = isBrowser ? process.env.NEXT_PUBLIC_DELPHS_BROWSER_KEY : process.env.DELPHS_ORCHESTRATOR_KEY
-  const cert = isBrowser ? process.env.NEXT_PUBLIC_DELPHS_BROWSER_CERT : process.env.DELPHS_ORCHESTRATOR_CERT
+  const key = isBrowser ? process.env.NEXT_PUBLIC_DELPHS_BROWSER_KEY?.replace(/_/g, "\n") : process.env.DELPHS_ORCHESTRATOR_KEY
+  const cert = isBrowser ? process.env.NEXT_PUBLIC_DELPHS_BROWSER_CERT?.replace(/_/g, "\n") : process.env.DELPHS_ORCHESTRATOR_CERT
   const username = isBrowser ? process.env.NEXT_PUBLIC_DELPHS_BROWSER_MQTT_USERNAME : process.env.DELPHS_ORCHESTRATOR_MQTT_USERNAME
 
   if (!key || !cert || !username) {
