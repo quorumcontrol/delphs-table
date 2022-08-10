@@ -123,7 +123,7 @@ const Play: NextPage = () => {
         {isClient && <Box
           id="game"
           as='iframe'
-          src={`https://playcanv.as/e/b/7XqAEzsb/?tableId=${tableId}&player=${address}`}
+          src={`https://playcanv.as/e/p/wQEQB1Cp/?tableId=${tableId}&player=${address}`}
           ref={iframe}
           top='0'
           left='0'
