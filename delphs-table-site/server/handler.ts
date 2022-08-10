@@ -1,17 +1,20 @@
 
-import { Wallet } from "ethers";
+import { ContractReceipt, Wallet } from "ethers";
 import debug, { Debugger } from 'debug'
 import { keccak256 } from "ethers/lib/utils";
 import { faker } from '@faker-js/faker'
 import { NonceManager } from '@ethersproject/experimental'
+import * as dotenv from "dotenv";
 import botSetup from '../contracts/bots'
 import { OrchestratorState__factory } from "../contracts/typechain";
 import { addresses } from "../src/utils/networks";
 import { delphsContract, lobbyContract, playerContract } from "../src/utils/contracts";
 import promiseWaiter from '../src/utils/promiseWaiter'
-import * as dotenv from "dotenv";
 import SingletonQueue from '../src/utils/singletonQueue'
 import { skaleProvider } from "../src/utils/skaleProvider";
+import mqttClient, { NO_MORE_MOVES_CHANNEL, ROLLS_CHANNEL } from '../src/utils/mqtt'
+import Pinger from "./pinger";
+import { DiceRolledEvent } from "../contracts/typechain/DelphsTable";
 
 dotenv.config({
   path: '.env.local'
@@ -19,6 +22,7 @@ dotenv.config({
 
 const NUMBER_OF_ROUNDS = 30
 const SECONDS_BETWEEN_ROUNDS = 15
+const STOP_MOVES_BUFFER = 4 // seconds before the next round to stop moves
 
 if (!process.env.env_delphsPrivateKey) {
   console.error('no private key')
@@ -108,7 +112,7 @@ class TableMaker {
           }
         })
 
-      const tx = await delphs.createAndStart(id, playersWithNamesAndSeeds.map((p) => p.address!), playersWithNamesAndSeeds.map((p) => p.seed), rounds, await wallet.getAddress(), { gasLimit: 1500000})
+      const tx = await delphs.createAndStart(id, playersWithNamesAndSeeds.map((p) => p.address!), playersWithNamesAndSeeds.map((p) => p.seed), rounds, await wallet.getAddress(), { gasLimit: 1500000 })
       this.log('table id: ', id, 'tx: ', tx.hash)
       // on staging we do not have mtm
       await orchestratorState.add(id, { gasLimit: 1000000 })
@@ -121,6 +125,30 @@ class TableMaker {
       process.exit(1)
     }
   }
+}
+
+
+// const findBattleCompleted = (receipt:providers.TransactionReceipt) => {
+//   const evt = receipt.logs.find((log) => {
+//     return log.topics[0] === battleCompletedTopic
+//   })
+//   if (!evt) {
+//     throw new Error('bad transaction hash: missing battle completed topic')
+//   }
+//   const parsedEvt = battleInterface.parseLog(evt)
+//   console.log('parsed event: ', parsedEvt)
+//   return parsedEvt as unknown as  BattleCompletedEvent
+// }
+
+const diceRolledTopic = delphs.interface.getEventTopic('DiceRolled')
+const getDiceRollFromReceipt = (receipt:ContractReceipt) => {
+  const evt = receipt.logs.find((l) => {
+    return l.topics[0] === diceRolledTopic
+  })
+  if (!evt) {
+    throw new Error("passed a bad receipt with no DiceRolled evt")
+  }
+  return delphs.interface.parseLog(evt) as any as DiceRolledEvent
 }
 
 class TablePlayer {
@@ -173,11 +201,20 @@ class TablePlayer {
       this.log('rolling from ', currentTick.toNumber(), 'to', endings[0].toNumber())
 
       for (let i = 0; i < endings[0].sub(currentTick).toNumber(); i++) {
-        this.log('roll')
+        this.log('buffer')
+        const tick = currentTick.add(i+1).toNumber()
+
+        mqttClient().publish(NO_MORE_MOVES_CHANNEL, JSON.stringify({ tick }))
+        await promiseWaiter(STOP_MOVES_BUFFER * 1000)
+
+        this.log('rolling')
         const tx = await delphs.rollTheDice({ gasLimit: 250000 })
-        this.log('rolled: ', tx.hash)
-        await promiseWaiter(SECONDS_BETWEEN_ROUNDS * 1000)
-        await tx.wait()
+        const receipt = await tx.wait()
+        const diceRolledLog = getDiceRollFromReceipt(receipt)
+
+        mqttClient().publish(ROLLS_CHANNEL, JSON.stringify({ txHash: tx.hash, tick, random: diceRolledLog.args.random, blockNumber: receipt.blockNumber }))
+        this.log('waiting')
+        await promiseWaiter((SECONDS_BETWEEN_ROUNDS - STOP_MOVES_BUFFER) * 1000)
       }
       this.log('bulk remove')
       await orchestratorState.bulkRemove(active.map((table) => table.id), { gasLimit: 500000 })
@@ -192,11 +229,14 @@ class TablePlayer {
 async function main() {
   return new Promise((_resolve) => {
     console.log('running')
+    // call the client to just get it setup
+    mqttClient()
 
     const tableMaker = new TableMaker()
     const tablePlayer = new TablePlayer()
+    new Pinger().start()
 
-    debug.enable('table-player,table-maker')
+    debug.enable('table-player,table-maker,pinger')
 
     const lobbyRegistrationFilter = lobby.filters.RegisteredInterest(null)
     const orchestratorFilter = orchestratorState.filters.TableAdded(null)

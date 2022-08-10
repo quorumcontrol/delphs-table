@@ -1,3 +1,4 @@
+import { MESSAGE_EVENT } from "../appWide/AppConnector";
 import { ScriptTypeBase } from "../types/ScriptTypeBase";
 import { getGameConfig } from "../utils/config";
 
@@ -26,8 +27,6 @@ class CellSelector extends ScriptTypeBase {
     controller.on(NO_MORE_MOVES_EVT, this.handleNoMoreMoves, this)
     controller.on(GAME_OVER_EVT, this.handleGameOver, this)
 
-    this.handleExternalEvent = this.handleExternalEvent.bind(this)
-
     // Add a mousedown event handler
     this.app.mouse.on(pc.EVENT_MOUSEDOWN, this.mouseDown, this);
     this.app.mouse.on(pc.EVENT_MOUSEUP, this.clearEvent, this);
@@ -39,7 +38,7 @@ class CellSelector extends ScriptTypeBase {
       this.app.touch.on(pc.EVENT_TOUCHMOVE, this.clearEvent, this);
     }
 
-    window.addEventListener('message', this.handleExternalEvent)
+    this.app.on(MESSAGE_EVENT, this.handleExternalEvent, this)
   }
 
   private handleTick() {
@@ -54,14 +53,12 @@ class CellSelector extends ScriptTypeBase {
     this.canSelect = false
   }
 
-  handleExternalEvent(evt: any) {
-    console.log('external message: ', evt)
+  handleExternalEvent(msg: any) {
     const config = getGameConfig(this.app.root)
     if (config.grid?.isOver()) {
       return
     }
     try {
-      const msg = JSON.parse(evt.data)
       switch (msg.type) {
         case "destinationStarting":
           config.currentPlayer?.setPendingDestination(msg.x, msg.y)
@@ -73,10 +70,10 @@ class CellSelector extends ScriptTypeBase {
           }
           break;
         default:
-          console.error('unknown message type: ', msg)
+          console.log('unknown message type: ', msg)
       }
-    } catch (err) {
-      console.log('msg error: ', err)
+    } catch {
+      console.error('error with msg:', msg)
     }
   }
 

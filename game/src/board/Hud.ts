@@ -1,4 +1,4 @@
-import { Entity, SineOut, Tween } from "playcanvas";
+import { Entity, SineInOut, Tween } from "playcanvas";
 import HelpText from "../appWide/HelpText";
 import { CellOutComeDescriptor } from "../boardLogic/Cell";
 import { TickOutput } from "../boardLogic/Grid";
@@ -8,7 +8,7 @@ import { GameConfig, getGameConfig } from "../utils/config";
 import { createScript } from "../utils/createScriptDecorator";
 
 import mustFindByName from "../utils/mustFindByName";
-import { GAME_OVER_EVT, NO_MORE_MOVES_EVT, TICK_EVT, TIME_BETWEEN_ROUNDS } from "../utils/rounds";
+import { GAME_OVER_EVT, NO_MORE_MOVES_EVT, ORCHESTRATOR_TICK, SECONDS_BETWEEN_ROUNDS, STOP_MOVES_BUFFER, TICK_EVT } from "../utils/rounds";
 
 @createScript("hud")
 class Hud extends ScriptTypeBase {
@@ -19,7 +19,7 @@ class Hud extends ScriptTypeBase {
   roundTimer: Entity
   roundFadeTween?: Tween
 
-  inProgress?:Promise<any>
+  inProgress?: Promise<any>
 
   timeToNextRound = -1;
 
@@ -29,11 +29,14 @@ class Hud extends ScriptTypeBase {
     this.roundTimer = mustFindByName(this.entity, "RoundTimer")
     this.roundText = mustFindByName(this.entity, "RoundText")
     this.eventTemplate.enabled = false;
-    
+
     const controller = getGameConfig(this.app.root).controller
     controller.on(TICK_EVT, this.handleTick, this);
     controller.on(NO_MORE_MOVES_EVT, this.handleNoMoreMoves, this);
     controller.on(GAME_OVER_EVT, this.handleGameOver, this);
+    controller.on(ORCHESTRATOR_TICK, (data) => {
+      console.log('orchestrator tick', data)
+    })
 
     const helpScreenScript = this.getScript<HelpText>(mustFindByName(this.app.root, 'HelpScreen'), 'helpText')
     mustFindByName(this.entity, 'HelpButton').button?.on('click', () => {
@@ -47,7 +50,7 @@ class Hud extends ScriptTypeBase {
     })
   }
 
-  update(dt:number) {
+  update(dt: number) {
     if (this.timeToNextRound > 0) {
       this.timeToNextRound -= dt
       this.updateRoundTimerText()
@@ -55,7 +58,11 @@ class Hud extends ScriptTypeBase {
   }
 
   private handleNoMoreMoves() {
+    if (this.timeToNextRound === -1) {
+      return // idempotent
+    }
     this.timeToNextRound = -1
+    this.updateRoundText('No more moves')
     this.roundTimer.element!.text = `No more moves`
   }
 
@@ -64,7 +71,7 @@ class Hud extends ScriptTypeBase {
       return
     }
 
-    this.roundTimer.element!.text = `Next Round in ${Math.ceil(this.timeToNextRound)}s`
+    this.roundTimer.element!.text = `Choose moves for ${Math.ceil(this.timeToNextRound)}s`
   }
 
   private handleGameOver() {
@@ -72,34 +79,34 @@ class Hud extends ScriptTypeBase {
     this.roundTimer.element!.text = ''
   }
 
-  private updateRoundText(round:number) {
+  private updateRoundText(txt: string) {
     if (this.roundFadeTween) {
       this.roundFadeTween.stop()
     }
-    this.roundText.element!.text = `Round ${round}`
-    this.roundText.element!.opacity = 1.0
-    let opacity = {value: 1.0}
+    this.roundText.element!.text = txt
+    let opacity = { value: 1.0 }
+    this.roundText.element!.opacity = opacity.value
 
-    this.roundFadeTween = this.entity.tween(opacity).to({value: 0.0}, 3.0, SineOut).on('update', () => {
+    this.roundFadeTween = this.entity.tween(opacity).to({ value: 0.0 }, 4.0, SineInOut).on('update', () => {
       this.roundText.element!.opacity = opacity.value
     }).start()
   }
 
-  rank(config:GameConfig, _tickOutput:TickOutput) {
+  rank(config: GameConfig, _tickOutput: TickOutput) {
     if (!config.currentPlayer || !config.grid) {
       return -1
     }
-    const sorted = config.grid.warriors.sort((a,b) => {
+    const sorted = config.grid.warriors.sort((a, b) => {
       return b.wootgumpBalance - a.wootgumpBalance
     })
     return sorted?.indexOf(config.currentPlayer) + 1
   }
 
-  handleTick(tickOutput:TickOutput) {
-    this.timeToNextRound = TIME_BETWEEN_ROUNDS
-    this.updateRoundText(tickOutput.tick)
+  handleTick(tickOutput: TickOutput) {
     const config = getGameConfig(this.app.root);
     const grid = config.grid;
+    this.timeToNextRound = (SECONDS_BETWEEN_ROUNDS - STOP_MOVES_BUFFER - 2) // show the user a shorter period of time
+    this.updateRoundText(`Round ${tickOutput.tick} of ${grid?.gameLength}`)
     const player = config.currentPlayer
     if (!grid) {
       return;
@@ -109,7 +116,7 @@ class Hud extends ScriptTypeBase {
       text += ` - Rank: ${this.rank(config, tickOutput)} - ${config.currentPlayer.wootgumpBalance} Wootgump`
     }
     this.uiText.element!.text = text;
-      
+
 
     // lets see if anything happened to the player themselves
     const events = this.getInterestingEvents(tickOutput.outcomes, player?.id)
@@ -127,10 +134,10 @@ class Hud extends ScriptTypeBase {
       }
     }
   }
-  
-  private playEvent(eventText:string) {
+
+  private playEvent(eventText: string) {
     const playEvent = () => {
-      return new Promise<void>((resolve,reject) => {
+      return new Promise<void>((resolve, reject) => {
         try {
           console.log('playing event', eventText)
           const eventElement = this.eventTemplate.clone() as Entity
@@ -144,20 +151,20 @@ class Hud extends ScriptTypeBase {
           const duration = 3.0
 
           const opacity = { value: 1.0 }
-          eventElement.tween(opacity).to({value: 0.5}, duration - 0.1, pc.SineOut).on('update', () => {
+          eventElement.tween(opacity).to({ value: 0.5 }, duration - 0.1, pc.SineOut).on('update', () => {
             eventElement.element!.opacity = opacity.value
           }).start()
 
-          eventElement.tween(curPosition).to({x: curPosition.x, y: curPosition.y + 200, z: curPosition.z}, duration, pc.SineIn).start().on('complete', () => {
+          eventElement.tween(curPosition).to({ x: curPosition.x, y: curPosition.y + 200, z: curPosition.z }, duration, pc.SineIn).start().on('complete', () => {
             eventElement.destroy()
-          }).on('update', (dt:any) => {
+          }).on('update', (dt: any) => {
             total = total + dt
             if (total >= duration / 2) {
               // half way through this, let the next event pop up
               resolve()
             }
           })
-        } catch(err) {
+        } catch (err) {
           console.error('error playing event: ', err)
           reject(err)
         }
@@ -170,8 +177,8 @@ class Hud extends ScriptTypeBase {
     this.inProgress = playEvent.bind(this)()
   }
 
-  private getInterestingEvents(outcomes:CellOutComeDescriptor[][], player?:string):string[] {
-    let interestingEvents:string[] = []
+  private getInterestingEvents(outcomes: CellOutComeDescriptor[][], player?: string): string[] {
+    let interestingEvents: string[] = []
     outcomes.forEach((row) => {
       row.forEach((outcome) => {
         if (player && outcome.harvested[player]?.length > 0) {

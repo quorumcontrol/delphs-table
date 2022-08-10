@@ -1,10 +1,12 @@
 import { VStack, Text, Heading, Box, Spinner, Link, Button } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import NextLink from "next/link";
+import { useCallback } from "react";
 import { useAccount } from "wagmi";
 import Layout from "../src/components/Layout";
 import { useUsername } from "../src/hooks/Player";
 import useIsClientSide from "../src/hooks/useIsClientSide";
+import useMqttMessages from "../src/hooks/useMqttMessages";
 import { useLogin } from "../src/hooks/useUser";
 
 const Home: NextPage = () => {
@@ -17,6 +19,10 @@ const Home: NextPage = () => {
     isLoggingIn:relayerLoading
   } = useLogin();
   const isClient = useIsClientSide();
+  const handler = useCallback((topic:string,msg:Buffer) => {
+    console.log('mqtt: ', topic, msg.toString())
+  }, [])
+  useMqttMessages(handler)
 
   return (
     <>

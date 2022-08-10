@@ -1,12 +1,12 @@
-import { VStack, Text, Heading, Box, Button } from "@chakra-ui/react";
+import { VStack, Text, Heading, Box } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAccount } from "wagmi";
 import LoggedInLayout from "../../src/components/LoggedInLayout";
 import useIsClientSide from "../../src/hooks/useIsClientSide";
-import { useLogin } from "../../src/hooks/useUser";
-import { delphsContract } from "../../src/utils/contracts";
+import useMqttMessages from "../../src/hooks/useMqttMessages";
+import { NO_MORE_MOVES_CHANNEL, ROLLS_CHANNEL } from "../../src/utils/mqtt";
 import promiseWaiter from "../../src/utils/promiseWaiter";
 import relayer from "../../src/utils/relayer";
 import SingletonQueue from "../../src/utils/singletonQueue";
@@ -23,6 +23,31 @@ const Play: NextPage = () => {
   const isClient = useIsClientSide();
   const iframe = useRef<HTMLIFrameElement>(null);
   const [fullScreen, setFullScreen] = useState(false)
+
+  const mqttHandler = useCallback((topic:string, msg: Buffer) => {
+    switch (topic) {
+      case NO_MORE_MOVES_CHANNEL:
+        {
+          const { tick } = JSON.parse(msg.toString())
+          return iframe.current?.contentWindow?.postMessage(JSON.stringify({
+            type: 'noMoreMoves',
+            tick,
+          }), '*')
+        }
+      case ROLLS_CHANNEL:
+        {
+          const parsedMsg = JSON.parse(msg.toString())
+          return iframe.current?.contentWindow?.postMessage(JSON.stringify({
+            type: 'orchestratorRoll',
+            ...parsedMsg
+          }), '*')
+        }
+      default:
+        console.log('mqtt: ', topic)
+    }
+  }, [])
+
+  useMqttMessages(mqttHandler)
 
   const handleFullScreenMessage = useCallback(() => {
     setFullScreen((old) => !old)
@@ -63,7 +88,7 @@ const Play: NextPage = () => {
         }), '*')
       })
     })
-  }, [relayer])
+  }, [relayer, tableId])
 
   useEffect(() => {
     const handler = async (evt:MessageEvent) => {
@@ -88,7 +113,7 @@ const Play: NextPage = () => {
       console.log('removing destination listener')
       window.removeEventListener('message', handler)
     }
-  }, [handleMessage])
+  }, [handleMessage, handleFullScreenMessage])
 
   return (
     <LoggedInLayout>
@@ -98,7 +123,7 @@ const Play: NextPage = () => {
         {isClient && <Box
           id="game"
           as='iframe'
-          src={`https://playcanv.as/e/p/wQEQB1Cp/?tableId=${tableId}&player=${address}`}
+          src={`https://playcanv.as/e/b/7XqAEzsb/?tableId=${tableId}&player=${address}`}
           ref={iframe}
           top='0'
           left='0'

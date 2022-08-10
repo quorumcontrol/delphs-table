@@ -11,7 +11,8 @@ import BoardGenerate from "./BoardGenerate";
 import { DiceRolledEvent, StartedEvent } from "../typechain/DelphsTable";
 import addresses from '../deployments/skaletest/addresses.json'
 import MulticallWrapper from "kasumah-multicall";
-import { GAME_OVER_EVT, NO_MORE_MOVES_EVT, TICK_EVT, TIME_BETWEEN_ROUNDS } from "../utils/rounds";
+import { GAME_OVER_EVT, NO_MORE_MOVES_EVT, ORCHESTRATOR_TICK, TICK_EVT } from "../utils/rounds";
+import { MESSAGE_EVENT } from "../appWide/AppConnector";
 
 const log = console.log; //debug('chainConnector')
 
@@ -62,6 +63,7 @@ class ChainConnector extends ScriptTypeBase {
       throw new Error('do not use chain connector without boardgenerate')
     }
     this.boardGenerate = boardGenerate
+    this.app.on(MESSAGE_EVENT, this.handleIframeEvents, this)
     this.asyncSetup();
   }
 
@@ -83,6 +85,23 @@ class ChainConnector extends ScriptTypeBase {
   //   const roll = await this.delphs.rolls(this.latest.add(1))
   //   this.handleTick(this.latest.add(1) , constants.Zero, roll);
   // }
+
+  private handleIframeEvents(evt:any) {
+    try {
+      switch (evt.type) {
+        case 'orchestratorRoll':
+          console.log('orchestrator rolled', evt)
+          this.handleTick(BigNumber.from(evt.tick), BigNumber.from(evt.blockNumber), evt.random)
+          return this.entity.fire(ORCHESTRATOR_TICK)
+        case 'noMoreMoves':
+          console.log('orchestratored fired no more moves')
+          return this.entity.fire(NO_MORE_MOVES_EVT)
+      }
+    } catch(err) {
+      console.error('error handling event', err)
+      throw err
+    }
+  }
 
   async asyncSetup() {
     try {
@@ -139,7 +158,7 @@ class ChainConnector extends ScriptTypeBase {
 
       if (table.startedAt.gt(0) && latest.gte(table.startedAt)) {
         log("table is already in progress, let's catch up");
-        const end = table.startedAt.add(table.gameLength)
+        const end = table.startedAt.add(table.gameLength).sub(1)
         await this.catchUp(table.startedAt, bigNumMin(end, latest));
         // await this.catchUp(table.startedAt, table.startedAt.add(0));
       }
@@ -148,7 +167,7 @@ class ChainConnector extends ScriptTypeBase {
       log("setting up event filters", this.delphs.filters.Started(tableId));
 
       this.delphs.on(this.delphs.filters.Started(tableId, null), this.handleStarted);
-      this.delphs.on(this.delphs.filters.DiceRolled(null, null, null), this.handleTick);
+      // this.delphs.on(this.delphs.filters.DiceRolled(null, null, null), this.handleTick);
     } catch (err) {
       console.error("error", err);
       throw err;
@@ -244,7 +263,6 @@ class ChainConnector extends ScriptTypeBase {
           }
           warrior.setDestination(dest.x.toNumber(), dest.y.toNumber())
         })
-        this.timeToNextRound = TIME_BETWEEN_ROUNDS
         this.entity.fire(TICK_EVT, this.grid.handleTick(random));
         this.latest = index;
         if (this.grid.isOver()) {

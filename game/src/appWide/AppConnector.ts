@@ -11,7 +11,11 @@ if (typeof window !== "undefined") {
         // call API method two:
         const app = pc.Application.getApplication();
         if (app) {
-          app.fire(MESSAGE_EVENT, event.data);
+          try {
+            app.fire(MESSAGE_EVENT, JSON.parse(event.data));
+          } catch (err) {
+            console.log('EXPECTED msg error: ', err)
+          }
         }
       // }
     },

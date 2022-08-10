@@ -10,6 +10,8 @@ import { UI_FOCUS_REQUEST } from "../appWide/Focuser";
 import Warrior from "../boardLogic/Warrior";
 import mustFindByName from "../utils/mustFindByName";
 import PlayerMarker from "./PlayerMarker";
+import { MESSAGE_EVENT } from "../appWide/AppConnector";
+import { NO_MORE_MOVES_EVT, ORCHESTRATOR_TICK } from "../utils/rounds";
 
 @createScript("boardGenerate")
 class BoardGenerate extends ScriptTypeBase {
@@ -37,6 +39,7 @@ class BoardGenerate extends ScriptTypeBase {
     this.currentPlayer = urlParams.get("player") || "";
     console.log('current player: ', this.currentPlayer)
     this.next = []
+    this.app.on(MESSAGE_EVENT, this.handleExternalEvents, this)
   }
 
   update() {
@@ -48,6 +51,22 @@ class BoardGenerate extends ScriptTypeBase {
     }
     if (this.app.keyboard.wasPressed(pc.KEY_P)) {
       this.focusOnPlayerCell()
+    }
+  }
+
+  private handleExternalEvents(evt:any) {
+    try {
+      switch (evt.type) {
+        case 'orchestratorRoll':
+          console.log('orchestrator rolled')
+          return this.entity.fire(ORCHESTRATOR_TICK)
+        case 'noMoreMoves':
+          console.log('orchestratored fired no more moves')
+          return this.entity.fire(NO_MORE_MOVES_EVT)
+      }
+    } catch(err) {
+      console.error('error handling event', err)
+      throw err
     }
   }
 
