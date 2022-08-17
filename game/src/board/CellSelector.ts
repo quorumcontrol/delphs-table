@@ -89,14 +89,17 @@ class CellSelector extends ScriptTypeBase {
   }
   
   maybeClearTouchEvent(e: pc.TouchEvent) {
-    e.event.preventDefault()
-    const distance = this.getDistance(e.touches[0].x, e.touches[0].y)
-    // if they use two fingers or just move their finger a little, then we can ignore it and keep going
-    if (distance < 10 && e.touches.length === 1) {
-      console.log('no clear, tiny movement')
-      return
+    if (this.startedEvent) {
+      const distance = this.getDistance(e.touches[0].x, e.touches[0].y)
+      // if they use two fingers or just move their finger a little, then we can ignore it and keep going
+      if (distance < 10 && e.touches.length === 1) {
+        console.log('no clear, tiny movement')
+        e.event.preventDefault()
+      } else {
+        console.log('clearing')
+        this.startedEvent = undefined
+      }
     }
-    this.startedEvent = undefined
   }
 
   clearMouseEvent(e: pc.MouseEvent) {
