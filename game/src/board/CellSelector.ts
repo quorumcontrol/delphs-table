@@ -89,6 +89,7 @@ class CellSelector extends ScriptTypeBase {
   }
   
   maybeClearTouchEvent(e: pc.TouchEvent) {
+    e.event.preventDefault()
     const distance = this.getDistance(e.touches[0].x, e.touches[0].y)
     // if they use two fingers or just move their finger a little, then we can ignore it and keep going
     if (distance < 10 && e.touches.length === 1) {
@@ -96,7 +97,6 @@ class CellSelector extends ScriptTypeBase {
       return
     }
     this.startedEvent = undefined
-    e.event.preventDefault()
   }
 
   clearMouseEvent(e: pc.MouseEvent) {
